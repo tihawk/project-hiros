@@ -4,6 +4,7 @@ import detector from 'i18next-browser-languagedetector'
 import backend from 'i18next-xhr-backend'
 import en from '../../public/locales/en.json'
 import bg from '../../public/locales/bg.json'
+import de from '../../public/locales/de.json'
 
 const resources = {
   en: {
@@ -11,6 +12,9 @@ const resources = {
   },
   bg: {
     translation: bg
+  },
+  de: {
+    translation: de
   }
 }
 
