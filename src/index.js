@@ -5,9 +5,9 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import './utility/i18next/i18next'
 // import App from './App'
 import * as serviceWorker from './serviceWorker'
-import Battleground from './containers/Battleground/Battleground'
+import Battlefield from './containers/Battlefield/Battlefield'
 
-ReactDOM.render(<Battleground />, document.getElementById('root'))
+ReactDOM.render(<Battlefield />, document.getElementById('root'))
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
