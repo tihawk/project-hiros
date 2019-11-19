@@ -4,7 +4,7 @@ body {
 
 .grid {
     position: relative;
-    width: 60%;
+    width: 30%;
     margin: 0 auto;
     padding: 0; /* Clears unordered list default of 40px */
 }

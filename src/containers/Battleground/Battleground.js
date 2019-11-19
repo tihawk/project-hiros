@@ -22,7 +22,7 @@ class Battleground extends Component {
           <button onClick={() => this.changeLanguage('en')}>en</button>
           <button onClick={() => this.changeLanguage('de')}>de</button>
           <h1>{t('Battlefield.Battlefield')}</h1>
-          <ul className={[classes.grid, classes.clear] + 'd-flex flex-wrap align-items-center'}>
+          <ul className={[classes.grid, classes.clear].join(' ')}>
             {this.state.board.map(rowEl => {
               return rowEl.map(colEl => {
                 return (
