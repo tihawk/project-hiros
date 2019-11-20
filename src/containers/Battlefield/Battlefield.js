@@ -7,7 +7,8 @@ import CombatDashboard from './CombatDashboard'
 import DistanceHeader from './DistanceHeader'
 import Sprite from '../Sprite/Sprite'
 
-import image from '../../public/assets/sprites/sorcerer1.png'
+import spriteData from '../../public/assets/sprites/swordsman-idle.json'
+import image from '../../public/assets/sprites/swordsman-idle.png'
 
 class Battlefield extends Component {
     state = {
@@ -68,11 +69,8 @@ class Battlefield extends Component {
       const character = (
         <Sprite
           src={image}
-          states={10}
-          tile={{ width: 200, height: 200 }}
-          scale={0.7}
-          framesPerStep={10}
-          className={classes.clear}
+          framesPerStep={9}
+          data={spriteData}
         />
       )
 
@@ -94,7 +92,6 @@ class Battlefield extends Component {
               )
             })}
           </ul>
-          {/* {character} */}
           <div>
             <CombatDashboard />
             <CombatFooter />

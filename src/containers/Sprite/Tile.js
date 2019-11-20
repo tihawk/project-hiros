@@ -4,23 +4,22 @@ import styled from 'styled-components'
 const Container = styled.div`
   overflow: hidden;
   width: ${({ width }) => width}px;
-  width: ${({ height }) => height}px;
-  transform: scale(${({ scale }) => `${scale}, ${scale}`}) translate(-50%, -50%);
-  transform-origin: top center;
+  height: ${({ height }) => height}px;
+  transform-origin: bottom left;
+  transform: scale(${({ scale }) => `${scale}, ${scale}`}) translate(50%, -50%);
 `
 const Image = styled.img`
-  transform: translate(-${({ left }) => left}px, 0);
+  transform: translate(-${({ left }) => left}px, -${({ top }) => top}px);
 `
 
-const Tile = ({ src, tile, state, scale }) => {
-  const left = tile.width * state
+const Tile = ({ src, tile, scale }) => {
   return (
     <Container
       width={tile.width}
       height={tile.height}
       scale={scale}
     >
-      <Image src={src} left={left}/>
+      <Image src={src} left={tile.left} top={tile.top}/>
     </Container>
   )
 }

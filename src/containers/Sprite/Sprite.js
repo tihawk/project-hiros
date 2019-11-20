@@ -19,7 +19,8 @@ class Sprite extends Component {
 
     animate = () => {
       const { state } = this.state
-      const { framesPerStep, states } = this.props
+      const { framesPerStep } = this.props
+      const states = Object.keys(this.props.data.frames).length
 
       if (this.tick === framesPerStep) {
         this.tick = 0
@@ -31,14 +32,20 @@ class Sprite extends Component {
     }
 
     render () {
-      const { src, tile, scale } = this.props
       const { state } = this.state
+      const tile = {
+        width: this.props.data.frames[state].frame.w,
+        height: this.props.data.frames[state].frame.h,
+        left: this.props.data.frames[state].frame.x,
+        top: this.props.data.frames[state].frame.y
+      }
+      const { src } = this.props
+      const { scale } = this.props.data.meta
 
       return <Tile
         src={src}
         tile={tile}
         scale={scale}
-        state={state}
       />
     }
 }
