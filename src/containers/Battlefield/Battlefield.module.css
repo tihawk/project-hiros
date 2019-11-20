@@ -227,3 +227,12 @@ button {
     right: 0px;
     border-bottom: 20px solid rgba(255, 250, 250, 0.5);
 }
+
+canvas {
+    position: absolute;
+    /* display: flex;
+    justify-content: center; */
+    background-color: white;
+    width: 80%;
+    height: 80vh;
+}

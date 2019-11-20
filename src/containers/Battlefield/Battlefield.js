@@ -10,10 +10,24 @@ import Sprite from '../Sprite/Sprite'
 
 import image from '../../public/assets/sprites/sorcerer.png'
 
-class Battleground extends Component {
+class Battlefield extends Component {
     state = {
       board: [...range(0, 10).map(colEl => range(0, 14))]
     }
+
+    // componentDidMount () {
+    //   this.canvas = document.getElementById('canvas')
+    //   this.canvas.width = 800
+    //   this.canvas.height = 600
+    //   this.context = this.canvas.getContext('2d')
+    //   let x = 0
+    //   for (const row of this.state.board) {
+    //     for (const cell of row) {
+    //       x += 10
+    //       drawHexagon(this.context, 10, { x: x, y: 10 })
+    //     }
+    //   }
+    // }
 
     changeLanguage = (lng) => {
       i18n.changeLanguage(lng)
@@ -62,4 +76,4 @@ class Battleground extends Component {
     }
 }
 
-export default withTranslation()(Battleground)
+export default withTranslation()(Battlefield)
