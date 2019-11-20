@@ -6,6 +6,27 @@ export const range = (start, end) => {
   }
 }
 
+export const populateGrid = () => {
+  const grid = []
+  // const gridObj = {
+  //   x: 0,
+  //   y: 0,
+  //   hasCreature: false
+  // }
+  for (let y = 0; y < 11; y++) {
+    for (let x = 0; x < 15; x++) {
+      const gridObj = {}
+      gridObj.x = x
+      gridObj.y = y
+      if (x === 0) {
+        gridObj.hasCreature = true
+      }
+      grid.push(gridObj)
+    }
+  }
+  return grid
+}
+
 export const drawHexagon = (context, size, { x, y }) => {
   context.beginPath()
   context.moveTo(x + size * Math.cos(0), y + size * Math.sin(0))
