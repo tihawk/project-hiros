@@ -6,6 +6,9 @@ import classes from './Battlefield.module.css'
 import CombatFooter from './CombatFooter'
 import CombatDashboard from './CombatDashboard'
 import DistanceHeader from './DistanceHeader'
+import Sprite from '../Sprite/Sprite'
+
+import image from '../../public/assets/sprites/sorcerer.png'
 
 class Battleground extends Component {
     state = {
@@ -17,6 +20,14 @@ class Battleground extends Component {
     }
 
     render () {
+      const character = <Sprite
+        src={image}
+        states={10}
+        tile={{ width: 200, height: 200 }}
+        scale={0.5}
+        framesPerStep={10}
+      />
+
       console.table(this.state.board)
       // const { t } = this.props
       return (
@@ -32,13 +43,16 @@ class Battleground extends Component {
                 return (
                   <li key={colEl}>
                     <div className={classes.hexagon}>
-                      <strong className={classes.onHexagon}>{rowIndex}x{colEl}</strong>
+                      <div className={classes.onHexagon}>
+                        {/* {character} */}
+                      </div>
                     </div>
                   </li>
                 )
               })
             })}
           </ul>
+          {/* {character} */}
           <div>
             <CombatDashboard />
             <CombatFooter />

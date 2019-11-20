@@ -137,17 +137,10 @@ li:nth-child(30n+30)
     background-color: rgba(51, 51, 51, 0.5);
 }
 
-.footer {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-}
-
 .onHexagon {
+    z-index: 999;
     position: relative;
-    left: 40%;
-    top: 40%;
+    overflow: visible;
 }
 
 /* .onHexagon:before {
@@ -160,6 +153,13 @@ li:nth-child(30n+30)
     bottom: 10px;
     background-color: inherit;
 } */
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
 
 .combFooter {
     text-align: center;
