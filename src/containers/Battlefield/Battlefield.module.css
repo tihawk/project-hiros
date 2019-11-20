@@ -1,4 +1,5 @@
 .field {
+    margin: 10px;
     position: relative;
     background-image: url(../../public/assets/textures/snow005.png);
     background-size: 200px;
@@ -207,18 +208,22 @@ button {
     position: relative;
     height: 100px;
     background-image: url(../../public/assets/textures/bg1.png);
+    background-color: rgba(255, 250, 250, 0.2);
+    background-blend-mode: overlay;
     background-repeat: repeat-x;
     background-size: 60px;
     /* box-shadow: 20px 20px rgba(255, 250, 250, 0.5); */
-    outline: rgba(255, 250, 250, 0.5) solid 20px;
+    /* outline: rgba(255, 250, 250, 0.5) solid 20px; */
 }
 
 .distance:before {
     content: " ";
     position: absolute;
+    background: inherit;
+    mix-blend-mode: overlay;
     top: 2px;
     bottom: 2px;
-    left: 2px;
-    right: 2px;
+    left: 0px;
+    right: 0px;
     border-bottom: 20px solid rgba(255, 250, 250, 0.5);
 }
