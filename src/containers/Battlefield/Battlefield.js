@@ -51,17 +51,28 @@ class Battlefield extends Component {
     handleCreatureMoved = (tileToMoveTo, indexOfTileToMoveTo) => {
       if (!tileToMoveTo.hasCreature) {
         console.log('moving...')
-        const tileMovedTo = this.state.board.slice(indexOfTileToMoveTo)
-        tileMovedTo[0].hasCreature = true
-        let boardCopy = this.state.board.slice(0, indexOfTileToMoveTo).concat(tileMovedTo)
-        const tileMovedFrom = this.state.board.slice(this.state.indexOfSelectedTileWithCreature)
-        tileMovedFrom[0].hasCreature = false
-        boardCopy = this.state.board.slice(0, this.state.indexOfSelectedTileWithCreature).concat(tileMovedFrom)
-        this.setState({
-          board: boardCopy,
-          isCreatureSelected: false,
-          indexOfSelectedTileWithCreature: null
-        })
+        const tileToElement = document.getElementById(indexOfTileToMoveTo)
+        const tileFromElement = document.getElementById(this.state.indexOfSelectedTileWithCreature)
+        const spriteToMoveElement = tileFromElement.firstChild
+        const distanceX = tileToElement.getBoundingClientRect().left - tileFromElement.getBoundingClientRect().left
+        const distanceY = tileToElement.getBoundingClientRect().top - tileFromElement.getBoundingClientRect().top
+        
+        const animation = spriteToMoveElement.animate([{left: `0`, top: '0'}, {left: `${distanceX}px`, top: `${distanceY}px`}], Math.sqrt(distanceX**2 + distanceY**2)*3)
+        animation.onfinish = () => {
+          console.log('replacing element')
+            const tileMovedTo = this.state.board.slice(indexOfTileToMoveTo)
+            tileMovedTo[0].hasCreature = true
+            let boardCopy = this.state.board.slice(0, indexOfTileToMoveTo).concat(tileMovedTo)
+            const tileMovedFrom = this.state.board.slice(this.state.indexOfSelectedTileWithCreature)
+            tileMovedFrom[0].hasCreature = false
+            boardCopy = this.state.board.slice(0, this.state.indexOfSelectedTileWithCreature).concat(tileMovedFrom)
+            this.setState({
+              board: boardCopy,
+              isCreatureSelected: false,
+              indexOfSelectedTileWithCreature: null
+            })
+        }
+          
       }
     }
 
@@ -85,6 +96,7 @@ class Battlefield extends Component {
                   <div
                     className={classes.hexagon}
                     onClick={() => this.handleTileClicked(hex, hexIndex)}
+                    id={hexIndex}
                   >
                     {hex.hasCreature ? character : null}
                   </div>
