@@ -24,7 +24,7 @@ const SpriteController = ({ creature, action, oriented }) => {
   return (
     <Sprite
       src={image}
-      framesPerStep={Math.floor(Object.keys(data.frames).length / 1.5)}
+      framesPerStep={Math.floor(Object.keys(data.frames).length / 2)}
       data={data}
       oriented={oriented}
     />

@@ -33,11 +33,19 @@ class Sprite extends Component {
 
     render () {
       const { state } = this.state
-      const tile = {
-        width: this.props.data.frames[state].frame.w,
-        height: this.props.data.frames[state].frame.h,
-        left: this.props.data.frames[state].frame.x,
-        top: this.props.data.frames[state].frame.y
+      let tile = {
+        width: 0,
+        height: 0,
+        left: 0,
+        top: 0
+      }
+      if (this.props.data.frames[state]) {
+        tile = {
+          width: this.props.data.frames[state].frame.w,
+          height: this.props.data.frames[state].frame.h,
+          left: this.props.data.frames[state].frame.x,
+          top: this.props.data.frames[state].frame.y
+        }
       }
       const { src } = this.props
       const { oriented } = this.props
