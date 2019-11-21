@@ -1,3 +1,7 @@
+.inAction {
+    pointer-events: none;
+}
+
 .field {
     margin: 10px;
     position: relative;

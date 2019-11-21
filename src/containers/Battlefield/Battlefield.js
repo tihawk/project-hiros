@@ -15,18 +15,25 @@ class Battlefield extends Component {
       creature: {
         type: 'swordsman',
         action: 'idle'
-      }
+      },
+      inAction: false
     }
 
     handleTileClicked = (tile, tileIndex) => {
+      this.setState({ inAction: true })
       if (!tile.hasCreature) {
         if (this.state.isCreatureSelected) {
           console.log('calling moving')
           this.handleCreatureMoved(tile, tileIndex)
+        } else {
+          // clicked on empty tile i guess
+          this.setState({ inAction: false })
         }
       } else if (tile.hasCreature) {
         console.log('calling selecting')
         this.handleCreatureSelect(tileIndex)
+      } else {
+        this.setState({ inAction: false })
       }
     }
 
@@ -36,14 +43,16 @@ class Battlefield extends Component {
         console.log('deselect')
         this.setState({
           indexOfSelectedTileWithCreature: null,
-          isCreatureSelected: false
+          isCreatureSelected: false,
+          inAction: false
         })
       } else {
         // select
         console.log('select')
         this.setState({
           indexOfSelectedTileWithCreature: tileIndex,
-          isCreatureSelected: true
+          isCreatureSelected: true,
+          inAction: false
         })
       }
     }
@@ -83,16 +92,20 @@ class Battlefield extends Component {
           this.setState({
             board: boardCopy,
             isCreatureSelected: false,
-            indexOfSelectedTileWithCreature: null
+            indexOfSelectedTileWithCreature: null,
+            inAction: false
           })
         }
+      } else {
+        this.setState({ inAction: false })
       }
     }
 
     render () {
       // const { t } = this.props
+      const fieldClasses = [classes.field, this.state.inAction ? classes.inAction : null].join(' ')
       return (
-        <div className={classes.field}>
+        <div className={fieldClasses}>
           <ul className={[classes.grid, classes.clear].join(' ')}>
             {this.state.board.map((hex, hexIndex) => {
               return (
