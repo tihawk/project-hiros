@@ -4,17 +4,18 @@ import { withTranslation } from 'react-i18next'
 import classes from './Battlefield.module.css'
 import CombatFooter from './CombatFooter'
 import CombatDashboard from './CombatDashboard'
-import Sprite from '../Sprite/Sprite'
-
-import spriteData from '../../public/assets/sprites/swordsman-idle.json'
-import image from '../../public/assets/sprites/swordsman-idle.png'
+import SpriteController from '../Sprite/SpriteController'
 
 class Battlefield extends Component {
     state = {
       // board: [...range(0, 10).map(colEl => range(0, 14))]
       board: populateGrid(),
       indexOfSelectedTileWithCreature: null,
-      isCreatureSelected: false
+      isCreatureSelected: false,
+      creature: {
+        type: 'swordsman',
+        action: 'idle'
+      }
     }
 
     handleTileClicked = (tile, tileIndex) => {
@@ -50,6 +51,12 @@ class Battlefield extends Component {
     handleCreatureMoved = (tileToMoveTo, indexOfTileToMoveTo) => {
       if (!tileToMoveTo.hasCreature) {
         console.log('moving...')
+
+        const tileMovedFrom = this.state.board.slice(this.state.indexOfSelectedTileWithCreature)
+        tileMovedFrom[0].creature.action = 'walk'
+        const boardCopy = this.state.board.slice(0, this.state.indexOfSelectedTileWithCreature).concat(tileMovedFrom)
+        this.setState({ board: boardCopy })
+
         const tileToElement = document.getElementById(indexOfTileToMoveTo)
         const tileFromElement = document.getElementById(this.state.indexOfSelectedTileWithCreature)
         const spriteToMoveElement = tileFromElement.firstChild
@@ -65,11 +72,14 @@ class Battlefield extends Component {
         animation.onfinish = () => {
           console.log('replacing element')
           const tileMovedTo = this.state.board.slice(indexOfTileToMoveTo)
-          tileMovedTo[0].hasCreature = true
           let boardCopy = this.state.board.slice(0, indexOfTileToMoveTo).concat(tileMovedTo)
           const tileMovedFrom = this.state.board.slice(this.state.indexOfSelectedTileWithCreature)
+          tileMovedTo[0].hasCreature = true
+          tileMovedTo[0].creature = { ...tileMovedFrom[0].creature, action: 'idle' }
           tileMovedFrom[0].hasCreature = false
+          delete tileMovedFrom[0].creature
           boardCopy = this.state.board.slice(0, this.state.indexOfSelectedTileWithCreature).concat(tileMovedFrom)
+          // this.setState({ creatureState: { ...this.state.creatureState, data: swordsmanIdleData, image: swordsmanIdleImage } })
           this.setState({
             board: boardCopy,
             isCreatureSelected: false,
@@ -80,14 +90,6 @@ class Battlefield extends Component {
     }
 
     render () {
-      const character = (
-        <Sprite
-          src={image}
-          framesPerStep={9}
-          data={spriteData}
-        />
-      )
-
       // const { t } = this.props
       return (
         <div className={classes.field}>
@@ -100,7 +102,12 @@ class Battlefield extends Component {
                     onClick={() => this.handleTileClicked(hex, hexIndex)}
                     id={hexIndex}
                   >
-                    {hex.hasCreature ? character : null}
+                    {hex.hasCreature
+                      ? <SpriteController
+                        creature={hex.creature.type}
+                        action={hex.creature.action}
+                      />
+                      : null}
                   </div>
                 </li>
               )

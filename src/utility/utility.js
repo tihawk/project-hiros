@@ -20,6 +20,10 @@ export const populateGrid = () => {
       gridObj.y = y
       if (x === 0) {
         gridObj.hasCreature = true
+        gridObj.creature = {
+          type: 'swordsman',
+          action: 'idle'
+        }
       }
       grid.push(gridObj)
     }
