@@ -12,10 +12,6 @@ class Battlefield extends Component {
       board: populateGrid(),
       indexOfSelectedTileWithCreature: null,
       isCreatureSelected: false,
-      creature: {
-        type: 'swordsman',
-        action: 'idle'
-      },
       inAction: false
     }
 
@@ -60,15 +56,21 @@ class Battlefield extends Component {
     handleCreatureMoved = (tileToMoveTo, indexOfTileToMoveTo) => {
       if (!tileToMoveTo.hasCreature) {
         console.log('moving...')
-        let board = this.state.board
-        board = update(board, { [this.state.indexOfSelectedTileWithCreature]: { creature: { action: { $set: 'walk' } } } })
-        this.setState({ board })
+        // board = update(board, { [this.state.indexOfSelectedTileWithCreature]: { creature: { action: { $set: 'walk' } } } })
+        // this.setState({ board })
 
         const tileToElement = document.getElementById(indexOfTileToMoveTo)
         const tileFromElement = document.getElementById(this.state.indexOfSelectedTileWithCreature)
         const spriteToMoveElement = tileFromElement.firstChild
         const distanceX = tileToElement.getBoundingClientRect().left - tileFromElement.getBoundingClientRect().left
         const distanceY = tileToElement.getBoundingClientRect().top - tileFromElement.getBoundingClientRect().top
+
+        let board = this.state.board
+        board = update(board, { [this.state.indexOfSelectedTileWithCreature]: { creature: { action: { $set: 'walk' } } } })
+        board = update(board, { [this.state.indexOfSelectedTileWithCreature]: { creature: { oriented: { $set: distanceX / Math.abs(distanceX) } } } })
+
+        this.setState({ board })
+
         const keyFrames = [
           { left: '0', top: '0' },
           { left: distanceX + 'px', top: distanceY + 'px' }
@@ -113,6 +115,7 @@ class Battlefield extends Component {
                       ? <SpriteController
                         creature={hex.creature.type}
                         action={hex.creature.action}
+                        oriented={hex.creature.oriented}
                       />
                       : null}
                   </div>

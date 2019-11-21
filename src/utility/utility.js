@@ -22,7 +22,8 @@ export const populateGrid = () => {
         gridObj.hasCreature = true
         gridObj.creature = {
           type: 'swordsman',
-          action: 'idle'
+          action: 'idle',
+          oriented: 1
         }
       }
       grid.push(gridObj)

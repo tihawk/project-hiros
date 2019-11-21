@@ -40,7 +40,11 @@ class Sprite extends Component {
         top: this.props.data.frames[state].frame.y
       }
       const { src } = this.props
-      const { scale } = this.props.data.meta
+      const { oriented } = this.props
+      const scale = {
+        x: this.props.data.meta.scale * oriented,
+        y: this.props.data.meta.scale
+      }
 
       return <Tile
         src={src}
