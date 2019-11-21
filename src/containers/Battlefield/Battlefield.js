@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { populateGrid } from '../../utility/utility'
 import { withTranslation } from 'react-i18next'
+import update from 'immutability-helper'
 import classes from './Battlefield.module.css'
 import CombatFooter from './CombatFooter'
 import CombatDashboard from './CombatDashboard'
@@ -8,7 +9,6 @@ import SpriteController from '../Sprite/SpriteController'
 
 class Battlefield extends Component {
     state = {
-      // board: [...range(0, 10).map(colEl => range(0, 14))]
       board: populateGrid(),
       indexOfSelectedTileWithCreature: null,
       isCreatureSelected: false,
@@ -60,18 +60,15 @@ class Battlefield extends Component {
     handleCreatureMoved = (tileToMoveTo, indexOfTileToMoveTo) => {
       if (!tileToMoveTo.hasCreature) {
         console.log('moving...')
-
-        const tileMovedFrom = this.state.board.slice(this.state.indexOfSelectedTileWithCreature)
-        tileMovedFrom[0].creature.action = 'walk'
-        const boardCopy = this.state.board.slice(0, this.state.indexOfSelectedTileWithCreature).concat(tileMovedFrom)
-        this.setState({ board: boardCopy })
+        let board = this.state.board
+        board = update(board, { [this.state.indexOfSelectedTileWithCreature]: { creature: { action: { $set: 'walk' } } } })
+        this.setState({ board })
 
         const tileToElement = document.getElementById(indexOfTileToMoveTo)
         const tileFromElement = document.getElementById(this.state.indexOfSelectedTileWithCreature)
         const spriteToMoveElement = tileFromElement.firstChild
         const distanceX = tileToElement.getBoundingClientRect().left - tileFromElement.getBoundingClientRect().left
         const distanceY = tileToElement.getBoundingClientRect().top - tileFromElement.getBoundingClientRect().top
-
         const keyFrames = [
           { left: '0', top: '0' },
           { left: distanceX + 'px', top: distanceY + 'px' }
@@ -80,17 +77,14 @@ class Battlefield extends Component {
 
         animation.onfinish = () => {
           console.log('replacing element')
-          const tileMovedTo = this.state.board.slice(indexOfTileToMoveTo)
-          let boardCopy = this.state.board.slice(0, indexOfTileToMoveTo).concat(tileMovedTo)
-          const tileMovedFrom = this.state.board.slice(this.state.indexOfSelectedTileWithCreature)
-          tileMovedTo[0].hasCreature = true
-          tileMovedTo[0].creature = { ...tileMovedFrom[0].creature, action: 'idle' }
-          tileMovedFrom[0].hasCreature = false
-          delete tileMovedFrom[0].creature
-          boardCopy = this.state.board.slice(0, this.state.indexOfSelectedTileWithCreature).concat(tileMovedFrom)
-          // this.setState({ creatureState: { ...this.state.creatureState, data: swordsmanIdleData, image: swordsmanIdleImage } })
+          let board = this.state.board
+          board = update(board, { [indexOfTileToMoveTo]: { hasCreature: { $set: true } } })
+          board = update(board, { [indexOfTileToMoveTo]: { creature: { $set: board[this.state.indexOfSelectedTileWithCreature].creature } } })
+          board = update(board, { [indexOfTileToMoveTo]: { creature: { action: { $set: 'idle' } } } })
+          board = update(board, { [this.state.indexOfSelectedTileWithCreature]: { hasCreature: { $set: false } } })
+          board = update(board, { [this.state.indexOfSelectedTileWithCreature]: { creature: { $set: undefined } } })
           this.setState({
-            board: boardCopy,
+            board,
             isCreatureSelected: false,
             indexOfSelectedTileWithCreature: null,
             inAction: false
