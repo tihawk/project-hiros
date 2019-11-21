@@ -4,7 +4,6 @@ import { withTranslation } from 'react-i18next'
 import classes from './Battlefield.module.css'
 import CombatFooter from './CombatFooter'
 import CombatDashboard from './CombatDashboard'
-import DistanceHeader from './DistanceHeader'
 import Sprite from '../Sprite/Sprite'
 
 import spriteData from '../../public/assets/sprites/swordsman-idle.json'
@@ -56,23 +55,27 @@ class Battlefield extends Component {
         const spriteToMoveElement = tileFromElement.firstChild
         const distanceX = tileToElement.getBoundingClientRect().left - tileFromElement.getBoundingClientRect().left
         const distanceY = tileToElement.getBoundingClientRect().top - tileFromElement.getBoundingClientRect().top
-        
-        const animation = spriteToMoveElement.animate([{left: `0`, top: '0'}, {left: `${distanceX}px`, top: `${distanceY}px`}], Math.sqrt(distanceX**2 + distanceY**2)*3)
+
+        const keyFrames = [
+          { left: '0', top: '0' },
+          { left: distanceX + 'px', top: distanceY + 'px' }
+        ]
+        const animation = spriteToMoveElement.animate(keyFrames, Math.sqrt(distanceX ** 2 + distanceY ** 2) * 3)
+
         animation.onfinish = () => {
           console.log('replacing element')
-            const tileMovedTo = this.state.board.slice(indexOfTileToMoveTo)
-            tileMovedTo[0].hasCreature = true
-            let boardCopy = this.state.board.slice(0, indexOfTileToMoveTo).concat(tileMovedTo)
-            const tileMovedFrom = this.state.board.slice(this.state.indexOfSelectedTileWithCreature)
-            tileMovedFrom[0].hasCreature = false
-            boardCopy = this.state.board.slice(0, this.state.indexOfSelectedTileWithCreature).concat(tileMovedFrom)
-            this.setState({
-              board: boardCopy,
-              isCreatureSelected: false,
-              indexOfSelectedTileWithCreature: null
-            })
+          const tileMovedTo = this.state.board.slice(indexOfTileToMoveTo)
+          tileMovedTo[0].hasCreature = true
+          let boardCopy = this.state.board.slice(0, indexOfTileToMoveTo).concat(tileMovedTo)
+          const tileMovedFrom = this.state.board.slice(this.state.indexOfSelectedTileWithCreature)
+          tileMovedFrom[0].hasCreature = false
+          boardCopy = this.state.board.slice(0, this.state.indexOfSelectedTileWithCreature).concat(tileMovedFrom)
+          this.setState({
+            board: boardCopy,
+            isCreatureSelected: false,
+            indexOfSelectedTileWithCreature: null
+          })
         }
-          
       }
     }
 
@@ -88,7 +91,6 @@ class Battlefield extends Component {
       // const { t } = this.props
       return (
         <div className={classes.field}>
-          <DistanceHeader />
           <ul className={[classes.grid, classes.clear].join(' ')}>
             {this.state.board.map((hex, hexIndex) => {
               return (

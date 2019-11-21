@@ -23,9 +23,10 @@
 
 .grid {
     position: relative;
+    padding-top: 15%;
     width: 80%;
     margin: 0 auto;
-    padding: 0; /* Clears unordered list default of 40px */
+    /* padding: 0; Clears unordered list default of 40px */
 }
 
 .clear:after {
@@ -143,28 +144,6 @@ button {
     background-color: brown;
     border-right: 2px solid gold;
 }
-
-.distance {
-    position: relative;
-    height: 20vh;
-    /* background-image: url(../../public/assets/textures/bg1.png);
-    background-color: rgba(255, 250, 250, 0.2); */
-    /* background-blend-mode: overlay; */
-    /* background-repeat: repeat-x; */
-    /* background-size: 60px; */
-}
-
-/* .distance:before {
-    content: " ";
-    position: absolute;
-    background: inherit;
-    mix-blend-mode: overlay;
-    top: 2px;
-    bottom: 2px;
-    left: 0px;
-    right: 0px;
-    border-bottom: 20px solid rgba(255, 250, 250, 0.5);
-} */
 
 canvas {
     position: absolute;
