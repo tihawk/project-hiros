@@ -9,8 +9,8 @@ class CombatDashboard extends Component {
     this.scrollToBottom()
   }
 
-  componentDidUpdate () {
-    this.scrollToBottom()
+  componentDidUpdate (prevProps, prevState) {
+    if (this.state.messages !== prevState.messages) this.scrollToBottom()
   }
 
   scrollToBottom = () => {

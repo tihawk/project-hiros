@@ -71,6 +71,7 @@ const handleCreatureMoved = (indexOfTileToMoveTo) => {
 }
 
 exports.handleFinishedMoving = () => {
+  console.log('finished moving')
   this.board = update(this.board, { [this.indexOfTileToMoveTo]: { hasCreature: { $set: true } } })
   this.board = update(this.board, { [this.indexOfTileToMoveTo]: { creature: { $set: this.board[this.indexOfSelectedTileWithCreature].creature } } })
   this.board = update(this.board, { [this.indexOfTileToMoveTo]: { creature: { action: { $set: 'idle' } } } })

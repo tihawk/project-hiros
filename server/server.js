@@ -30,7 +30,7 @@ setInterval(() => {
     indexOfSelectedTileWithCreature: boardController.indexOfSelectedTileWithCreature,
     isCreatureSelected: boardController.isCreatureSelected
   })
-}, 1000 / 30)
+}, 1000 / 10)
 
 // let lastUpdateTime = new Date().getTime()
 // setInterval(() => {
