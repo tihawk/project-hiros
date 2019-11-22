@@ -23,10 +23,12 @@ io.on('connection', (socket) => {
     boardController.populateGrid()
   })
   socket.on('click', data => {
-    boardController.handleTileClicked(data)
+    const action = boardController.handleTileClicked(data)
+    io.sockets.emit('action', action)
   })
   socket.on('finished-moving', () => {
-    boardController.handleFinishedMoving()
+    const action = boardController.handleFinishedMoving()
+    io.sockets.emit('action', action)
   })
 })
 setInterval(() => {
@@ -37,7 +39,8 @@ setInterval(() => {
     indexOfTileToMoveTo: boardController.indexOfTileToMoveTo,
     turn: boardController.turn,
     loading: boardController.loading,
-    inAction: boardController.inAction
+    // inAction: boardController.inAction
+    action: boardController.action
   })
 }, 1000 / 10)
 

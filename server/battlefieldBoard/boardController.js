@@ -2,27 +2,33 @@ const update = require('immutability-helper')
 
 exports.reset = () => {
   this.board = [{ x: 0, y: 0 }]
-  this.isCreatureSelected = true
-  this.indexOfTileToMoveTo = null
   this.turn = {
     player: 1,
     creatureTileIndex: 0,
     number: 0
   }
   this.loading = false
-  this.inAction = false
+  this.action = {
+    inAction: false,
+    time: null,
+    type: null,
+    indexOfTileToMoveTo: null
+  }
 }
 
 exports.board = [{ x: 0, y: 0 }]
-exports.isCreatureSelected = true
-exports.indexOfTileToMoveTo = null
 exports.turn = {
   player: 1,
   creatureTileIndex: 0,
   number: 0
 }
 exports.loading = false
-exports.inAction = false
+exports.action = {
+  inAction: false,
+  time: null,
+  type: null,
+  indexOfTileToMoveTo: null
+}
 
 exports.populateGrid = () => {
   const grid = []
@@ -49,12 +55,8 @@ exports.populateGrid = () => {
 
 exports.handleTileClicked = (tileIndex) => {
   if (!this.board[tileIndex].hasCreature) {
-    if (this.isCreatureSelected) {
-      console.log('calling moving')
-      handleCreatureMoved(tileIndex)
-    } else {
-      // clicked on empty tile i guess
-    }
+    console.log('calling moving')
+    handleCreatureMoved(tileIndex)
   } else if (this.board[tileIndex].hasCreature) {
     console.log('calling selecting')
     // handleCreatureSelect(tileIndex)
@@ -62,35 +64,26 @@ exports.handleTileClicked = (tileIndex) => {
   } else {
     // placeholder condition
   }
+  return this.action
 }
 
 const handleCreatureAttack = (tileIndex) => {
 
 }
 
-// const handleCreatureSelect = (tileIndex) => {
-//   if (tileIndex === this.turn.creatureTileIndex) {
-//     // deselect
-//     console.log('deselect')
-//     this.turn.creatureTileIndex = null
-//     this.isCreatureSelected = false
-//   } else {
-//     // select
-//     console.log('select')
-//     this.turn.creatureTileIndex = tileIndex
-//     this.isCreatureSelected = true
-//   }
-// }
-
 const handleCreatureMoved = (indexOfTileToMoveTo) => {
-  this.inAction = true
+  this.action.inAction = true
+  this.action.indexOfTileToMoveTo = indexOfTileToMoveTo
   this.indexOfTileToMoveTo = indexOfTileToMoveTo
+
   if (!this.board[indexOfTileToMoveTo].hasCreature) {
     console.log('moving...')
-    // this.board = update(this.board, { [this.turn.creatureTileIndex]: { creature: { action: { $set: 'walk' } } } })
-
     this.board = update(this.board, { [this.turn.creatureTileIndex]: { creature: { action: { $set: 'walk' } } } })
-    const orientation = (this.board[indexOfTileToMoveTo].x - this.board[this.turn.creatureTileIndex].x) > 0 ? 1 : -1
+    const distanceX = (this.board[indexOfTileToMoveTo].x - this.board[this.turn.creatureTileIndex].x)
+    const distanceY = (this.board[indexOfTileToMoveTo].y - this.board[this.turn.creatureTileIndex].y)
+    const orientation = distanceX > 0 ? 1 : -1
+    this.action.time = Math.sqrt(distanceX ** 2 + distanceY ** 2) * 300
+    this.action.type = 'walk'
     this.board = update(this.board, { [this.turn.creatureTileIndex]: { creature: { oriented: { $set: orientation } } } })
   } else {
     // placeholder condition
@@ -99,15 +92,16 @@ const handleCreatureMoved = (indexOfTileToMoveTo) => {
 
 exports.handleFinishedMoving = () => {
   console.log('finished moving')
-  if (this.inAction) {
+  if (this.action.inAction) {
     this.board = update(this.board, { [this.indexOfTileToMoveTo]: { hasCreature: { $set: true } } })
     this.board = update(this.board, { [this.indexOfTileToMoveTo]: { creature: { $set: this.board[this.turn.creatureTileIndex].creature } } })
     this.board = update(this.board, { [this.indexOfTileToMoveTo]: { creature: { action: { $set: 'idle' } } } })
     this.board = update(this.board, { [this.turn.creatureTileIndex]: { hasCreature: { $set: false } } })
     this.board = update(this.board, { [this.turn.creatureTileIndex]: { creature: { $set: undefined } } })
-    // this.isCreatureSelected = false
     this.turn.creatureTileIndex = this.indexOfTileToMoveTo
+    this.action.indexOfTileToMoveTo = null
     this.indexOfTileToMoveTo = null
-    this.inAction = false
+    this.action.inAction = false
   }
+  return this.action
 }
