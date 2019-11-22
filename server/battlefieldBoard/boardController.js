@@ -1,9 +1,28 @@
 const update = require('immutability-helper')
 
+exports.reset = () => {
+  this.board = [{ x: 0, y: 0 }]
+  this.isCreatureSelected = true
+  this.indexOfTileToMoveTo = null
+  this.turn = {
+    player: 1,
+    creatureTileIndex: 0,
+    number: 0
+  }
+  this.loading = false
+  this.inAction = false
+}
+
 exports.board = [{ x: 0, y: 0 }]
-exports.isCreatureSelected = false
-exports.indexOfSelectedTileWithCreature = null
-this.indexOfTileToMoveTo = null
+exports.isCreatureSelected = true
+exports.indexOfTileToMoveTo = null
+exports.turn = {
+  player: 1,
+  creatureTileIndex: 0,
+  number: 0
+}
+exports.loading = false
+exports.inAction = false
 
 exports.populateGrid = () => {
   const grid = []
@@ -12,12 +31,14 @@ exports.populateGrid = () => {
       const gridObj = {}
       gridObj.x = x
       gridObj.y = y
-      if (x === 0) {
+      if (x === 0 || x === 14) {
         gridObj.hasCreature = true
         gridObj.creature = {
+          player: x === 0 ? 1 : 2,
           type: 'swordsman',
           action: 'idle',
-          oriented: 1
+          speed: Math.floor(Math.random() * 22),
+          oriented: x === 0 ? 1 : -1
         }
       }
       grid.push(gridObj)
@@ -36,35 +57,41 @@ exports.handleTileClicked = (tileIndex) => {
     }
   } else if (this.board[tileIndex].hasCreature) {
     console.log('calling selecting')
-    handleCreatureSelect(tileIndex)
+    // handleCreatureSelect(tileIndex)
+    handleCreatureAttack(tileIndex)
   } else {
     // placeholder condition
   }
 }
 
-const handleCreatureSelect = (tileIndex) => {
-  if (tileIndex === this.indexOfSelectedTileWithCreature) {
-    // deselect
-    console.log('deselect')
-    this.indexOfSelectedTileWithCreature = null
-    this.isCreatureSelected = false
-  } else {
-    // select
-    console.log('select')
-    this.indexOfSelectedTileWithCreature = tileIndex
-    this.isCreatureSelected = true
-  }
+const handleCreatureAttack = (tileIndex) => {
+
 }
 
+// const handleCreatureSelect = (tileIndex) => {
+//   if (tileIndex === this.turn.creatureTileIndex) {
+//     // deselect
+//     console.log('deselect')
+//     this.turn.creatureTileIndex = null
+//     this.isCreatureSelected = false
+//   } else {
+//     // select
+//     console.log('select')
+//     this.turn.creatureTileIndex = tileIndex
+//     this.isCreatureSelected = true
+//   }
+// }
+
 const handleCreatureMoved = (indexOfTileToMoveTo) => {
+  this.inAction = true
   this.indexOfTileToMoveTo = indexOfTileToMoveTo
   if (!this.board[indexOfTileToMoveTo].hasCreature) {
     console.log('moving...')
-    this.board = update(this.board, { [this.indexOfSelectedTileWithCreature]: { creature: { action: { $set: 'walk' } } } })
+    // this.board = update(this.board, { [this.turn.creatureTileIndex]: { creature: { action: { $set: 'walk' } } } })
 
-    this.board = update(this.board, { [this.indexOfSelectedTileWithCreature]: { creature: { action: { $set: 'walk' } } } })
-    const orientation = (this.board[indexOfTileToMoveTo].x - this.board[this.indexOfSelectedTileWithCreature].x) > 0 ? 1 : -1
-    this.board = update(this.board, { [this.indexOfSelectedTileWithCreature]: { creature: { oriented: { $set: orientation } } } })
+    this.board = update(this.board, { [this.turn.creatureTileIndex]: { creature: { action: { $set: 'walk' } } } })
+    const orientation = (this.board[indexOfTileToMoveTo].x - this.board[this.turn.creatureTileIndex].x) > 0 ? 1 : -1
+    this.board = update(this.board, { [this.turn.creatureTileIndex]: { creature: { oriented: { $set: orientation } } } })
   } else {
     // placeholder condition
   }
@@ -72,12 +99,15 @@ const handleCreatureMoved = (indexOfTileToMoveTo) => {
 
 exports.handleFinishedMoving = () => {
   console.log('finished moving')
-  this.board = update(this.board, { [this.indexOfTileToMoveTo]: { hasCreature: { $set: true } } })
-  this.board = update(this.board, { [this.indexOfTileToMoveTo]: { creature: { $set: this.board[this.indexOfSelectedTileWithCreature].creature } } })
-  this.board = update(this.board, { [this.indexOfTileToMoveTo]: { creature: { action: { $set: 'idle' } } } })
-  this.board = update(this.board, { [this.indexOfSelectedTileWithCreature]: { hasCreature: { $set: false } } })
-  this.board = update(this.board, { [this.indexOfSelectedTileWithCreature]: { creature: { $set: undefined } } })
-  this.isCreatureSelected = false
-  this.indexOfSelectedTileWithCreature = null
-  this.indexOfTileToMoveTo = null
+  if (this.inAction) {
+    this.board = update(this.board, { [this.indexOfTileToMoveTo]: { hasCreature: { $set: true } } })
+    this.board = update(this.board, { [this.indexOfTileToMoveTo]: { creature: { $set: this.board[this.turn.creatureTileIndex].creature } } })
+    this.board = update(this.board, { [this.indexOfTileToMoveTo]: { creature: { action: { $set: 'idle' } } } })
+    this.board = update(this.board, { [this.turn.creatureTileIndex]: { hasCreature: { $set: false } } })
+    this.board = update(this.board, { [this.turn.creatureTileIndex]: { creature: { $set: undefined } } })
+    // this.isCreatureSelected = false
+    this.turn.creatureTileIndex = this.indexOfTileToMoveTo
+    this.indexOfTileToMoveTo = null
+    this.inAction = false
+  }
 }

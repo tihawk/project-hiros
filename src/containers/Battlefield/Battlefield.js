@@ -8,23 +8,37 @@ import SpriteController from '../Sprite/SpriteController'
 
 class Battlefield extends Component {
   state = {
-    response: false,
     endpoint: 'http://localhost:5000',
     board: [{ x: 0, y: 0 }],
-    indexOfSelectedTileWithCreature: null,
+    // turn.creatureTileIndex: null,
+    indexOfTileToMoveTo: null,
     isCreatureSelected: false,
-    inAction: false
+    inAction: false,
+    loading: true
   }
 
   componentDidMount () {
     const { endpoint } = this.state
     this.socket = socketIOClient(endpoint)
     this.socket.emit('new-battle')
-    this.socket.on('state', data => this.setState({
-      board: data.board,
-      indexOfSelectedTileWithCreature: data.indexOfSelectedTileWithCreature,
-      isCreatureSelected: data.isCreatureSelected
-    }))
+    this.socket.on('state', data => {
+      this.setState({
+        board: data.board,
+        // turn.creatureTileIndex: data.turn.creatureTileIndex,
+        isCreatureSelected: data.isCreatureSelected,
+        indexOfTileToMoveTo: data.indexOfTileToMoveTo,
+        turn: data.turn,
+        loading: data.loading,
+        inAction: data.inAction
+      })
+    })
+  }
+
+  componentDidUpdate (prevProps, prevState) {
+    if (prevState.inAction !== this.state.inAction) {
+      this.setState({ isToAnimate: true })
+      this.handleMovement()
+    }
   }
 
   shouldComponentUpdate (nextProps, nextState) {
@@ -34,38 +48,26 @@ class Battlefield extends Component {
     return true
   }
 
+  componentWillUnmount () {
+    this.socket.emit('disconnect')
+  }
+
     handleTileClicked = (tile, tileIndex) => {
       this.socket.emit('click', tileIndex)
-      this.setState({ inAction: true })
-      if (!tile.hasCreature) {
-        if (this.state.isCreatureSelected) {
-          console.log('calling moving')
-          this.handleCreatureMoved(tile, tileIndex)
-        } else {
-          // clicked on empty tile i guess
-          this.setState({ inAction: false })
-        }
-      } else if (tile.hasCreature) {
-        console.log('calling selecting')
-        this.setState({ inAction: false })
-        // this.handleCreatureSelect(tileIndex)
-      } else {
-        this.setState({ inAction: false })
-      }
+      this.setState({ isToAnimate: true })
     }
 
-    handleCreatureMoved = (tileToMoveTo, indexOfTileToMoveTo) => {
-      if (!tileToMoveTo.hasCreature) {
-        console.log('moving...')
-
-        const tileToElement = document.getElementById(indexOfTileToMoveTo)
-        const tileFromElement = document.getElementById(this.state.indexOfSelectedTileWithCreature)
+    handleMovement = () => {
+      // console.log('[handleMovement] called, checking if is to animate')
+      if (this.state.isToAnimate && this.state.indexOfTileToMoveTo !== null && this.state.inAction) {
+        console.log('animating')
+        this.setState({ isToAnimate: false })
+        const tileToElement = document.getElementById(this.state.indexOfTileToMoveTo)
+        const tileFromElement = document.getElementById(this.state.turn.creatureTileIndex)
         const spriteToMoveElement = tileFromElement.firstChild
         const distanceX = tileToElement.getBoundingClientRect().left - tileFromElement.getBoundingClientRect().left
         const distanceY = tileToElement.getBoundingClientRect().top - tileFromElement.getBoundingClientRect().top
-
-        this.socket.emit('update-orientation', distanceX / Math.abs(distanceX))
-
+        // console.log('distance', distanceX, distanceY)
         const keyFrames = [
           { left: '0', top: '0' },
           { left: distanceX + 'px', top: distanceY + 'px' }
@@ -74,11 +76,9 @@ class Battlefield extends Component {
 
         animation.onfinish = () => {
           console.log('replacing element')
+          // this.setState({ isToAnimate: false })
           this.socket.emit('finished-moving')
-          this.setState({ inAction: false })
         }
-      } else {
-        this.setState({ inAction: false })
       }
     }
 
@@ -91,7 +91,7 @@ class Battlefield extends Component {
       return (
         <div className={fieldClasses}>
           <ul className={[classes.grid, classes.clear].join(' ')}>
-            {board.map((hex, hexIndex) => {
+            { this.state.loading ? null : board.map((hex, hexIndex) => {
               return (
                 <li key={hexIndex}>
                   <div

@@ -17,6 +17,11 @@ io.on('connection', (socket) => {
   socket.on('new-battle', () => {
     boardController.populateGrid()
   })
+  socket.on('disconnect', () => {
+    console.log('resetting')
+    boardController.reset()
+    boardController.populateGrid()
+  })
   socket.on('click', data => {
     boardController.handleTileClicked(data)
   })
@@ -27,8 +32,12 @@ io.on('connection', (socket) => {
 setInterval(() => {
   io.sockets.emit('state', {
     board: boardController.board,
-    indexOfSelectedTileWithCreature: boardController.indexOfSelectedTileWithCreature,
-    isCreatureSelected: boardController.isCreatureSelected
+    // indexOfSelectedTileWithCreature: boardController.indexOfSelectedTileWithCreature,
+    isCreatureSelected: boardController.isCreatureSelected,
+    indexOfTileToMoveTo: boardController.indexOfTileToMoveTo,
+    turn: boardController.turn,
+    loading: boardController.loading,
+    inAction: boardController.inAction
   })
 }, 1000 / 10)
 
