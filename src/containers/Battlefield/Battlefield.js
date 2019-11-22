@@ -1,19 +1,28 @@
 import React, { Component } from 'react'
-import { populateGrid } from '../../utility/utility'
+import socketIOClient from 'socket.io-client'
 import { withTranslation } from 'react-i18next'
 import update from 'immutability-helper'
+import { populateGrid } from '../../utility/utility'
 import classes from './Battlefield.module.css'
 import CombatFooter from './CombatFooter'
 import CombatDashboard from './CombatDashboard'
 import SpriteController from '../Sprite/SpriteController'
 
 class Battlefield extends Component {
-    state = {
-      board: populateGrid(),
-      indexOfSelectedTileWithCreature: null,
-      isCreatureSelected: false,
-      inAction: false
-    }
+  state = {
+    response: false,
+    endpoint: 'http://localhost:5000',
+    board: populateGrid(),
+    indexOfSelectedTileWithCreature: null,
+    isCreatureSelected: false,
+    inAction: false
+  }
+
+  componentDidMount () {
+    const { endpoint } = this.state
+    const socket = socketIOClient(endpoint)
+    socket.on('message', data => { console.log(data) })
+  }
 
     handleTileClicked = (tile, tileIndex) => {
       this.setState({ inAction: true })
