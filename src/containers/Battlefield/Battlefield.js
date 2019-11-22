@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import socketIOClient from 'socket.io-client'
 import { withTranslation } from 'react-i18next'
-import update from 'immutability-helper'
-import { populateGrid } from '../../utility/utility'
 import classes from './Battlefield.module.css'
 import CombatFooter from './CombatFooter'
 import CombatDashboard from './CombatDashboard'
@@ -12,7 +10,7 @@ class Battlefield extends Component {
   state = {
     response: false,
     endpoint: 'http://localhost:5000',
-    board: populateGrid(),
+    board: [{ x: 0, y: 0 }],
     indexOfSelectedTileWithCreature: null,
     isCreatureSelected: false,
     inAction: false
@@ -20,11 +18,24 @@ class Battlefield extends Component {
 
   componentDidMount () {
     const { endpoint } = this.state
-    const socket = socketIOClient(endpoint)
-    socket.on('message', data => { console.log(data) })
+    this.socket = socketIOClient(endpoint)
+    this.socket.emit('new-battle')
+    this.socket.on('state', data => this.setState({
+      board: data.board,
+      indexOfSelectedTileWithCreature: data.indexOfSelectedTileWithCreature,
+      isCreatureSelected: data.isCreatureSelected
+    }))
+  }
+
+  shouldComponentUpdate (nextProps, nextState) {
+    if (nextState.board === this.state.board) {
+      return false
+    }
+    return true
   }
 
     handleTileClicked = (tile, tileIndex) => {
+      this.socket.emit('click', tileIndex)
       this.setState({ inAction: true })
       if (!tile.hasCreature) {
         if (this.state.isCreatureSelected) {
@@ -36,37 +47,16 @@ class Battlefield extends Component {
         }
       } else if (tile.hasCreature) {
         console.log('calling selecting')
-        this.handleCreatureSelect(tileIndex)
+        this.setState({ inAction: false })
+        // this.handleCreatureSelect(tileIndex)
       } else {
         this.setState({ inAction: false })
-      }
-    }
-
-    handleCreatureSelect = (tileIndex) => {
-      if (tileIndex === this.state.indexOfSelectedTileWithCreature) {
-        // deselect
-        console.log('deselect')
-        this.setState({
-          indexOfSelectedTileWithCreature: null,
-          isCreatureSelected: false,
-          inAction: false
-        })
-      } else {
-        // select
-        console.log('select')
-        this.setState({
-          indexOfSelectedTileWithCreature: tileIndex,
-          isCreatureSelected: true,
-          inAction: false
-        })
       }
     }
 
     handleCreatureMoved = (tileToMoveTo, indexOfTileToMoveTo) => {
       if (!tileToMoveTo.hasCreature) {
         console.log('moving...')
-        // board = update(board, { [this.state.indexOfSelectedTileWithCreature]: { creature: { action: { $set: 'walk' } } } })
-        // this.setState({ board })
 
         const tileToElement = document.getElementById(indexOfTileToMoveTo)
         const tileFromElement = document.getElementById(this.state.indexOfSelectedTileWithCreature)
@@ -74,11 +64,7 @@ class Battlefield extends Component {
         const distanceX = tileToElement.getBoundingClientRect().left - tileFromElement.getBoundingClientRect().left
         const distanceY = tileToElement.getBoundingClientRect().top - tileFromElement.getBoundingClientRect().top
 
-        let board = this.state.board
-        board = update(board, { [this.state.indexOfSelectedTileWithCreature]: { creature: { action: { $set: 'walk' } } } })
-        board = update(board, { [this.state.indexOfSelectedTileWithCreature]: { creature: { oriented: { $set: distanceX / Math.abs(distanceX) } } } })
-
-        this.setState({ board })
+        this.socket.emit('update-orientation', distanceX / Math.abs(distanceX))
 
         const keyFrames = [
           { left: '0', top: '0' },
@@ -88,18 +74,8 @@ class Battlefield extends Component {
 
         animation.onfinish = () => {
           console.log('replacing element')
-          let board = this.state.board
-          board = update(board, { [indexOfTileToMoveTo]: { hasCreature: { $set: true } } })
-          board = update(board, { [indexOfTileToMoveTo]: { creature: { $set: board[this.state.indexOfSelectedTileWithCreature].creature } } })
-          board = update(board, { [indexOfTileToMoveTo]: { creature: { action: { $set: 'idle' } } } })
-          board = update(board, { [this.state.indexOfSelectedTileWithCreature]: { hasCreature: { $set: false } } })
-          board = update(board, { [this.state.indexOfSelectedTileWithCreature]: { creature: { $set: undefined } } })
-          this.setState({
-            board,
-            isCreatureSelected: false,
-            indexOfSelectedTileWithCreature: null,
-            inAction: false
-          })
+          this.socket.emit('finished-moving')
+          this.setState({ inAction: false })
         }
       } else {
         this.setState({ inAction: false })
@@ -107,12 +83,15 @@ class Battlefield extends Component {
     }
 
     render () {
+      // const { response } = this.state
+      // console.log(response)
       // const { t } = this.props
+      const { board } = this.state
       const fieldClasses = [classes.field, this.state.inAction ? classes.inAction : null].join(' ')
       return (
         <div className={fieldClasses}>
           <ul className={[classes.grid, classes.clear].join(' ')}>
-            {this.state.board.map((hex, hexIndex) => {
+            {board.map((hex, hexIndex) => {
               return (
                 <li key={hexIndex}>
                   <div
