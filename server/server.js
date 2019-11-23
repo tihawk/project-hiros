@@ -30,7 +30,7 @@ io.on('connection', (socket) => {
     const stoppedAction = new Promise((resolve, reject) => {
       setInterval(() => {
         resolve('should be finished moving')
-      }, action.time - 1.6 * SERVERTICKS)
+      }, action.time - SERVERTICKS)
     })
 
     stoppedAction.then(res => {
