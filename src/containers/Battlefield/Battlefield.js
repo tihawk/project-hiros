@@ -6,6 +6,7 @@ import InfoPanel from './InfoPanel'
 import CombatFooter from './CombatFooter'
 import CombatDashboard from './CombatDashboard'
 import SpriteController from '../Sprite/SpriteController'
+import { whichCornerOfHex } from '../../utility/utility'
 
 class Battlefield extends Component {
   state = {
@@ -53,52 +54,29 @@ class Battlefield extends Component {
     this.socket.emit('player-disconnect')
   }
 
-  handleTileClicked = (tile, tileIndex) => {
-    this.socket.emit('click', tileIndex)
+  handleTileClicked = (e, tileIndex) => {
+    const corner = whichCornerOfHex(e)
+
+    this.socket.emit('click', { tileIndex, corner })
   }
 
   handleTileHover = (e, hexIndex, { hasCreature, creature, x, y }) => {
-    const { offsetWidth, offsetHeight, style } = e.target
+    const { style } = e.target
     const { range } = this.state.turn.creature
     const inRange = range.includes(hexIndex)
 
-    if (inRange === true) {
+    if (inRange) {
       if (hasCreature) {
         if (creature.player !== this.state.turn.player) {
-          const { x, y } = e.target.getBoundingClientRect()
-
-          const dx = x - e.clientX + offsetWidth / 2
-          const dy = y - e.clientY + offsetHeight / 2
-
-          const leftRight = 3.5
-          const up = 14
-          const down = 0
-
-          if (dx > leftRight) {
-            if (dy <= up && dy >= down) {
-              style.cursor = 'w-resize'
-            } else if (dy > up) {
-              style.cursor = 'nw-resize'
-            } else if (dy < down) {
-              style.cursor = 'sw-resize'
-            }
-          } else if (dx < leftRight) {
-            if (dy <= up && dy >= down) {
-              style.cursor = 'e-resize'
-            } else if (dy > up) {
-              style.cursor = 'ne-resize'
-            } else if (dy < down) {
-              style.cursor = 'se-resize'
-            }
-          }
+          const corner = whichCornerOfHex(e)
+          style.cursor = `${corner}-resize`
         } else {
           style.cursor = 'not-allowed'
         }
       } else if (!hasCreature) {
         style.cursor = 'pointer'
       }
-    } else if (inRange === false) {
-      // console.log('[handleTileHover] sometimes it goes to inRange===false even though it\'s', inRange)
+    } else if (!inRange) {
       style.cursor = 'not-allowed'
     }
   }
@@ -133,7 +111,7 @@ class Battlefield extends Component {
               <li key={hexIndex}>
                 <div
                   className={[classes.hexagon, this.state.turn.creature.range.includes(hexIndex) ? classes.inRange : 'hi'].join(' ')}
-                  onClick={() => this.handleTileClicked(hex, hexIndex)}
+                  onClick={(e) => this.handleTileClicked(e, hexIndex)}
                   onMouseMove={(e) => this.handleTileHover(e, hexIndex, hex)}
                   id={hexIndex}
                 >
