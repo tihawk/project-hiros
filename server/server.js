@@ -25,6 +25,18 @@ io.on('connection', (socket) => {
   socket.on('click', data => {
     const action = boardController.handleTileClicked(data)
     io.sockets.emit('action', action)
+
+    const stoppedAction = new Promise((resolve, reject) => {
+      setInterval(() => {
+        resolve('should be finished moving')
+      }, action.time * 0.9)
+    })
+
+    stoppedAction.then(res => {
+      console.log(res)
+      const stopAction = boardController.handleFinishedMoving()
+      io.sockets.emit('action', stopAction)
+    })
   })
   socket.on('finished-moving', () => {
     const action = boardController.handleFinishedMoving()

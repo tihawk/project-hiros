@@ -55,12 +55,13 @@ class Battlefield extends Component {
         { left: distanceX + 'px', top: distanceY + 'px' }
       ]
       // const time = Math.sqrt(distanceX ** 2 + distanceY ** 2) * 3
-      const animation = spriteToMoveElement.animate(keyFrames, action.time)
+      // const animation = spriteToMoveElement.animate(keyFrames, action.time)
+      spriteToMoveElement.animate(keyFrames, action.time)
 
-      animation.onfinish = () => {
-        this.socket.emit('finished-moving')
-        console.log('replacing element')
-      }
+      // animation.onfinish = () => {
+      //   // this.socket.emit('finished-moving')
+      //   console.log('replacing element')
+      // }
     }
   }
 
