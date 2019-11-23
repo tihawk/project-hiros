@@ -26,19 +26,19 @@ const oddRowHexToCube = ({ x, y }) => {
   return { x: cubeX, y: cubeY, z: cubeZ }
 }
 
+const calculateCubeDistance = ({ x, y, z }, cx, cy, cz) => {
+  return (Math.abs(cx - x) + Math.abs(cy - y) + Math.abs(cz - z)) / 2
+}
+
 const calculateRange = () => {
   const { tileIndex } = this.turn.creature
   const { spd } = this.board[tileIndex].creature
   const { x, y, z } = oddRowHexToCube(this.board[tileIndex])
-  console.log(x, y, z)
-  const coords = this.board.map(tile => oddRowHexToCube(tile))
+  const coordsCube = this.board.map(tile => oddRowHexToCube(tile))
+
   const range = []
-  for (let i = 0; i < coords.length; i++) {
-    const cx = coords[i].x
-    const cy = coords[i].y
-    const cz = coords[i].z
-    // const dist = Math.sqrt((coords[i].x - x) ** 2 + (coords[i].y - y) ** 2 + (coords[i].z - z) ** 2)
-    const dist = (Math.abs(cx - x) + Math.abs(cy - y) + Math.abs(cz - z)) / 2
+  for (let i = 0; i < coordsCube.length; i++) {
+    const dist = calculateCubeDistance(coordsCube[i], x, y, z)
     if (dist <= spd) range.push(i)
   }
   this.turn.creature.range = range
@@ -86,15 +86,17 @@ exports.populateGrid = () => {
 }
 
 exports.handleTileClicked = (tileIndex) => {
-  if (!this.board[tileIndex].hasCreature) {
-    console.log('calling moving')
-    handleCreatureMoved(tileIndex)
-  } else if (this.board[tileIndex].hasCreature) {
-    console.log('calling selecting')
-    // handleCreatureSelect(tileIndex)
-    handleCreatureAttack(tileIndex)
-  } else {
+  if (this.turn.creature.range.includes(tileIndex)) {
+    if (!this.board[tileIndex].hasCreature) {
+      console.log('calling moving')
+      handleCreatureMoved(tileIndex)
+    } else if (this.board[tileIndex].hasCreature) {
+      console.log('calling selecting')
+      // handleCreatureSelect(tileIndex)
+      handleCreatureAttack(tileIndex)
+    } else {
     // placeholder condition
+    }
   }
   return this.action
 }
