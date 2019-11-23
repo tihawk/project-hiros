@@ -14,30 +14,45 @@ server.listen(PORT, () => {
   console.log('Starting server on port', PORT)
 })
 
+const players = new Set([])
 io.on('connection', (socket) => {
-  socket.on('new-battle', () => {
-    boardController.populateGrid()
+  socket.on('player-ready', () => {
+    if (players.size < 2) {
+      players.add(socket.id)
+      if (players.size === 2) {
+        boardController.populateGrid()
+      }
+    }
+    console.log(players)
+  })
+  socket.on('player-disconnect', () => {
+    if (players.has(socket.id)) {
+      console.log('resetting')
+      players.delete(socket.id)
+      console.log(players)
+      boardController.reset()
+    }
   })
   socket.on('disconnect', () => {
-    console.log('resetting')
-    boardController.reset()
-    boardController.populateGrid()
+    console.log('[disconnect]', players)
   })
   socket.on('click', data => {
-    const action = boardController.handleTileClicked(data)
-    io.sockets.emit('action', action)
-
-    const stoppedAction = new Promise((resolve, reject) => {
-      setInterval(() => {
-        resolve('should be finished moving')
-      }, action.time - SERVERTICKS)
-    })
-
-    stoppedAction.then(res => {
-      console.log(res)
-      const action = boardController.handleFinishedMoving()
+    if (players.has(socket.id)) {
+      const action = boardController.handleTileClicked(data)
       io.sockets.emit('action', action)
-    })
+
+      const stoppedAction = new Promise((resolve, reject) => {
+        setInterval(() => {
+          resolve('should be finished moving')
+        }, action.time - SERVERTICKS)
+      })
+
+      stoppedAction.then(res => {
+        console.log(res)
+        const action = boardController.handleFinishedMoving()
+        io.sockets.emit('action', action)
+      })
+    }
   })
   // socket.on('finished-moving', () => {
   //   const action = boardController.handleFinishedMoving()

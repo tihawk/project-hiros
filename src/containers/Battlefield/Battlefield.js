@@ -20,7 +20,6 @@ class Battlefield extends Component {
   componentDidMount () {
     const { endpoint } = this.state
     this.socket = socketIOClient(endpoint)
-    this.socket.emit('new-battle')
     this.socket.on('state', data => {
       this.setState({ ...data })
     })
@@ -30,10 +29,20 @@ class Battlefield extends Component {
         this.handleMovement(action)
       }
     })
+    window.addEventListener('beforeunload', e => {
+      e.preventDefault()
+      this.playerDisconnect()
+    })
   }
 
-  componentWillUnmount () {
-    this.socket.emit('disconnect')
+  playerReady = () => {
+    console.log('clicked player ready')
+    this.socket.emit('player-ready')
+  }
+
+  playerDisconnect = () => {
+    console.log('clicked player disconnect')
+    this.socket.emit('player-disconnect')
   }
 
   handleTileClicked = (tile, tileIndex) => {
@@ -93,7 +102,7 @@ class Battlefield extends Component {
           })}
         </ul>
         <div>
-          <CombatDashboard />
+          <CombatDashboard playerReady={this.playerReady} playerDisconnect={this.playerDisconnect} />
           <CombatFooter />
         </div>
       </div>

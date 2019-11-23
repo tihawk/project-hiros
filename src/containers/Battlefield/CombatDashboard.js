@@ -20,8 +20,8 @@ class CombatDashboard extends Component {
   render () {
     return (
       <div className={classes.dashboard}>
-        <button>btn</button>
-        <button>
+        <button onClick={this.props.playerReady}>plr rdy</button>
+        <button onClick={this.props.playerDisconnect}>
           <img style={{ height: '75%' }} alt="smtin" src="https://previews.123rf.com/images/tmricons/tmricons1707/tmricons170700580/81207012-shuffle-sign-icon-random-button-.jpg" />
         </button>
         <button>btn</button>
