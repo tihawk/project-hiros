@@ -49,6 +49,40 @@ class Battlefield extends Component {
     this.socket.emit('click', tileIndex)
   }
 
+  handleTileHover = e => {
+    const { x, y } = e.target.getBoundingClientRect()
+    const { offsetWidth, offsetHeight, style } = e.target
+    // console.log(e.target.offsetWidth)
+    // console.log(x, y)
+    // console.log(e.clientX, e.clientY)
+    // console.log(x - e.clientX + offsetWidth / 2, y - e.clientY + offsetHeight / 2)
+
+    const dx = x - e.clientX + offsetWidth / 2
+    const dy = y - e.clientY + offsetHeight / 2
+
+    const leftRight = 3.5
+    const up = 14
+    const down = 0
+
+    if (dx > leftRight) {
+      if (dy <= up && dy >= down) {
+        style.cursor = 'w-resize'
+      } else if (dy > up) {
+        style.cursor = 'nw-resize'
+      } else if (dy < down) {
+        style.cursor = 'sw-resize'
+      }
+    } else if (dx < leftRight) {
+      if (dy <= up && dy >= down) {
+        style.cursor = 'e-resize'
+      } else if (dy > up) {
+        style.cursor = 'ne-resize'
+      } else if (dy < down) {
+        style.cursor = 'se-resize'
+      }
+    }
+  }
+
   handleMovement = (action) => {
     // console.log('[handleMovement] called, checking if is to animate')
     if (action.indexOfTileToMoveTo !== null && action.inAction) {
@@ -87,6 +121,7 @@ class Battlefield extends Component {
                 <div
                   className={classes.hexagon}
                   onClick={() => this.handleTileClicked(hex, hexIndex)}
+                  onMouseMove={this.handleTileHover}
                   id={hexIndex}
                 >
                   {hex.hasCreature

@@ -97,6 +97,7 @@ li:nth-child(30n+30)
 
 .hexagon * {
     position: absolute;
+    transform-origin: center center;
     z-index: 2;
     pointer-events: none;
     /* background-color: rgba(255,255,255,1); */
