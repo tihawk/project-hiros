@@ -8,6 +8,7 @@ const io = socketIO(server)
 const boardController = require('./battlefieldBoard/boardController')
 
 const PORT = process.env.PORT || 5000
+const SERVERTICKS = 1000 / 10
 
 server.listen(PORT, () => {
   console.log('Starting server on port', PORT)
@@ -29,32 +30,32 @@ io.on('connection', (socket) => {
     const stoppedAction = new Promise((resolve, reject) => {
       setInterval(() => {
         resolve('should be finished moving')
-      }, action.time * 0.9)
+      }, action.time - 1.6 * SERVERTICKS)
     })
 
     stoppedAction.then(res => {
       console.log(res)
-      const stopAction = boardController.handleFinishedMoving()
-      io.sockets.emit('action', stopAction)
+      const action = boardController.handleFinishedMoving()
+      io.sockets.emit('action', action)
     })
   })
-  socket.on('finished-moving', () => {
-    const action = boardController.handleFinishedMoving()
-    io.sockets.emit('action', action)
-  })
+  // socket.on('finished-moving', () => {
+  //   const action = boardController.handleFinishedMoving()
+  //   io.sockets.emit('action', { action })
+  // })
 })
 setInterval(() => {
   io.sockets.emit('state', {
     board: boardController.board,
     // indexOfSelectedTileWithCreature: boardController.indexOfSelectedTileWithCreature,
-    isCreatureSelected: boardController.isCreatureSelected,
-    indexOfTileToMoveTo: boardController.indexOfTileToMoveTo,
+    // isCreatureSelected: boardController.isCreatureSelected,
+    // indexOfTileToMoveTo: boardController.indexOfTileToMoveTo,
     turn: boardController.turn,
     loading: boardController.loading,
     // inAction: boardController.inAction
     action: boardController.action
   })
-}, 1000 / 10)
+}, SERVERTICKS)
 
 // let lastUpdateTime = new Date().getTime()
 // setInterval(() => {

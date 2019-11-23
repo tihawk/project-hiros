@@ -27,6 +27,7 @@ const SpriteController = ({ creature, action, oriented }) => {
       framesPerStep={Math.floor(Object.keys(data.frames).length / 2)}
       data={data}
       oriented={oriented}
+      action={action}
     />
   )
 }

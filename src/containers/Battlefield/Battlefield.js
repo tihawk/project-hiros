@@ -25,8 +25,8 @@ class Battlefield extends Component {
       this.setState({ ...data })
     })
     this.socket.on('action', action => {
+      this.setState({ action })
       if (action.inAction === true) {
-        this.setState({ action })
         this.handleMovement(action)
       }
     })

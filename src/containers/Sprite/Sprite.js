@@ -8,9 +8,16 @@ class Sprite extends Component {
 
     tick = 0
     frame = 0
+    action = 'idle'
 
     componentDidMount () {
       this.animate()
+    }
+
+    componentDidUpdate (prevProps) {
+      if (prevProps.action === 'idle' && this.props.action !== 'idle') {
+        this.animate()
+      }
     }
 
     componentWillUnmount () {
@@ -18,20 +25,23 @@ class Sprite extends Component {
     }
 
     animate = () => {
-      const { state } = this.state
-      const { framesPerStep } = this.props
-      const states = Object.keys(this.props.data.frames).length
+      if (this.action !== 'idle') {
+        const { state } = this.state
+        const { framesPerStep } = this.props
+        const states = Object.keys(this.props.data.frames).length
 
-      if (this.tick === framesPerStep) {
-        this.tick = 0
-        this.setState({ state: (state + 1) % states })
+        if (this.tick === framesPerStep) {
+          this.tick = 0
+          this.setState({ state: (state + 1) % states })
+        }
+        this.tick += 1
+
+        this.frame = requestAnimationFrame(this.animate)
       }
-      this.tick += 1
-
-      this.frame = requestAnimationFrame(this.animate)
     }
 
     render () {
+      this.action = this.props.action
       const { state } = this.state
       let tile = {
         width: 0,
