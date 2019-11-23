@@ -110,6 +110,7 @@ li:nth-child(30n+30)
 }
 
 .combFooter {
+    height: 35px;
     text-align: center;
     margin: 0px 2px 2px 2px;
     background-image: url(../../public/assets/textures/461223166.jpg);

@@ -81,7 +81,7 @@ class Battlefield extends Component {
     return (
       <div className={fieldClasses}>
         <ul className={[classes.grid, classes.clear].join(' ')}>
-          { this.state.loading ? null : board.map((hex, hexIndex) => {
+          { this.state.loading ? <CombatFooter message={'Waiting for players...'} /> : board.map((hex, hexIndex) => {
             return (
               <li key={hexIndex}>
                 <div

@@ -1,7 +1,7 @@
 const update = require('immutability-helper')
 
 exports.reset = () => {
-  this.board = [{ x: 0, y: 0 }]
+  this.board = []
   this.turn = {
     player: 1,
     creatureTileIndex: 0,
@@ -16,7 +16,7 @@ exports.reset = () => {
   }
 }
 
-exports.board = [{ x: 0, y: 0 }]
+exports.board = []
 exports.turn = {
   player: 1,
   creatureTileIndex: 0,

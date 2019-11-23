@@ -1,5 +1,8 @@
 {
     "Battlefield": {
         "Battlefield": "Бойно поле"
+    },
+    "CombatFooter": {
+        "Empty": " "
     }
 }

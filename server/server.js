@@ -8,7 +8,7 @@ const io = socketIO(server)
 const boardController = require('./battlefieldBoard/boardController')
 
 const PORT = process.env.PORT || 5000
-const SERVERTICKS = 1000 / 10
+// const SERVERTICKS = 1000 / 10
 
 server.listen(PORT, () => {
   console.log('Starting server on port', PORT)
@@ -23,6 +23,7 @@ io.on('connection', (socket) => {
         boardController.populateGrid()
       }
     }
+    updateState()
     console.log(players)
   })
   socket.on('player-disconnect', () => {
@@ -32,50 +33,52 @@ io.on('connection', (socket) => {
       console.log(players)
       boardController.reset()
     }
+    updateState()
   })
   socket.on('disconnect', () => {
     console.log('[disconnect]', players)
+    updateState()
   })
   socket.on('click', data => {
     if (players.has(socket.id)) {
       const action = boardController.handleTileClicked(data)
+      updateState()
       io.sockets.emit('action', action)
 
       const stoppedAction = new Promise((resolve, reject) => {
         setInterval(() => {
           resolve('should be finished moving')
-        }, action.time - SERVERTICKS)
+        }, action.time)
       })
 
       stoppedAction.then(res => {
         console.log(res)
         const action = boardController.handleFinishedMoving()
+        updateState()
         io.sockets.emit('action', action)
       })
     }
   })
-  // socket.on('finished-moving', () => {
-  //   const action = boardController.handleFinishedMoving()
-  //   io.sockets.emit('action', { action })
-  // })
 })
-setInterval(() => {
+
+const updateState = () => {
   io.sockets.emit('state', {
     board: boardController.board,
-    // indexOfSelectedTileWithCreature: boardController.indexOfSelectedTileWithCreature,
-    // isCreatureSelected: boardController.isCreatureSelected,
-    // indexOfTileToMoveTo: boardController.indexOfTileToMoveTo,
     turn: boardController.turn,
     loading: boardController.loading,
-    // inAction: boardController.inAction
     action: boardController.action
   })
-}, SERVERTICKS)
+}
 
-// let lastUpdateTime = new Date().getTime()
 // setInterval(() => {
-//   const currentTime = new Date().getTime()
-//   const timeDiff = currentTime - lastUpdateTime
-//   io.sockets.emit('message', `hi from server socket ${timeDiff}`)
-//   lastUpdateTime = currentTime
-// }, 1000)
+//   io.sockets.emit('state', {
+//     board: boardController.board,
+//     // indexOfSelectedTileWithCreature: boardController.indexOfSelectedTileWithCreature,
+//     // isCreatureSelected: boardController.isCreatureSelected,
+//     // indexOfTileToMoveTo: boardController.indexOfTileToMoveTo,
+//     turn: boardController.turn,
+//     loading: boardController.loading,
+//     // inAction: boardController.inAction
+//     action: boardController.action
+//   })
+// }, SERVERTICKS)
