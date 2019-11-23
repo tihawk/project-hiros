@@ -56,40 +56,45 @@ class Battlefield extends Component {
   handleTileHover = (e, hexIndex, { hasCreature, creature, x, y }) => {
     const { offsetWidth, offsetHeight, style } = e.target
     const { range } = this.state.turn.creature
-    console.log(hexIndex)
     const inRange = range.includes(hexIndex)
-    console.log(inRange)
 
     if (inRange === true) {
-      if (hasCreature && creature.player !== this.state.turn.player) {
-        const { x, y } = e.target.getBoundingClientRect()
+      if (hasCreature) {
+        if (creature.player !== this.state.turn.player) {
+          const { x, y } = e.target.getBoundingClientRect()
 
-        const dx = x - e.clientX + offsetWidth / 2
-        const dy = y - e.clientY + offsetHeight / 2
+          const dx = x - e.clientX + offsetWidth / 2
+          const dy = y - e.clientY + offsetHeight / 2
 
-        const leftRight = 3.5
-        const up = 14
-        const down = 0
+          const leftRight = 3.5
+          const up = 14
+          const down = 0
 
-        if (dx > leftRight) {
-          if (dy <= up && dy >= down) {
-            style.cursor = 'w-resize'
-          } else if (dy > up) {
-            style.cursor = 'nw-resize'
-          } else if (dy < down) {
-            style.cursor = 'sw-resize'
+          if (dx > leftRight) {
+            if (dy <= up && dy >= down) {
+              style.cursor = 'w-resize'
+            } else if (dy > up) {
+              style.cursor = 'nw-resize'
+            } else if (dy < down) {
+              style.cursor = 'sw-resize'
+            }
+          } else if (dx < leftRight) {
+            if (dy <= up && dy >= down) {
+              style.cursor = 'e-resize'
+            } else if (dy > up) {
+              style.cursor = 'ne-resize'
+            } else if (dy < down) {
+              style.cursor = 'se-resize'
+            }
           }
-        } else if (dx < leftRight) {
-          if (dy <= up && dy >= down) {
-            style.cursor = 'e-resize'
-          } else if (dy > up) {
-            style.cursor = 'ne-resize'
-          } else if (dy < down) {
-            style.cursor = 'se-resize'
-          }
+        } else {
+          style.cursor = 'not-allowed'
         }
+      } else if (!hasCreature) {
+        style.cursor = 'pointer'
       }
     } else if (inRange === false) {
+      // console.log('[handleTileHover] sometimes it goes to inRange===false even though it\'s', inRange)
       style.cursor = 'not-allowed'
     }
   }
