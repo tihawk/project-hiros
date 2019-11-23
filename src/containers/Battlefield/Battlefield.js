@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import socketIOClient from 'socket.io-client'
 import { withTranslation } from 'react-i18next'
 import classes from './Battlefield.module.css'
+import InfoPanel from './InfoPanel'
 import CombatFooter from './CombatFooter'
 import CombatDashboard from './CombatDashboard'
 import SpriteController from '../Sprite/SpriteController'
@@ -9,7 +10,10 @@ import SpriteController from '../Sprite/SpriteController'
 class Battlefield extends Component {
   state = {
     endpoint: 'http://localhost:5000',
-    loading: true,
+    loading: {
+      isLoading: true,
+      message: 'WaitingOnServer'
+    },
     action: {
       inAction: false,
       time: null,
@@ -124,7 +128,7 @@ class Battlefield extends Component {
     return (
       <div className={fieldClasses}>
         <ul className={[classes.grid, classes.clear].join(' ')}>
-          { this.state.loading ? <CombatFooter message={'Waiting for players...'} /> : board.map((hex, hexIndex) => {
+          { this.state.loading.isLoading ? <InfoPanel message={this.state.loading.message} /> : board.map((hex, hexIndex) => {
             return (
               <li key={hexIndex}>
                 <div

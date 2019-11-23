@@ -4,5 +4,9 @@
     },
     "CombatFooter": {
         "Empty": " "
+    },
+    "LoadingMessages": {
+        "WaitingForPlayers": "Warten auf den Beitritt eines anderen Spielers",
+        "WaitingOnServer": "Warten auf Serverantwort"
     }
 }

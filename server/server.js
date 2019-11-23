@@ -28,10 +28,11 @@ io.on('connection', (socket) => {
   })
   socket.on('player-disconnect', () => {
     if (players.has(socket.id)) {
-      console.log('resetting')
+      console.log('user disconnected')
+      boardController.reset()
+      boardController.setLoading('WaitingForPlayers')
       players.delete(socket.id)
       console.log(players)
-      boardController.reset()
     }
     updateState()
   })

@@ -10,12 +10,22 @@ exports.reset = () => {
     },
     number: 0
   }
-  this.loading = false
+  this.loading = {
+    isLoading: false,
+    message: ''
+  }
   this.action = {
     inAction: false,
     time: null,
     type: null,
     indexOfTileToMoveTo: null
+  }
+}
+
+exports.setLoading = (message) => {
+  this.loading = {
+    isLoading: true,
+    message
   }
 }
 
@@ -53,7 +63,10 @@ exports.turn = {
   },
   number: 0
 }
-exports.loading = false
+exports.loading = {
+  isLoading: true,
+  message: 'WaitingForPlayers'
+}
 exports.action = {
   inAction: false,
   time: null,
@@ -62,6 +75,7 @@ exports.action = {
 }
 
 exports.populateGrid = () => {
+  this.loading = false
   const grid = []
   for (let y = 0; y < 11; y++) {
     for (let x = 0; x < 15; x++) {
@@ -91,9 +105,11 @@ exports.handleTileClicked = (tileIndex) => {
       console.log('calling moving')
       handleCreatureMoved(tileIndex)
     } else if (this.board[tileIndex].hasCreature) {
-      console.log('calling selecting')
-      // handleCreatureSelect(tileIndex)
-      handleCreatureAttack(tileIndex)
+      if (this.board[tileIndex].creature.player !== this.turn.player) {
+        console.log('calling attack')
+        // handleCreatureSelect(tileIndex)
+        handleCreatureAttack(tileIndex)
+      }
     } else {
     // placeholder condition
     }

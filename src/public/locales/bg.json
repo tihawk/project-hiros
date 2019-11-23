@@ -4,5 +4,9 @@
     },
     "CombatFooter": {
         "Empty": " "
+    },
+    "LoadingMessages": {
+        "WaitingForPlayers": "Очаква друг играч да се свърже",
+        "WaitingOnServer": "Очаква отговор от сървъра"
     }
 }
