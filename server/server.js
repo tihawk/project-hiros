@@ -42,7 +42,7 @@ io.on('connection', (socket) => {
   })
   socket.on('click', data => {
     if (players.has(socket.id)) {
-      const action = boardController.handleTileClicked(data)
+      const action = boardController.handleTileClicked(data.tileIndex, data.corner)
       updateState()
       io.sockets.emit('action', action)
 
