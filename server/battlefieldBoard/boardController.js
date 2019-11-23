@@ -19,14 +19,26 @@ exports.reset = () => {
   }
 }
 
+const oddRowHexToCube = ({ x, y }) => {
+  const cubeX = x - (y - (y & 1)) / 2
+  const cubeZ = y
+  const cubeY = -cubeX - cubeZ
+  return { x: cubeX, y: cubeY, z: cubeZ }
+}
+
 const calculateRange = () => {
   const { tileIndex } = this.turn.creature
   const { spd } = this.board[tileIndex].creature
-  const { x, y } = this.board[tileIndex]
-  // const coords = this.board.map(tile => { return { x: tile.x, y: tile.y } })
+  const { x, y, z } = oddRowHexToCube(this.board[tileIndex])
+  console.log(x, y, z)
+  const coords = this.board.map(tile => oddRowHexToCube(tile))
   const range = []
-  for (let i = 0; i < this.board.length; i++) {
-    const dist = Math.sqrt((this.board[i].x - x) ** 2 + (this.board[i].y - y) ** 2)
+  for (let i = 0; i < coords.length; i++) {
+    const cx = coords[i].x
+    const cy = coords[i].y
+    const cz = coords[i].z
+    // const dist = Math.sqrt((coords[i].x - x) ** 2 + (coords[i].y - y) ** 2 + (coords[i].z - z) ** 2)
+    const dist = (Math.abs(cx - x) + Math.abs(cy - y) + Math.abs(cz - z)) / 2
     if (dist <= spd) range.push(i)
   }
   this.turn.creature.range = range
