@@ -159,12 +159,12 @@ const handleCreatureAttack = (tileIndex, corner) => {
 }
 
 const handleCreatureMove = (indexOfTileToMoveTo) => {
-  this.action.inAction = true
-  this.action.indexOfTileToMoveTo = indexOfTileToMoveTo
-  this.indexOfTileToMoveTo = indexOfTileToMoveTo
-
   if (!this.board[indexOfTileToMoveTo].hasCreature) {
+    this.indexOfTileToMoveTo = indexOfTileToMoveTo
+    this.action.inAction = true
+    this.action.indexOfTileToMoveTo = indexOfTileToMoveTo
     console.log('moving...')
+
     this.board = update(this.board, { [this.turn.creature.tileIndex]: { creature: { action: { $set: 'walk' } } } })
     const distanceX = (this.board[indexOfTileToMoveTo].x - this.board[this.turn.creature.tileIndex].x)
     const distanceY = (this.board[indexOfTileToMoveTo].y - this.board[this.turn.creature.tileIndex].y)
