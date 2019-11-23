@@ -4,7 +4,10 @@ exports.reset = () => {
   this.board = []
   this.turn = {
     player: 1,
-    creatureTileIndex: 0,
+    creature: {
+      tileIndex: 0,
+      range: []
+    },
     number: 0
   }
   this.loading = false
@@ -16,10 +19,26 @@ exports.reset = () => {
   }
 }
 
+const calculateRange = () => {
+  const { tileIndex } = this.turn.creature
+  const { spd } = this.board[tileIndex].creature
+  const { x, y } = this.board[tileIndex]
+  // const coords = this.board.map(tile => { return { x: tile.x, y: tile.y } })
+  const range = []
+  for (let i = 0; i < this.board.length; i++) {
+    const dist = Math.sqrt((this.board[i].x - x) ** 2 + (this.board[i].y - y) ** 2)
+    if (dist <= spd) range.push(i)
+  }
+  this.turn.creature.range = range
+}
+
 exports.board = []
 exports.turn = {
   player: 1,
-  creatureTileIndex: 0,
+  creature: {
+    tileIndex: 0,
+    range: []
+  },
   number: 0
 }
 exports.loading = false
@@ -43,7 +62,7 @@ exports.populateGrid = () => {
           player: x === 0 ? 1 : 2,
           type: 'swordsman',
           action: 'idle',
-          speed: Math.floor(Math.random() * 22),
+          spd: Math.floor(Math.random() * 22),
           oriented: x === 0 ? 1 : -1
         }
       }
@@ -51,6 +70,7 @@ exports.populateGrid = () => {
     }
   }
   this.board = grid
+  calculateRange()
 }
 
 exports.handleTileClicked = (tileIndex) => {
@@ -78,13 +98,13 @@ const handleCreatureMoved = (indexOfTileToMoveTo) => {
 
   if (!this.board[indexOfTileToMoveTo].hasCreature) {
     console.log('moving...')
-    this.board = update(this.board, { [this.turn.creatureTileIndex]: { creature: { action: { $set: 'walk' } } } })
-    const distanceX = (this.board[indexOfTileToMoveTo].x - this.board[this.turn.creatureTileIndex].x)
-    const distanceY = (this.board[indexOfTileToMoveTo].y - this.board[this.turn.creatureTileIndex].y)
+    this.board = update(this.board, { [this.turn.creature.tileIndex]: { creature: { action: { $set: 'walk' } } } })
+    const distanceX = (this.board[indexOfTileToMoveTo].x - this.board[this.turn.creature.tileIndex].x)
+    const distanceY = (this.board[indexOfTileToMoveTo].y - this.board[this.turn.creature.tileIndex].y)
     const orientation = distanceX > 0 ? 1 : -1
     this.action.time = Math.sqrt(distanceX ** 2 + distanceY ** 2) * 300
     this.action.type = 'walk'
-    this.board = update(this.board, { [this.turn.creatureTileIndex]: { creature: { oriented: { $set: orientation } } } })
+    this.board = update(this.board, { [this.turn.creature.tileIndex]: { creature: { oriented: { $set: orientation } } } })
   } else {
     // placeholder condition
   }
@@ -94,11 +114,12 @@ exports.handleFinishedMoving = () => {
   console.log('finished moving')
   if (this.action.inAction) {
     this.board = update(this.board, { [this.indexOfTileToMoveTo]: { hasCreature: { $set: true } } })
-    this.board = update(this.board, { [this.indexOfTileToMoveTo]: { creature: { $set: this.board[this.turn.creatureTileIndex].creature } } })
+    this.board = update(this.board, { [this.indexOfTileToMoveTo]: { creature: { $set: this.board[this.turn.creature.tileIndex].creature } } })
     this.board = update(this.board, { [this.indexOfTileToMoveTo]: { creature: { action: { $set: 'idle' } } } })
-    this.board = update(this.board, { [this.turn.creatureTileIndex]: { hasCreature: { $set: false } } })
-    this.board = update(this.board, { [this.turn.creatureTileIndex]: { creature: { $set: undefined } } })
-    this.turn.creatureTileIndex = this.indexOfTileToMoveTo
+    this.board = update(this.board, { [this.turn.creature.tileIndex]: { hasCreature: { $set: false } } })
+    this.board = update(this.board, { [this.turn.creature.tileIndex]: { creature: { $set: undefined } } })
+    this.turn.creature.tileIndex = this.indexOfTileToMoveTo
+    calculateRange()
     this.action.indexOfTileToMoveTo = null
     this.indexOfTileToMoveTo = null
     this.action.inAction = false

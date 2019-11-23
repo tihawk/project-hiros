@@ -35,6 +35,10 @@ class Battlefield extends Component {
     })
   }
 
+  componentDidUpdate () {
+
+  }
+
   playerReady = () => {
     console.log('clicked player ready')
     this.socket.emit('player-ready')
@@ -49,37 +53,44 @@ class Battlefield extends Component {
     this.socket.emit('click', tileIndex)
   }
 
-  handleTileHover = e => {
-    const { x, y } = e.target.getBoundingClientRect()
+  handleTileHover = (e, hexIndex, { hasCreature, creature, x, y }) => {
     const { offsetWidth, offsetHeight, style } = e.target
-    // console.log(e.target.offsetWidth)
-    // console.log(x, y)
-    // console.log(e.clientX, e.clientY)
-    // console.log(x - e.clientX + offsetWidth / 2, y - e.clientY + offsetHeight / 2)
+    const { range } = this.state.turn.creature
+    console.log(hexIndex)
+    const inRange = range.includes(hexIndex)
+    console.log(inRange)
 
-    const dx = x - e.clientX + offsetWidth / 2
-    const dy = y - e.clientY + offsetHeight / 2
+    if (inRange === true) {
+      if (hasCreature && creature.player !== this.state.turn.player) {
+        const { x, y } = e.target.getBoundingClientRect()
 
-    const leftRight = 3.5
-    const up = 14
-    const down = 0
+        const dx = x - e.clientX + offsetWidth / 2
+        const dy = y - e.clientY + offsetHeight / 2
 
-    if (dx > leftRight) {
-      if (dy <= up && dy >= down) {
-        style.cursor = 'w-resize'
-      } else if (dy > up) {
-        style.cursor = 'nw-resize'
-      } else if (dy < down) {
-        style.cursor = 'sw-resize'
+        const leftRight = 3.5
+        const up = 14
+        const down = 0
+
+        if (dx > leftRight) {
+          if (dy <= up && dy >= down) {
+            style.cursor = 'w-resize'
+          } else if (dy > up) {
+            style.cursor = 'nw-resize'
+          } else if (dy < down) {
+            style.cursor = 'sw-resize'
+          }
+        } else if (dx < leftRight) {
+          if (dy <= up && dy >= down) {
+            style.cursor = 'e-resize'
+          } else if (dy > up) {
+            style.cursor = 'ne-resize'
+          } else if (dy < down) {
+            style.cursor = 'se-resize'
+          }
+        }
       }
-    } else if (dx < leftRight) {
-      if (dy <= up && dy >= down) {
-        style.cursor = 'e-resize'
-      } else if (dy > up) {
-        style.cursor = 'ne-resize'
-      } else if (dy < down) {
-        style.cursor = 'se-resize'
-      }
+    } else if (inRange === false) {
+      style.cursor = 'not-allowed'
     }
   }
 
@@ -88,23 +99,16 @@ class Battlefield extends Component {
     if (action.indexOfTileToMoveTo !== null && action.inAction) {
       console.log('animating')
       const tileToElement = document.getElementById(action.indexOfTileToMoveTo)
-      const tileFromElement = document.getElementById(this.state.turn.creatureTileIndex)
+      const tileFromElement = document.getElementById(this.state.turn.creature.tileIndex)
       const spriteToMoveElement = tileFromElement.firstChild
       const distanceX = tileToElement.getBoundingClientRect().left - tileFromElement.getBoundingClientRect().left
       const distanceY = tileToElement.getBoundingClientRect().top - tileFromElement.getBoundingClientRect().top
-      // console.log('distance', distanceX, distanceY)
+
       const keyFrames = [
         { left: '0', top: '0' },
         { left: distanceX + 'px', top: distanceY + 'px' }
       ]
-      // const time = Math.sqrt(distanceX ** 2 + distanceY ** 2) * 3
-      // const animation = spriteToMoveElement.animate(keyFrames, action.time)
       spriteToMoveElement.animate(keyFrames, action.time)
-
-      // animation.onfinish = () => {
-      //   // this.socket.emit('finished-moving')
-      //   console.log('replacing element')
-      // }
     }
   }
 
@@ -119,9 +123,9 @@ class Battlefield extends Component {
             return (
               <li key={hexIndex}>
                 <div
-                  className={classes.hexagon}
+                  className={[classes.hexagon, this.state.turn.creature.range.includes(hexIndex) ? classes.inRange : 'hi'].join(' ')}
                   onClick={() => this.handleTileClicked(hex, hexIndex)}
-                  onMouseMove={this.handleTileHover}
+                  onMouseMove={(e) => this.handleTileHover(e, hexIndex, hex)}
                   id={hexIndex}
                 >
                   {hex.hasCreature
