@@ -7,6 +7,7 @@
     },
     "LoadingMessages": {
         "WaitingForPlayers": "Waiting for another player to join",
-        "WaitingOnServer": "Waiting for server response"
+        "WaitingOnServer": "Waiting for server response",
+        "ClickReady": "Click 'Ready' to start a game"
     }
 }

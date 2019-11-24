@@ -13,7 +13,7 @@ class Battlefield extends Component {
     endpoint: 'http://localhost:5000',
     loading: {
       isLoading: true,
-      message: 'WaitingOnServer'
+      message: 'ClickReady'
     },
     action: {
       inAction: false,

@@ -16,6 +16,9 @@ server.listen(PORT, () => {
 
 const players = new Set([])
 io.on('connection', (socket) => {
+  if (players.size >= 2) {
+    sendStateTo(socket)
+  }
   socket.on('player-ready', () => {
     if (players.size < 2) {
       players.add(socket.id)
@@ -35,10 +38,22 @@ io.on('connection', (socket) => {
       console.log(players)
     }
     updateState()
+    socket.emit('state', {
+      loading: {
+        isLoading: true,
+        message: 'ClickReady'
+      }
+    })
   })
   socket.on('disconnect', () => {
     console.log('[disconnect]', players)
     updateState()
+    socket.emit('state', {
+      loading: {
+        isLoading: true,
+        message: 'ClickReady'
+      }
+    })
   })
   socket.on('click', data => {
     if (players.has(socket.id)) {
@@ -64,6 +79,15 @@ io.on('connection', (socket) => {
 
 const updateState = () => {
   io.sockets.emit('state', {
+    board: boardController.board,
+    turn: boardController.turn,
+    loading: boardController.loading,
+    action: boardController.action
+  })
+}
+
+const sendStateTo = (socket) => {
+  socket.emit('state', {
     board: boardController.board,
     turn: boardController.turn,
     loading: boardController.loading,
