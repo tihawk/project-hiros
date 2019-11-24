@@ -2,6 +2,7 @@ const update = require('immutability-helper')
 const helper = require('./helper')
 const Swordsman = require('../Entities/Creatures/Swordsman')
 const Army = require('../Entities/Army')
+const { actionTypes, orientations } = require('../Entities/Enums').creature
 
 exports.reset = () => {
   this.board = []
@@ -13,22 +14,39 @@ exports.reset = () => {
     },
     number: 0
   }
-  this.loading = {
-    isLoading: false,
-    message: ''
-  }
-  this.action = {
-    inAction: false,
-    time: null,
-    type: null,
-    indexOfTileToMoveTo: null
-  }
+  resetLoading()
+  resetAction()
 }
 
 exports.setLoading = (message) => {
   this.loading = {
     isLoading: true,
     message
+  }
+}
+
+const resetLoading = () => {
+  this.loading = {
+    isLoading: false,
+    message: ''
+  }
+}
+
+const setAction = (inAction, type, time = null, indexOfTileToMoveTo = null) => {
+  this.action = {
+    inAction,
+    time,
+    type,
+    indexOfTileToMoveTo
+  }
+}
+
+const resetAction = () => {
+  this.action = {
+    inAction: false,
+    time: null,
+    type: null,
+    indexOfTileToMoveTo: null
   }
 }
 
@@ -78,7 +96,9 @@ const populateArmies = () => {
   for (let i = 1; i <= 2; i++) {
     const army = new Army(i)
     for (let j = 0; j < 7; j++) {
-      army.addMember(new Swordsman(1, 'idle', i === 1 ? 1 : -1, i), j)
+      army.addMember(new Swordsman(1,
+        actionTypes.idle, i === 1 ? orientations.right : orientations.left,
+        i), j)
     }
     armies.push(army)
   }
@@ -86,10 +106,9 @@ const populateArmies = () => {
 }
 
 exports.populateGrid = () => {
+  resetLoading()
   const armies = populateArmies()
-  console.log(armies)
 
-  this.loading = false
   const grid = []
   for (let y = 0; y < 11; y++) {
     for (let x = 0; x < 15; x++) {
@@ -132,7 +151,13 @@ exports.handleTileClicked = (tileIndex, corner) => {
   return this.action
 }
 
+this.indexOfTileToMoveTo = null
+this.isToAttack = false
+this.indexOfTileToAttack = null
+
 const handleCreatureAttack = (tileIndex, corner) => {
+  this.isToAttack = true
+
   const neighbour = getNeighbour(tileIndex, corner)
   const indexOfNeighbour = this.board.findIndex(tile => tile.x === neighbour.x && tile.y === neighbour.y)
   console.log(neighbour)
@@ -145,18 +170,16 @@ const handleCreatureAttack = (tileIndex, corner) => {
 const handleCreatureMove = (indexOfTileToMoveTo) => {
   if (!this.board[indexOfTileToMoveTo].hasCreature) {
     this.indexOfTileToMoveTo = indexOfTileToMoveTo
-    this.action.inAction = true
-    this.action.indexOfTileToMoveTo = indexOfTileToMoveTo
     console.log('moving...')
 
     const distanceX = (this.board[indexOfTileToMoveTo].x - this.board[this.turn.creature.tileIndex].x)
     const distanceY = (this.board[indexOfTileToMoveTo].y - this.board[this.turn.creature.tileIndex].y)
-    const orientation = distanceX > 0 ? 1 : -1
-    this.board[this.turn.creature.tileIndex].creature.setAction('walk')
+    const orientation = distanceX > 0 ? orientations.right : orientations.left
+    this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes.walk)
     this.board[this.turn.creature.tileIndex].creature.setOrientation(orientation)
 
-    this.action.time = Math.sqrt(distanceX ** 2 + distanceY ** 2) * 300
-    this.action.type = 'walk'
+    const time = Math.sqrt(distanceX ** 2 + distanceY ** 2) * 300
+    setAction(true, actionTypes.walk, time, indexOfTileToMoveTo)
   } else {
     // placeholder condition
   }
@@ -167,14 +190,29 @@ exports.handleFinishedMoving = () => {
   if (this.action.inAction) {
     this.board = update(this.board, { [this.indexOfTileToMoveTo]: { hasCreature: { $set: true } } })
     this.board = update(this.board, { [this.indexOfTileToMoveTo]: { creature: { $set: this.board[this.turn.creature.tileIndex].creature } } })
-    this.board[this.indexOfTileToMoveTo].creature.setAction('idle')
+    this.board[this.indexOfTileToMoveTo].creature.setAction(actionTypes.idle)
     this.board = update(this.board, { [this.turn.creature.tileIndex]: { hasCreature: { $set: false } } })
     this.board = update(this.board, { [this.turn.creature.tileIndex]: { creature: { $set: undefined } } })
     this.turn.creature.tileIndex = this.indexOfTileToMoveTo
     calculateRange()
-    this.action.indexOfTileToMoveTo = null
-    this.indexOfTileToMoveTo = null
-    this.action.inAction = false
+
+    if (this.isToAttack) {
+      this.isToAttack = false
+      setAction(true, actionTypes.attackWE, 600)
+    } else {
+      resetAction()
+    }
   }
+  return this.action
+}
+
+exports.handleFinishedAttacking = () => {
+  this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes.attackWE)
+  return this.action
+}
+
+exports.returnCreatureToIdle = () => {
+  resetAction()
+  this.board[this.turn.creature.tileIndex].creature.resetAction()
   return this.action
 }

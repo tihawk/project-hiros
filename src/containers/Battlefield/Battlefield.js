@@ -31,7 +31,7 @@ class Battlefield extends Component {
     this.socket.on('action', action => {
       this.setState({ action })
       if (action.inAction === true) {
-        this.handleMovement(action)
+        this.handleActions(action)
       }
     })
     window.addEventListener('beforeunload', e => {
@@ -81,32 +81,35 @@ class Battlefield extends Component {
     }
   }
 
-  handleMovement = (action) => {
+  handleActions = (action) => {
     // console.log('[handleMovement] called, checking if is to animate')
-    if (action.indexOfTileToMoveTo !== null && action.inAction) {
-      console.log('animating')
-      const tileToElement = document.getElementById(action.indexOfTileToMoveTo)
-      const tileFromElement = document.getElementById(this.state.turn.creature.tileIndex)
-      const spriteToMoveElement = tileFromElement.firstChild
-      const distanceX = tileToElement.getBoundingClientRect().left - tileFromElement.getBoundingClientRect().left
-      const distanceY = tileToElement.getBoundingClientRect().top - tileFromElement.getBoundingClientRect().top
+    if (action.inAction) {
+      if (action.indexOfTileToMoveTo !== null && action.type === 'walk') {
+        console.log('animating')
+        const tileToElement = document.getElementById(action.indexOfTileToMoveTo)
+        const tileFromElement = document.getElementById(this.state.turn.creature.tileIndex)
+        const spriteToMoveElement = tileFromElement.firstChild
+        const distanceX = tileToElement.getBoundingClientRect().left - tileFromElement.getBoundingClientRect().left
+        const distanceY = tileToElement.getBoundingClientRect().top - tileFromElement.getBoundingClientRect().top
 
-      const keyFrames = [
-        { left: '0', top: '0' },
-        { left: distanceX + 'px', top: distanceY + 'px' }
-      ]
-      spriteToMoveElement.animate(keyFrames, action.time)
+        const keyFrames = [
+          { left: '0', top: '0' },
+          { left: distanceX + 'px', top: distanceY + 'px' }
+        ]
+        spriteToMoveElement.animate(keyFrames, action.time)
+      }
     }
   }
 
   render () {
     // const { t } = this.props
     const { board } = this.state
+
     const fieldClasses = [classes.field, this.state.action.inAction ? classes.inAction : null].join(' ')
     return (
       <div className={fieldClasses}>
         <ul className={[classes.grid, classes.clear].join(' ')}>
-          { this.state.loading.isLoading ? <InfoPanel message={this.state.loading.message} /> : board.map((hex, hexIndex) => {
+          { this.state.loading.isLoading === true ? <InfoPanel message={this.state.loading.message} /> : board.map((hex, hexIndex) => {
             return (
               <li key={hexIndex}>
                 <div

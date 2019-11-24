@@ -23,6 +23,7 @@ io.on('connection', (socket) => {
     if (players.size < 2) {
       players.add(socket.id)
       if (players.size === 2) {
+        console.log('populating grid')
         boardController.populateGrid()
       }
     }
@@ -61,23 +62,46 @@ io.on('connection', (socket) => {
       updateState()
       io.sockets.emit('action', action)
 
-      const stoppedAction = new Promise((resolve, reject) => {
-        setInterval(() => {
-          resolve('should be finished moving')
-        }, action.time)
-      })
+      if (action.type === 'walk') {
+        const finishedMoving = new Promise((resolve, reject) => {
+          setInterval(() => {
+            resolve('should be finished moving')
+          }, action.time)
+        })
 
-      stoppedAction.then(res => {
-        console.log(res)
-        const action = boardController.handleFinishedMoving()
-        updateState()
-        io.sockets.emit('action', action)
-      })
+        finishedMoving.then(res => {
+          console.log(res)
+          const action = boardController.handleFinishedMoving()
+
+          if (action.type === 'attack-w-e') {
+            const action = boardController.handleFinishedAttacking()
+            updateState()
+            io.sockets.emit('action', action)
+
+            const finishedAttacking = new Promise((resolve, reject) => {
+              setInterval(() => {
+                resolve('enough attacking')
+              }, action.time)
+            })
+
+            finishedAttacking.then(res => {
+              console.log(res)
+              const action = boardController.returnCreatureToIdle()
+              updateState()
+              io.sockets.emit('action', action)
+            })
+          } else {
+            updateState()
+            io.sockets.emit('action', action)
+          }
+        })
+      }
     }
   })
 })
 
 const updateState = () => {
+  console.log('updating state')
   io.sockets.emit('state', {
     board: boardController.board,
     turn: boardController.turn,

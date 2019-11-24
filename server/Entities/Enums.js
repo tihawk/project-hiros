@@ -2,7 +2,7 @@ const creature = {
   actionTypes: {
     idle: 'idle',
     walk: 'walk',
-    attack: 'attack',
+    attackWE: 'attack-w-e',
     attacked: 'attacked',
     dying: 'dying'
   },

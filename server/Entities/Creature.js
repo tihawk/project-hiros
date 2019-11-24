@@ -1,4 +1,4 @@
-const { actionTypes, orientations } = require('./Enums').creature
+const { actionTypes } = require('./Enums').creature
 
 class Creature {
   constructor (name, town, lvl, att, def, dMin, dMax, hp, spd, grw, val, cost, special = {}) {
