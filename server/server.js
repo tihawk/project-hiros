@@ -5,7 +5,7 @@ const app = express()
 const server = http.Server(app)
 const io = socketIO(server)
 
-const boardController = require('./battlefieldBoard/boardController')
+const ActionController = require('./battlefieldBoard/ActionController')
 
 const PORT = process.env.PORT || 5000
 
@@ -14,6 +14,7 @@ server.listen(PORT, () => {
 })
 
 const players = new Set([])
+const actions = new ActionController()
 io.on('connection', (socket) => {
   if (players.size >= 2) {
     sendStateTo(socket)
@@ -23,7 +24,7 @@ io.on('connection', (socket) => {
       players.add(socket.id)
       if (players.size === 2) {
         console.log('populating grid')
-        boardController.populateGrid()
+        actions.populateGrid()
       }
     }
     updateState()
@@ -32,8 +33,8 @@ io.on('connection', (socket) => {
   socket.on('player-disconnect', () => {
     if (players.has(socket.id)) {
       console.log('user disconnected')
-      boardController.reset()
-      boardController.setLoading('WaitingForPlayers')
+      actions.resetAll()
+      actions.setLoading('WaitingForPlayers')
       players.delete(socket.id)
       console.log(players)
     }
@@ -57,7 +58,7 @@ io.on('connection', (socket) => {
   })
   socket.on('click', data => {
     if (players.has(socket.id)) {
-      const action = boardController.handleTileClicked(data.tileIndex, data.corner)
+      const action = actions.handleTileClicked(data.tileIndex, data.corner)
       updateState()
       io.sockets.emit('action', action)
 
@@ -79,7 +80,7 @@ const movingAndMaybeAttacking = (time) => {
 
   finishedMoving.then(res => {
     console.log(res)
-    const action = boardController.handleFinishedMoving()
+    const action = actions.handleFinishedMoving()
 
     if (String(action.type).startsWith('attack-')) {
       attacking()
@@ -91,7 +92,7 @@ const movingAndMaybeAttacking = (time) => {
 }
 
 const attacking = () => {
-  const action = boardController.performTheAttack()
+  const action = actions.performTheAttack()
   updateState()
   io.sockets.emit('action', action)
 
@@ -103,7 +104,7 @@ const attacking = () => {
 
   finishedAttacking.then(res => {
     console.log(res)
-    const action = boardController.returnCreatureToIdle()
+    const action = actions.returnCreatureToIdle()
     updateState()
     io.sockets.emit('action', action)
   })
@@ -112,18 +113,18 @@ const attacking = () => {
 const updateState = () => {
   console.log('updating state')
   io.sockets.emit('state', {
-    board: boardController.board,
-    turn: boardController.turn,
-    loading: boardController.loading,
-    action: boardController.action
+    board: actions.board,
+    turn: actions.turn,
+    loading: actions.loading,
+    action: actions.action
   })
 }
 
 const sendStateTo = (socket) => {
   socket.emit('state', {
-    board: boardController.board,
-    turn: boardController.turn,
-    loading: boardController.loading,
-    action: boardController.action
+    board: actions.board,
+    turn: actions.turn,
+    loading: actions.loading,
+    action: actions.action
   })
 }
