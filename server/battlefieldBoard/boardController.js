@@ -1,4 +1,7 @@
 const update = require('immutability-helper')
+const helper = require('./helper')
+const Swordsman = require('../Entities/Creatures/Swordsman')
+const Army = require('../Entities/Army')
 
 exports.reset = () => {
   this.board = []
@@ -29,57 +32,21 @@ exports.setLoading = (message) => {
   }
 }
 
-const oddRowHexToCube = ({ x, y }) => {
-  const cubeX = x - (y - (y & 1)) / 2
-  const cubeZ = y
-  const cubeY = -cubeX - cubeZ
-  return { x: cubeX, y: cubeY, z: cubeZ }
-}
-
-const cubeHexToOddRow = ({ x, z }) => {
-  const oddRowX = x + (z - (z & 1)) / 2
-  const oddRowY = z
-  return { x: oddRowX, y: oddRowY }
-}
-
-const calculateCubeDistance = ({ x, y, z }, cx, cy, cz) => {
-  return (Math.abs(cx - x) + Math.abs(cy - y) + Math.abs(cz - z)) / 2
-}
-
-const cubeNeighbourFromCube = (x, y, z, corner) => {
-  switch (corner) {
-    case ('w'):
-      return { x: x - 1, y: y + 1, z: z }
-    case ('nw'):
-      return { x: x, y: y + 1, z: z - 1 }
-    case ('ne'):
-      return { x: x + 1, y: y, z: z - 1 }
-    case ('e'):
-      return { x: x + 1, y: y - 1, z: z }
-    case ('se'):
-      return { x: x, y: y - 1, z: z + 1 }
-    case ('sw'):
-      return { x: x - 1, y: y, z: z + 1 }
-    default:
-      return null
-  }
-}
-
 const getNeighbour = (tileIndex, corner) => {
-  const { x, y, z } = oddRowHexToCube(this.board[tileIndex])
-  const resultCube = cubeNeighbourFromCube(x, y, z, corner)
-  return cubeHexToOddRow(resultCube)
+  const { x, y, z } = helper.oddRowHexToCube(this.board[tileIndex])
+  const resultCube = helper.cubeNeighbourFromCube(x, y, z, corner)
+  return helper.cubeHexToOddRow(resultCube)
 }
 
 const calculateRange = () => {
   const { tileIndex } = this.turn.creature
   const { spd } = this.board[tileIndex].creature
-  const { x, y, z } = oddRowHexToCube(this.board[tileIndex])
-  const coordsCube = this.board.map(tile => oddRowHexToCube(tile))
+  const { x, y, z } = helper.oddRowHexToCube(this.board[tileIndex])
+  const coordsCube = this.board.map(tile => helper.oddRowHexToCube(tile))
 
   const range = []
   for (let i = 0; i < coordsCube.length; i++) {
-    const dist = calculateCubeDistance(coordsCube[i], x, y, z)
+    const dist = helper.calculateCubeDistance(coordsCube[i], x, y, z)
     if (dist <= spd) range.push(i)
   }
   this.turn.creature.range = range
@@ -105,7 +72,23 @@ exports.action = {
   indexOfTileToMoveTo: null
 }
 
+const populateArmies = () => {
+  const armies = []
+
+  for (let i = 1; i <= 2; i++) {
+    const army = new Army(i)
+    for (let j = 0; j < 7; j++) {
+      army.addMember(new Swordsman(1, 'idle', i === 1 ? 1 : -1, i), j)
+    }
+    armies.push(army)
+  }
+  return armies
+}
+
 exports.populateGrid = () => {
+  const armies = populateArmies()
+  console.log(armies)
+
   this.loading = false
   const grid = []
   for (let y = 0; y < 11; y++) {
@@ -113,14 +96,15 @@ exports.populateGrid = () => {
       const gridObj = {}
       gridObj.x = x
       gridObj.y = y
-      if (x === 0 || x === 14) {
-        gridObj.hasCreature = true
-        gridObj.creature = {
-          player: x === 0 ? 1 : 2,
-          type: 'swordsman',
-          action: 'idle',
-          spd: Math.floor(Math.random() * 22),
-          oriented: x === 0 ? 1 : -1
+      if (x === 0 && y < 7) {
+        if (armies[0].army[y]) {
+          gridObj.hasCreature = true
+          gridObj.creature = armies[0].army[y]
+        }
+      } else if (x === 14 && y < 7) {
+        if (armies[1].army[y]) {
+          gridObj.hasCreature = true
+          gridObj.creature = armies[1].army[y]
         }
       }
       grid.push(gridObj)
@@ -165,13 +149,14 @@ const handleCreatureMove = (indexOfTileToMoveTo) => {
     this.action.indexOfTileToMoveTo = indexOfTileToMoveTo
     console.log('moving...')
 
-    this.board = update(this.board, { [this.turn.creature.tileIndex]: { creature: { action: { $set: 'walk' } } } })
     const distanceX = (this.board[indexOfTileToMoveTo].x - this.board[this.turn.creature.tileIndex].x)
     const distanceY = (this.board[indexOfTileToMoveTo].y - this.board[this.turn.creature.tileIndex].y)
     const orientation = distanceX > 0 ? 1 : -1
+    this.board[this.turn.creature.tileIndex].creature.setAction('walk')
+    this.board[this.turn.creature.tileIndex].creature.setOrientation(orientation)
+
     this.action.time = Math.sqrt(distanceX ** 2 + distanceY ** 2) * 300
     this.action.type = 'walk'
-    this.board = update(this.board, { [this.turn.creature.tileIndex]: { creature: { oriented: { $set: orientation } } } })
   } else {
     // placeholder condition
   }
@@ -182,7 +167,7 @@ exports.handleFinishedMoving = () => {
   if (this.action.inAction) {
     this.board = update(this.board, { [this.indexOfTileToMoveTo]: { hasCreature: { $set: true } } })
     this.board = update(this.board, { [this.indexOfTileToMoveTo]: { creature: { $set: this.board[this.turn.creature.tileIndex].creature } } })
-    this.board = update(this.board, { [this.indexOfTileToMoveTo]: { creature: { action: { $set: 'idle' } } } })
+    this.board[this.indexOfTileToMoveTo].creature.setAction('idle')
     this.board = update(this.board, { [this.turn.creature.tileIndex]: { hasCreature: { $set: false } } })
     this.board = update(this.board, { [this.turn.creature.tileIndex]: { creature: { $set: undefined } } })
     this.turn.creature.tileIndex = this.indexOfTileToMoveTo

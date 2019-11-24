@@ -6,9 +6,9 @@ import swordsmanIdleImage from '../../public/assets/sprites/swordsman-idle.png'
 import swordsmanWalkData from '../../public/assets/sprites/swordsman-walk.json'
 import swordsmanWalkImage from '../../public/assets/sprites/swordsman-walk.png'
 
-const SpriteController = ({ creature, action, oriented }) => {
+const SpriteController = ({ creature, action, orientation }) => {
   const creatures = {
-    swordsman: {
+    Swordsman: {
       idle: {
         data: swordsmanIdleData,
         image: swordsmanIdleImage
@@ -26,7 +26,7 @@ const SpriteController = ({ creature, action, oriented }) => {
       src={image}
       framesPerStep={Math.floor(Object.keys(data.frames).length / 2)}
       data={data}
-      oriented={oriented}
+      orientation={orientation}
       action={action}
     />
   )

@@ -117,9 +117,9 @@ class Battlefield extends Component {
                 >
                   {hex.hasCreature
                     ? <SpriteController
-                      creature={hex.creature.type}
+                      creature={hex.creature.name}
                       action={hex.creature.action}
-                      oriented={hex.creature.oriented}
+                      orientation={hex.creature.orientation}
                     />
                     : null}
                 </div>

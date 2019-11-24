@@ -1,3 +1,5 @@
+const { actionTypes, orientations } = require('./Enums').creature
+
 class Creature {
   constructor (name, town, lvl, att, def, dMin, dMax, hp, spd, grw, val, cost, special = {}) {
     this.name = name
@@ -13,6 +15,37 @@ class Creature {
     this.val = val
     this.cost = cost
     this.special = { ...special }
+
+    this.action = null
+    this.orientation = null
+    this.stackMultiplier = null
+
+    this.setAction = this.setAction.bind(this)
+    this.setOrientation = this.setOrientation.bind(this)
+    this.resetAction = this.resetAction.bind(this)
+    this.move = this.move.bind(this)
+    this.attack = this.attack.bind(this)
+  }
+
+  setAction (actionType) {
+    this.action = actionType
+  }
+
+  setOrientation (orientation) {
+    this.orientation = orientation
+  }
+
+  resetAction () {
+    this.action = actionTypes.idle
+  }
+
+  move (orientation) {
+    this.action = actionTypes.walk
+    this.orientation = orientation
+  }
+
+  attack (indexOfTileToAttack) {
+    this.action = actionTypes.attack
   }
 }
 

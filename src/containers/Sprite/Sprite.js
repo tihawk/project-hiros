@@ -58,9 +58,9 @@ class Sprite extends Component {
         }
       }
       const { src } = this.props
-      const { oriented } = this.props
+      const { orientation } = this.props
       const scale = {
-        x: this.props.data.meta.scale * oriented,
+        x: this.props.data.meta.scale * orientation,
         y: this.props.data.meta.scale
       }
 
