@@ -180,8 +180,8 @@ const handleCreatureMove = (indexOfTileToMoveTo) => {
 
     const time = Math.sqrt(distanceX ** 2 + distanceY ** 2) * 300
     setAction(true, actionTypes.walk, time, indexOfTileToMoveTo)
-  } else {
-    // placeholder condition
+  } else if (indexOfTileToMoveTo === this.turn.creature.tileIndex) {
+    setAction(true, actionTypes.attackWE, 600)
   }
 }
 

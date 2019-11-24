@@ -74,31 +74,37 @@ io.on('connection', (socket) => {
           const action = boardController.handleFinishedMoving()
 
           if (action.type === 'attack-w-e') {
-            const action = boardController.handleFinishedAttacking()
-            updateState()
-            io.sockets.emit('action', action)
-
-            const finishedAttacking = new Promise((resolve, reject) => {
-              setInterval(() => {
-                resolve('enough attacking')
-              }, action.time)
-            })
-
-            finishedAttacking.then(res => {
-              console.log(res)
-              const action = boardController.returnCreatureToIdle()
-              updateState()
-              io.sockets.emit('action', action)
-            })
+            attacking()
           } else {
             updateState()
             io.sockets.emit('action', action)
           }
         })
+      } else if (action.type === 'attack-w-e') {
+        attacking()
       }
     }
   })
 })
+
+const attacking = () => {
+  const action = boardController.handleFinishedAttacking()
+  updateState()
+  io.sockets.emit('action', action)
+
+  const finishedAttacking = new Promise((resolve, reject) => {
+    setInterval(() => {
+      resolve('enough attacking')
+    }, action.time)
+  })
+
+  finishedAttacking.then(res => {
+    console.log(res)
+    const action = boardController.returnCreatureToIdle()
+    updateState()
+    io.sockets.emit('action', action)
+  })
+}
 
 const updateState = () => {
   console.log('updating state')
