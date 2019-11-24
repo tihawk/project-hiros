@@ -8,7 +8,6 @@ const io = socketIO(server)
 const boardController = require('./battlefieldBoard/boardController')
 
 const PORT = process.env.PORT || 5000
-// const SERVERTICKS = 1000 / 10
 
 server.listen(PORT, () => {
   console.log('Starting server on port', PORT)
@@ -63,32 +62,36 @@ io.on('connection', (socket) => {
       io.sockets.emit('action', action)
 
       if (action.type === 'walk') {
-        const finishedMoving = new Promise((resolve, reject) => {
-          setInterval(() => {
-            resolve('should be finished moving')
-          }, action.time)
-        })
-
-        finishedMoving.then(res => {
-          console.log(res)
-          const action = boardController.handleFinishedMoving()
-
-          if (action.type === 'attack-w-e') {
-            attacking()
-          } else {
-            updateState()
-            io.sockets.emit('action', action)
-          }
-        })
-      } else if (action.type === 'attack-w-e') {
+        movingAndMaybeAttacking(action.time)
+      } else if (String(action.type).startsWith('attack-')) {
         attacking()
       }
     }
   })
 })
 
+const movingAndMaybeAttacking = (time) => {
+  const finishedMoving = new Promise((resolve, reject) => {
+    setInterval(() => {
+      resolve('should be finished moving')
+    }, time)
+  })
+
+  finishedMoving.then(res => {
+    console.log(res)
+    const action = boardController.handleFinishedMoving()
+
+    if (String(action.type).startsWith('attack-')) {
+      attacking()
+    } else {
+      updateState()
+      io.sockets.emit('action', action)
+    }
+  })
+}
+
 const attacking = () => {
-  const action = boardController.handleFinishedAttacking()
+  const action = boardController.performTheAttack()
   updateState()
   io.sockets.emit('action', action)
 
@@ -124,16 +127,3 @@ const sendStateTo = (socket) => {
     action: boardController.action
   })
 }
-
-// setInterval(() => {
-//   io.sockets.emit('state', {
-//     board: boardController.board,
-//     // indexOfSelectedTileWithCreature: boardController.indexOfSelectedTileWithCreature,
-//     // isCreatureSelected: boardController.isCreatureSelected,
-//     // indexOfTileToMoveTo: boardController.indexOfTileToMoveTo,
-//     turn: boardController.turn,
-//     loading: boardController.loading,
-//     // inAction: boardController.inAction
-//     action: boardController.action
-//   })
-// }, SERVERTICKS)

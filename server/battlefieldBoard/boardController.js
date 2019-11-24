@@ -79,16 +79,8 @@ exports.turn = {
   },
   number: 0
 }
-exports.loading = {
-  isLoading: true,
-  message: 'WaitingForPlayers'
-}
-exports.action = {
-  inAction: false,
-  time: null,
-  type: null,
-  indexOfTileToMoveTo: null
-}
+exports.loading = this.setLoading('WaitingForPlayers')
+exports.action = resetAction()
 
 const populateArmies = () => {
   const armies = []
@@ -151,7 +143,6 @@ exports.handleTileClicked = (tileIndex, corner) => {
   return this.action
 }
 
-this.indexOfTileToMoveTo = null
 this.isToAttack = false
 this.indexOfTileToAttack = null
 
@@ -169,7 +160,6 @@ const handleCreatureAttack = (tileIndex, corner) => {
 
 const handleCreatureMove = (indexOfTileToMoveTo) => {
   if (!this.board[indexOfTileToMoveTo].hasCreature) {
-    this.indexOfTileToMoveTo = indexOfTileToMoveTo
     console.log('moving...')
 
     const distanceX = (this.board[indexOfTileToMoveTo].x - this.board[this.turn.creature.tileIndex].x)
@@ -188,12 +178,12 @@ const handleCreatureMove = (indexOfTileToMoveTo) => {
 exports.handleFinishedMoving = () => {
   console.log('finished moving')
   if (this.action.inAction) {
-    this.board = update(this.board, { [this.indexOfTileToMoveTo]: { hasCreature: { $set: true } } })
-    this.board = update(this.board, { [this.indexOfTileToMoveTo]: { creature: { $set: this.board[this.turn.creature.tileIndex].creature } } })
-    this.board[this.indexOfTileToMoveTo].creature.setAction(actionTypes.idle)
+    this.board = update(this.board, { [this.action.indexOfTileToMoveTo]: { hasCreature: { $set: true } } })
+    this.board = update(this.board, { [this.action.indexOfTileToMoveTo]: { creature: { $set: this.board[this.turn.creature.tileIndex].creature } } })
+    this.board[this.action.indexOfTileToMoveTo].creature.setAction(actionTypes.idle)
     this.board = update(this.board, { [this.turn.creature.tileIndex]: { hasCreature: { $set: false } } })
     this.board = update(this.board, { [this.turn.creature.tileIndex]: { creature: { $set: undefined } } })
-    this.turn.creature.tileIndex = this.indexOfTileToMoveTo
+    this.turn.creature.tileIndex = this.action.indexOfTileToMoveTo
     calculateRange()
 
     if (this.isToAttack) {
@@ -206,7 +196,7 @@ exports.handleFinishedMoving = () => {
   return this.action
 }
 
-exports.handleFinishedAttacking = () => {
+exports.performTheAttack = () => {
   this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes.attackWE)
   return this.action
 }
