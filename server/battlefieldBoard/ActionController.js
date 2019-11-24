@@ -8,11 +8,12 @@ const { actionTypes, orientations } = require('../Entities/Enums').creature
 
 class ActionController {
   constructor () {
+    this.players = []
     this.battlefield = new Board()
     this.board = battlefield.getBoard()
     this.armies = []
     this.turn = {
-      player: 1,
+      player: '',
       creature: {
         tileIndex: 0,
         range: []
@@ -35,11 +36,12 @@ class ActionController {
   }
 
   resetAll () {
+    this.players = []
     this.battlefield = new Board()
     this.board = battlefield.getBoard()
     this.armies = []
     this.turn = {
-      player: 1,
+      player: '',
       creature: {
         tileIndex: 0,
         range: []
@@ -51,6 +53,21 @@ class ActionController {
 
     this.isToAttack = false
     this.indexOfTileToAttack = null
+  }
+
+  addPlayer (id) {
+    this.players.push(id)
+  }
+
+  setFirstTurn () {
+    this.turn = {
+      player: this.players[0],
+      creature: {
+        tileIndex: 0,
+        range: []
+      },
+      number: 0
+    }
   }
 
   setLoading (message) {
@@ -106,12 +123,12 @@ class ActionController {
   }
 
   populateArmies () {
-    for (let i = 1; i <= 2; i++) {
-      const army = new Army(i)
+    for (let i = 0; i < 2; i++) {
+      const army = new Army(this.players[i])
       for (let j = 0; j < 7; j++) {
         army.addMember(new Swordsman(1,
-          actionTypes.idle, i === 1 ? orientations.right : orientations.left,
-          i), j)
+          actionTypes.idle, i === 0 ? orientations.right : orientations.left,
+          this.players[i]), j)
       }
       this.armies.push(army)
     }
@@ -133,7 +150,6 @@ class ActionController {
       } else if (this.board[tileIndex].hasCreature) {
         if (this.board[tileIndex].creature.player !== this.turn.player) {
           console.log('calling attack')
-          // handleCreatureSelect(tileIndex)
           this.handleCreatureAttack(tileIndex, corner)
         }
       } else {
@@ -202,6 +218,19 @@ class ActionController {
     this.resetAction()
     this.board[this.turn.creature.tileIndex].creature.resetAction()
     return this.action
+  }
+
+  endTurn () {
+    // TODOONLY A PROTOTYPE
+    const currentTurn = { ...this.turn }
+    this.turn.number = currentTurn.number + 1
+    if (currentTurn.player === this.players[0]) {
+      this.turn.player = this.players[1]
+    } else {
+      this.turn.player = this.players[0]
+    }
+    this.turn.creature.tileIndex = this.board.findIndex(tile => tile.hasCreature && tile.creature.player === this.turn.player)
+    this.calculateRange()
   }
 }
 

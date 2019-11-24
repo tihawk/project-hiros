@@ -24,6 +24,10 @@ io.on('connection', (socket) => {
       players.add(socket.id)
       if (players.size === 2) {
         console.log('populating grid')
+        players.forEach(value => {
+          actions.addPlayer(value)
+        })
+        actions.setFirstTurn()
         actions.populateGrid()
       }
     }
@@ -57,7 +61,7 @@ io.on('connection', (socket) => {
     })
   })
   socket.on('click', data => {
-    if (players.has(socket.id)) {
+    if (players.has(socket.id) && actions.turn.player === socket.id) {
       const action = actions.handleTileClicked(data.tileIndex, data.corner)
       updateState()
       io.sockets.emit('action', action)
@@ -85,6 +89,7 @@ const movingAndMaybeAttacking = (time) => {
     if (String(action.type).startsWith('attack-')) {
       attacking()
     } else {
+      actions.endTurn()
       updateState()
       io.sockets.emit('action', action)
     }
@@ -105,6 +110,7 @@ const attacking = () => {
   finishedAttacking.then(res => {
     console.log(res)
     const action = actions.returnCreatureToIdle()
+    actions.endTurn()
     updateState()
     io.sockets.emit('action', action)
   })

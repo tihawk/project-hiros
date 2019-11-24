@@ -55,28 +55,33 @@ class Battlefield extends Component {
   }
 
   handleTileClicked = (e, tileIndex) => {
-    const corner = whichCornerOfHex(e)
-
-    this.socket.emit('click', { tileIndex, corner })
+    if (this.state.turn.player === this.socket.id) {
+      const corner = whichCornerOfHex(e)
+      this.socket.emit('click', { tileIndex, corner })
+    }
   }
 
   handleTileHover = (e, hexIndex, { hasCreature, creature, x, y }) => {
     const { style } = e.target
-    const { range } = this.state.turn.creature
-    const inRange = range.includes(hexIndex)
+    if (this.state.turn.player === this.socket.id) {
+      const { range } = this.state.turn.creature
+      const inRange = range.includes(hexIndex)
 
-    if (inRange) {
-      if (hasCreature) {
-        if (creature.player !== this.state.turn.player) {
-          const corner = whichCornerOfHex(e)
-          style.cursor = `${corner}-resize`
-        } else {
-          style.cursor = 'not-allowed'
+      if (inRange) {
+        if (hasCreature) {
+          if (creature.player !== this.state.turn.player) {
+            const corner = whichCornerOfHex(e)
+            style.cursor = `${corner}-resize`
+          } else {
+            style.cursor = 'not-allowed'
+          }
+        } else if (!hasCreature) {
+          style.cursor = 'pointer'
         }
-      } else if (!hasCreature) {
-        style.cursor = 'pointer'
+      } else if (!inRange) {
+        style.cursor = 'not-allowed'
       }
-    } else if (!inRange) {
+    } else {
       style.cursor = 'not-allowed'
     }
   }
