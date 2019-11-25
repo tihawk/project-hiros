@@ -19,6 +19,11 @@ const InfoPanel = ({ t, creatureData, id }) => {
           <div>Health: {creatureData.hp}</div>
         </div>
       </div>
+      <div className={classes.redPanel}>
+        <div className={classes.infoSubtile}>
+          <div>Health Left: {creatureData.currentHP}</div>
+        </div>
+      </div>
     </div>
   )
 }

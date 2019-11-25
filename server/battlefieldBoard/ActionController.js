@@ -219,7 +219,7 @@ class ActionController {
       this.calculateRange()
 
       if (this.isToAttack) {
-        this.isToAttack = false
+        // this.isToAttack = false
         this.setAction(true, actionTypes.attackWE, 600)
       } else {
         this.resetAction()
@@ -235,6 +235,7 @@ class ActionController {
 
     this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes[attackType])
     this.board[this.turn.creature.tileIndex].creature.setOrientation(orientation)
+    this.board[this.turn.creature.tileIndex].creature.attack(this.board[this.indexOfTileToAttack].creature)
     this.indexOfTileToAttack = null
     return this.action
   }

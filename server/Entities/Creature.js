@@ -16,6 +16,7 @@ class Creature {
     this.cost = cost
     this.special = { ...special }
 
+    this.currentHP = hp
     this.action = null
     this.orientation = null
     this.stackMultiplier = null
@@ -23,7 +24,6 @@ class Creature {
     this.setAction = this.setAction.bind(this)
     this.setOrientation = this.setOrientation.bind(this)
     this.resetAction = this.resetAction.bind(this)
-    this.move = this.move.bind(this)
     this.attack = this.attack.bind(this)
   }
 
@@ -39,13 +39,19 @@ class Creature {
     this.action = actionTypes.idle
   }
 
-  move (orientation) {
-    this.action = actionTypes.walk
-    this.orientation = orientation
-  }
+  attack (enemy) {
+    const randDamage = Math.random() * (this.dMax - this.dMin) + this.dMin
+    const X = this.att > enemy.def ? 0.05 : 0.02
+    const damage = (1 + ((this.att - enemy.def) * X)) * this.stackMultiplier * randDamage
 
-  attack (indexOfTileToAttack) {
-    this.action = actionTypes.attack
+    const currentHealthOfEnemy = enemy.currentHP - damage
+    console.log(currentHealthOfEnemy)
+    if (currentHealthOfEnemy < 0) {
+      enemy.stackMultiplier -= 1
+      enemy.currentHP = enemy.hp - damage - enemy.currentHP
+    } else {
+      enemy.currentHP = currentHealthOfEnemy
+    }
   }
 }
 
