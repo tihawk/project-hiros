@@ -21,7 +21,7 @@ const InfoPanel = ({ t, creatureData, id }) => {
       </div>
       <div className={classes.redPanel}>
         <div className={classes.infoSubtile}>
-          <div>Health Left: {creatureData.currentHP}</div>
+          <div>Health Left: {Math.floor(creatureData.currentHP)}</div>
         </div>
       </div>
     </div>
