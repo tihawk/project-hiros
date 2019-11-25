@@ -1,3 +1,5 @@
+const { actionTypes } = require('./Enums').creature
+
 class Board {
   constructor () {
     const grid = []
@@ -31,6 +33,16 @@ class Board {
   }
 
   getBoard () {
+    return this.board
+  }
+
+  moveCreature (indexOfTileFrom, indexOfTileTo) {
+    this.board[indexOfTileTo].hasCreature = true
+    this.board[indexOfTileTo].creature = this.board[indexOfTileFrom].creature
+    this.board[indexOfTileTo].creature.setAction(actionTypes.idle)
+    this.board[indexOfTileFrom].hasCreature = false
+    this.board[indexOfTileFrom].creature = undefined
+
     return this.board
   }
 }

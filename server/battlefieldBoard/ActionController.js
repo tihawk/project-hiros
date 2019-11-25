@@ -1,4 +1,3 @@
-const update = require('immutability-helper')
 const helper = require('./helper')
 const Swordsman = require('../Entities/Creatures/Swordsman')
 const Army = require('../Entities/Army')
@@ -165,7 +164,6 @@ class ActionController {
     this.resetLoading()
     this.populateArmies()
     battlefield.populateBoard(this.armies)
-    // this.board = battlefield.getBoard()
     this.calculateRange()
   }
 
@@ -192,8 +190,7 @@ class ActionController {
 
     const neighbour = this.getNeighbour(tileIndex, corner)
     const indexOfNeighbour = this.board.findIndex(tile => tile.x === neighbour.x && tile.y === neighbour.y)
-    console.log(neighbour)
-    console.log(indexOfNeighbour)
+
     if (indexOfNeighbour !== -1) {
       this.handleCreatureMove(indexOfNeighbour)
     }
@@ -203,8 +200,6 @@ class ActionController {
     if (!this.board[indexOfTileToMoveTo].hasCreature) {
       console.log('moving...')
 
-      // const distanceX = (this.board[indexOfTileToMoveTo].x - this.board[this.turn.creature.tileIndex].x)
-      // const distanceY = (this.board[indexOfTileToMoveTo].y - this.board[this.turn.creature.tileIndex].y)
       const { distance, orientation } = this.getDistanceOrientationAndDepth(this.board[this.turn.creature.tileIndex], this.board[indexOfTileToMoveTo])
       this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes.walk)
       this.board[this.turn.creature.tileIndex].creature.setOrientation(orientation)
@@ -219,11 +214,7 @@ class ActionController {
   handleFinishedMoving () {
     console.log('finished moving')
     if (this.action.inAction) {
-      this.board = update(this.board, { [this.action.indexOfTileToMoveTo]: { hasCreature: { $set: true } } })
-      this.board = update(this.board, { [this.action.indexOfTileToMoveTo]: { creature: { $set: this.board[this.turn.creature.tileIndex].creature } } })
-      this.board[this.action.indexOfTileToMoveTo].creature.setAction(actionTypes.idle)
-      this.board = update(this.board, { [this.turn.creature.tileIndex]: { hasCreature: { $set: false } } })
-      this.board = update(this.board, { [this.turn.creature.tileIndex]: { creature: { $set: undefined } } })
+      this.board = battlefield.moveCreature(this.turn.creature.tileIndex, this.action.indexOfTileToMoveTo)
       this.turn.creature.tileIndex = this.action.indexOfTileToMoveTo
       this.calculateRange()
 
@@ -241,7 +232,7 @@ class ActionController {
     this.isToAttack = false
     const { orientation, depth } = this.getDistanceOrientationAndDepth(this.board[this.turn.creature.tileIndex], this.board[this.indexOfTileToAttack])
     const attackType = 'attack' + depth
-    console.log(attackType)
+
     this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes[attackType])
     this.board[this.turn.creature.tileIndex].creature.setOrientation(orientation)
     this.indexOfTileToAttack = null
