@@ -30,7 +30,7 @@
     padding-top: 15%;
     padding-left: 0; /* clears default 40px of unordered list */
     width: 80%;
-    margin: 0 auto;
+    margin-right: 2.5%
 }
 
 .clear:after {
@@ -159,4 +159,55 @@ button {
     /* background-repeat: repeat-x; */
     background-color: brown;
     border-right: 2px solid gold;
+}
+
+.infoPanel {
+    height: 35px;
+    text-align: center;
+    margin: 15% 5% 5% 5%;
+    background-image: url(../../public/assets/textures/461223166.jpg);
+    background-repeat: repeat-x;
+    background-color: brown;
+    border: 2px solid gold;
+    color: white;
+    outline: black solid 1px;
+}
+
+.creatureInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1px;
+    margin: 5px;
+    height: 30%;
+    max-width: 10%;
+    width: 9%;
+    background-image: url(../../public/assets/textures/461223166.jpg);
+    background-color: brown;
+    background-repeat: repeat-y;
+    border: 1px solid gold;
+    outline: black solid 1px;
+    text-align: center;
+    color: white;
+    font-size: 1vw;
+    visibility: hidden;
+}
+
+.redPanel {
+    width: 100%;
+    margin: 1px;
+    background-color: darkred;
+    border: 1px solid gold;
+    outline: black solid 1px;
+    padding: 3px;
+}
+
+.infoSubtile {
+    width: 100%;
+    background-image: url(../../public/assets/textures/461223166.jpg);
+    background-color: brown;
+    background-repeat: repeat-y;
+    text-align: center;
+    color: white;
+    font-size: 1vw;
 }

@@ -126,6 +126,7 @@ const attacking = () => {
 const updateState = () => {
   console.log('updating state')
   io.sockets.emit('state', {
+    players: actions.players,
     board: actions.board,
     turn: actions.turn,
     loading: actions.loading,
@@ -135,6 +136,7 @@ const updateState = () => {
 
 const sendStateTo = (socket) => {
   socket.emit('state', {
+    players: actions.players,
     board: actions.board,
     turn: actions.turn,
     loading: actions.loading,

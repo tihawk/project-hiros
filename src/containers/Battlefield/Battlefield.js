@@ -8,6 +8,7 @@ import CombatDashboard from './CombatDashboard'
 import SpriteController from '../Sprite/SpriteController'
 import { whichCornerOfHex } from '../../utility/utility'
 import '../../App.css'
+import CreatureInfo from './CreatureInfo'
 
 class Battlefield extends Component {
   state = {
@@ -20,7 +21,8 @@ class Battlefield extends Component {
       inAction: false,
       time: null,
       type: null
-    }
+    },
+    creatureHoveredOver: {}
   }
 
   componentDidMount () {
@@ -55,6 +57,26 @@ class Battlefield extends Component {
     this.socket.emit('player-disconnect')
   }
 
+  showCreatureInfo = (creature) => {
+    if (creature) {
+      let infoPanel
+      if (creature.player === this.state.players[0]) {
+        infoPanel = document.getElementById(this.state.players[0])
+      } else {
+        infoPanel = document.getElementById(this.state.players[1])
+      }
+      this.setState({ creatureHoveredOver: { ...creature } })
+      infoPanel.style.visibility = 'visible'
+    }
+  }
+
+  hideCreatureInfo = () => {
+    let infoPanel = document.getElementById(this.state.players[0])
+    infoPanel.style.visibility = 'hidden'
+    infoPanel = document.getElementById(this.state.players[1])
+    infoPanel.style.visibility = 'hidden'
+  }
+
   handleTileClicked = (e, tileIndex) => {
     if (this.state.turn.player === this.socket.id) {
       const corner = whichCornerOfHex(e)
@@ -64,6 +86,7 @@ class Battlefield extends Component {
 
   handleTileHover = (e, hexIndex, { hasCreature, creature, x, y }) => {
     const { style } = e.target
+
     if (this.state.turn.player === this.socket.id) {
       const { range } = this.state.turn.creature
       const inRange = range.includes(hexIndex)
@@ -109,33 +132,40 @@ class Battlefield extends Component {
 
   render () {
     // const { t } = this.props
-    const { board } = this.state
+    const { board, creatureHoveredOver } = this.state
 
     const fieldClasses = [classes.field, this.state.action.inAction ? classes.inAction : null].join(' ')
     return (
       <div className={fieldClasses}>
-        <ul className={[classes.grid, classes.clear].join(' ')}>
-          { this.state.loading.isLoading === true ? <InfoPanel message={this.state.loading.message} /> : board.map((hex, hexIndex) => {
-            return (
-              <li key={hexIndex}>
-                <div
-                  className={[classes.hexagon, this.state.turn.creature.range.includes(hexIndex) ? classes.inRange : 'hi'].join(' ')}
-                  onClick={(e) => this.handleTileClicked(e, hexIndex)}
-                  onMouseMove={(e) => this.handleTileHover(e, hexIndex, hex)}
-                  id={hexIndex}
-                >
-                  {hex.hasCreature
-                    ? <SpriteController
-                      creature={hex.creature.name}
-                      action={hex.creature.action}
-                      orientation={hex.creature.orientation}
-                    />
-                    : null}
-                </div>
-              </li>
-            )
-          })}
-        </ul>
+        { this.state.loading.isLoading === true ? <InfoPanel message={this.state.loading.message} />
+          : <div className="d-flex flex-row justify-content-between align-items-end">
+            <CreatureInfo id={this.state.players[0]} creatureData={creatureHoveredOver} />
+            <ul className={[classes.grid, classes.clear].join(' ')}>
+              {board.map((hex, hexIndex) => {
+                return (
+                  <li key={hexIndex}>
+                    <div
+                      className={[classes.hexagon, this.state.turn.creature.range.includes(hexIndex) ? classes.inRange : 'hi'].join(' ')}
+                      onClick={(e) => this.handleTileClicked(e, hexIndex)}
+                      onMouseMove={(e) => this.handleTileHover(e, hexIndex, hex)}
+                      onMouseEnter={() => this.showCreatureInfo(hex.creature || null)}
+                      onMouseLeave={this.hideCreatureInfo}
+                      id={hexIndex}
+                    >
+                      {hex.hasCreature
+                        ? <SpriteController
+                          creature={hex.creature.name}
+                          action={hex.creature.action}
+                          orientation={hex.creature.orientation}
+                        />
+                        : null}
+                    </div>
+                  </li>
+                )
+              })}
+            </ul>
+            <CreatureInfo id={this.state.players[1]} creatureData={creatureHoveredOver} />
+          </div>}
         <div>
           <CombatDashboard playerReady={this.playerReady} playerDisconnect={this.playerDisconnect} />
           <CombatFooter />

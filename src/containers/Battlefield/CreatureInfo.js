@@ -1,0 +1,26 @@
+import React from 'react'
+import { withTranslation } from 'react-i18next'
+import classes from './Battlefield.module.css'
+
+const InfoPanel = ({ t, creatureData, id }) => {
+//   const translatedMessage = t(`LoadingMessages.${null}`)
+  return (
+    <div className={classes.creatureInfo} id={id}>
+      <div className={classes.redPanel}>
+        <div className={classes.infoSubtile}>
+          <div>{creatureData.name} x{creatureData.stackMultiplier}</div>
+        </div>
+      </div>
+      <div className={classes.redPanel}>
+        <div className={classes.infoSubtile}>
+          <div>Attack: {creatureData.att}</div>
+          <div>Defence: {creatureData.def}</div>
+          <div>Damage: {creatureData.dMin}-{creatureData.dMax}</div>
+          <div>Health: {creatureData.hp}</div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default withTranslation()(InfoPanel)
