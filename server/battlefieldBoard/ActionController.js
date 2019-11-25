@@ -2,14 +2,13 @@ const helper = require('./helper')
 const Swordsman = require('../Entities/Creatures/Swordsman')
 const Army = require('../Entities/Army')
 const Board = require('../Entities/Board')
-const battlefield = new Board()
 const { actionTypes, orientations } = require('../Entities/Enums').creature
 
 class ActionController {
   constructor () {
     this.players = []
     this.battlefield = new Board()
-    this.board = battlefield.getBoard()
+    this.board = this.battlefield.getBoard()
     this.armies = []
     this.turn = {
       player: '',
@@ -37,7 +36,7 @@ class ActionController {
   resetAll () {
     this.players = []
     this.battlefield = new Board()
-    this.board = battlefield.getBoard()
+    this.board = this.battlefield.getBoard()
     this.armies = []
     this.turn = {
       player: '',
@@ -149,6 +148,7 @@ class ActionController {
   }
 
   populateArmies () {
+    this.armies = []
     for (let i = 0; i < 2; i++) {
       const army = new Army(this.players[i])
       for (let j = 0; j < 7; j++) {
@@ -163,7 +163,7 @@ class ActionController {
   populateGrid () {
     this.resetLoading()
     this.populateArmies()
-    battlefield.populateBoard(this.armies)
+    this.battlefield.populateBoard(this.armies)
     this.calculateRange()
   }
 
@@ -214,7 +214,7 @@ class ActionController {
   handleFinishedMoving () {
     console.log('finished moving')
     if (this.action.inAction) {
-      this.board = battlefield.moveCreature(this.turn.creature.tileIndex, this.action.indexOfTileToMoveTo)
+      this.battlefield.moveCreature(this.turn.creature.tileIndex, this.action.indexOfTileToMoveTo)
       this.turn.creature.tileIndex = this.action.indexOfTileToMoveTo
       this.calculateRange()
 

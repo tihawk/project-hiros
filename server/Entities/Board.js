@@ -42,8 +42,6 @@ class Board {
     this.board[indexOfTileTo].creature.setAction(actionTypes.idle)
     this.board[indexOfTileFrom].hasCreature = false
     this.board[indexOfTileFrom].creature = undefined
-
-    return this.board
   }
 }
 

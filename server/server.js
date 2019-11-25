@@ -52,6 +52,9 @@ io.on('connection', (socket) => {
   })
   socket.on('disconnect', () => {
     console.log('[disconnect]', players)
+    actions.resetAll()
+    actions.setLoading('WaitingForPlayers')
+    players.delete(socket.id)
     updateState()
     socket.emit('state', {
       loading: {

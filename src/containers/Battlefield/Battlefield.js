@@ -7,6 +7,7 @@ import CombatFooter from './CombatFooter'
 import CombatDashboard from './CombatDashboard'
 import SpriteController from '../Sprite/SpriteController'
 import { whichCornerOfHex } from '../../utility/utility'
+import '../../App.css'
 
 class Battlefield extends Component {
   state = {
