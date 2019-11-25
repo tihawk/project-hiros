@@ -108,6 +108,15 @@ class ActionController {
     return helper.cubeHexToOddRow(resultCube)
   }
 
+  getOrientation (distanceX, distanceY) {
+    const { x, y, z } = helper.oddRowHexToCube({ x: distanceX, y: distanceY })
+    if (y > 0 || (y === 0 && z > 0)) {
+      return orientations.left
+    } else {
+      return orientations.right
+    }
+  }
+
   calculateRange () {
     const { tileIndex } = this.turn.creature
     const { spd } = this.board[tileIndex].creature
@@ -161,6 +170,7 @@ class ActionController {
 
   handleCreatureAttack (tileIndex, corner) {
     this.isToAttack = true
+    this.indexOfTileToAttack = tileIndex
 
     const neighbour = this.getNeighbour(tileIndex, corner)
     const indexOfNeighbour = this.board.findIndex(tile => tile.x === neighbour.x && tile.y === neighbour.y)
@@ -177,7 +187,7 @@ class ActionController {
 
       const distanceX = (this.board[indexOfTileToMoveTo].x - this.board[this.turn.creature.tileIndex].x)
       const distanceY = (this.board[indexOfTileToMoveTo].y - this.board[this.turn.creature.tileIndex].y)
-      const orientation = distanceX > 0 ? orientations.right : orientations.left
+      const orientation = this.getOrientation(distanceX, distanceY)
       this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes.walk)
       this.board[this.turn.creature.tileIndex].creature.setOrientation(orientation)
 
@@ -211,6 +221,11 @@ class ActionController {
 
   performTheAttack () {
     this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes.attackWE)
+    const distanceX = (this.board[this.indexOfTileToAttack].x - this.board[this.turn.creature.tileIndex].x)
+    const distanceY = (this.board[this.indexOfTileToAttack].y - this.board[this.turn.creature.tileIndex].y)
+    const orientation = this.getOrientation(distanceX, distanceY)
+    this.board[this.turn.creature.tileIndex].creature.setOrientation(orientation)
+    this.indexOfTileToAttack = null
     return this.action
   }
 
