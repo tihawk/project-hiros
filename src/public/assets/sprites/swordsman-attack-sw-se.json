@@ -1,0 +1,159 @@
+{
+  "frames": {
+    "1": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 57,
+        "h": 110
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 4,
+        "y": 0,
+        "w": 57,
+        "h": 110
+      },
+      "sourceSize": {
+        "w": 130,
+        "h": 110
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "2": {
+      "frame": {
+        "x": 57,
+        "y": 0,
+        "w": 57,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 41,
+        "y": 0,
+        "w": 57,
+        "h": 96
+      },
+      "sourceSize": {
+        "w": 125,
+        "h": 116
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "0": {
+      "frame": {
+        "x": 57,
+        "y": 96,
+        "w": 52,
+        "h": 91
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 2,
+        "y": 19,
+        "w": 52,
+        "h": 91
+      },
+      "sourceSize": {
+        "w": 130,
+        "h": 110
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "3": {
+      "frame": {
+        "x": 0,
+        "y": 110,
+        "w": 55,
+        "h": 78
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 59,
+        "y": 38,
+        "w": 55,
+        "h": 78
+      },
+      "sourceSize": {
+        "w": 125,
+        "h": 116
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "5": {
+      "frame": {
+        "x": 109,
+        "y": 96,
+        "w": 57,
+        "h": 72
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 29,
+        "y": 25,
+        "w": 57,
+        "h": 72
+      },
+      "sourceSize": {
+        "w": 125,
+        "h": 116
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "4": {
+      "frame": {
+        "x": 114,
+        "y": 0,
+        "w": 40,
+        "h": 65
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 48,
+        "y": 36,
+        "w": 40,
+        "h": 65
+      },
+      "sourceSize": {
+        "w": 125,
+        "h": 116
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.0",
+    "image": "swordsman-attack-sw-se.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 166,
+      "h": 188
+    },
+    "scale": 1
+  }
+}

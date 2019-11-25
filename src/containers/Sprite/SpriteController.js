@@ -7,6 +7,10 @@ import swordsmanWalkData from '../../public/assets/sprites/swordsman-walk.json'
 import swordsmanWalkImage from '../../public/assets/sprites/swordsman-walk.png'
 import swordsmanAttackWEData from '../../public/assets/sprites/swordsman-attack-w-e.json'
 import swordsmanAttackWEImage from '../../public/assets/sprites/swordsman-attack-w-e.png'
+import swordsmanAttackNWNEData from '../../public/assets/sprites/swordsman-attack-nw-ne.json'
+import swordsmanAttackNWNEImage from '../../public/assets/sprites/swordsman-attack-nw-ne.png'
+import swordsmanAttackSWSEData from '../../public/assets/sprites/swordsman-attack-sw-se.json'
+import swordsmanAttackSWSEImage from '../../public/assets/sprites/swordsman-attack-sw-se.png'
 
 const SpriteController = ({ creature, action, orientation }) => {
   const creatures = {
@@ -22,6 +26,14 @@ const SpriteController = ({ creature, action, orientation }) => {
       'attack-w-e': {
         data: swordsmanAttackWEData,
         image: swordsmanAttackWEImage
+      },
+      'attack-nw-ne': {
+        data: swordsmanAttackNWNEData,
+        image: swordsmanAttackNWNEImage
+      },
+      'attack-sw-se': {
+        data: swordsmanAttackSWSEData,
+        image: swordsmanAttackSWSEImage
       }
     }
   }

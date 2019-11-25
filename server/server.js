@@ -113,6 +113,10 @@ const attacking = () => {
     actions.endTurn()
     updateState()
     io.sockets.emit('action', action)
+  }).catch(err => {
+    console.log(err)
+    updateState()
+    io.sockets.emit('action', action)
   })
 }
 

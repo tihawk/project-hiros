@@ -108,13 +108,31 @@ class ActionController {
     return helper.cubeHexToOddRow(resultCube)
   }
 
-  getOrientation (distanceX, distanceY) {
-    const { x, y, z } = helper.oddRowHexToCube({ x: distanceX, y: distanceY })
+  getDistanceOrientationAndDepth (tileFrom, tileTo) {
+    const result = {}
+
+    const cubeTileFrom = helper.oddRowHexToCube(tileFrom)
+    const cubeTileTo = helper.oddRowHexToCube(tileTo)
+    const dist = helper.calculateCubeDistance(cubeTileFrom, cubeTileTo.x, cubeTileTo.y, cubeTileTo.z)
+    result.distance = dist
+
+    const y = cubeTileTo.y - cubeTileFrom.y
+    const z = cubeTileTo.z - cubeTileFrom.z
     if (y > 0 || (y === 0 && z > 0)) {
-      return orientations.left
+      result.orientation = orientations.left
     } else {
-      return orientations.right
+      result.orientation = orientations.right
     }
+
+    if (z === 0) {
+      result.depth = 'WE'
+    } else if (z < 0) {
+      result.depth = 'NWNE'
+    } else {
+      result.depth = 'SWSE'
+    }
+
+    return result
   }
 
   calculateRange () {
@@ -185,13 +203,13 @@ class ActionController {
     if (!this.board[indexOfTileToMoveTo].hasCreature) {
       console.log('moving...')
 
-      const distanceX = (this.board[indexOfTileToMoveTo].x - this.board[this.turn.creature.tileIndex].x)
-      const distanceY = (this.board[indexOfTileToMoveTo].y - this.board[this.turn.creature.tileIndex].y)
-      const orientation = this.getOrientation(distanceX, distanceY)
+      // const distanceX = (this.board[indexOfTileToMoveTo].x - this.board[this.turn.creature.tileIndex].x)
+      // const distanceY = (this.board[indexOfTileToMoveTo].y - this.board[this.turn.creature.tileIndex].y)
+      const { distance, orientation } = this.getDistanceOrientationAndDepth(this.board[this.turn.creature.tileIndex], this.board[indexOfTileToMoveTo])
       this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes.walk)
       this.board[this.turn.creature.tileIndex].creature.setOrientation(orientation)
 
-      const time = Math.sqrt(distanceX ** 2 + distanceY ** 2) * 300
+      const time = distance * 300
       this.setAction(true, actionTypes.walk, time, indexOfTileToMoveTo)
     } else if (indexOfTileToMoveTo === this.turn.creature.tileIndex) {
       this.setAction(true, actionTypes.attackWE, 600)
@@ -220,10 +238,11 @@ class ActionController {
   }
 
   performTheAttack () {
-    this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes.attackWE)
-    const distanceX = (this.board[this.indexOfTileToAttack].x - this.board[this.turn.creature.tileIndex].x)
-    const distanceY = (this.board[this.indexOfTileToAttack].y - this.board[this.turn.creature.tileIndex].y)
-    const orientation = this.getOrientation(distanceX, distanceY)
+    this.isToAttack = false
+    const { orientation, depth } = this.getDistanceOrientationAndDepth(this.board[this.turn.creature.tileIndex], this.board[this.indexOfTileToAttack])
+    const attackType = 'attack' + depth
+    console.log(attackType)
+    this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes[attackType])
     this.board[this.turn.creature.tileIndex].creature.setOrientation(orientation)
     this.indexOfTileToAttack = null
     return this.action

@@ -1,0 +1,159 @@
+{
+  "frames": {
+    "1": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 57,
+        "h": 110
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 4,
+        "y": 0,
+        "w": 57,
+        "h": 110
+      },
+      "sourceSize": {
+        "w": 130,
+        "h": 110
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "0": {
+      "frame": {
+        "x": 57,
+        "y": 0,
+        "w": 52,
+        "h": 91
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 2,
+        "y": 19,
+        "w": 52,
+        "h": 91
+      },
+      "sourceSize": {
+        "w": 130,
+        "h": 110
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "2": {
+      "frame": {
+        "x": 109,
+        "y": 0,
+        "w": 48,
+        "h": 89
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 36,
+        "y": 0,
+        "w": 48,
+        "h": 89
+      },
+      "sourceSize": {
+        "w": 125,
+        "h": 90
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "4": {
+      "frame": {
+        "x": 57,
+        "y": 91,
+        "w": 50,
+        "h": 80
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 42,
+        "y": 10,
+        "w": 50,
+        "h": 80
+      },
+      "sourceSize": {
+        "w": 125,
+        "h": 90
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "5": {
+      "frame": {
+        "x": 107,
+        "y": 91,
+        "w": 65,
+        "h": 80
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 22,
+        "y": 9,
+        "w": 65,
+        "h": 80
+      },
+      "sourceSize": {
+        "w": 125,
+        "h": 90
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "3": {
+      "frame": {
+        "x": 157,
+        "y": 0,
+        "w": 60,
+        "h": 79
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 44,
+        "y": 11,
+        "w": 60,
+        "h": 79
+      },
+      "sourceSize": {
+        "w": 125,
+        "h": 90
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.0",
+    "image": "sworsman-attack-nw-ne.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 217,
+      "h": 171
+    },
+    "scale": 1
+  }
+}

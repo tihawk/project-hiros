@@ -3,6 +3,8 @@ const creature = {
     idle: 'idle',
     walk: 'walk',
     attackWE: 'attack-w-e',
+    attackNWNE: 'attack-nw-ne',
+    attackSWSE: 'attack-sw-se',
     attacked: 'attacked',
     dying: 'dying'
   },
