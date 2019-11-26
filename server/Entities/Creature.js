@@ -46,10 +46,9 @@ class Creature {
     const damage = (1 + ((this.att - enemy.def) * X)) * this.stackMultiplier * randDamage
 
     const currentHealthOfEnemy = enemy.currentHP - damage
-    console.log(currentHealthOfEnemy)
     if (currentHealthOfEnemy < 0) {
       enemy.stackMultiplier -= 1
-      enemy.currentHP = enemy.hp - damage - enemy.currentHP
+      enemy.currentHP = enemy.hp + currentHealthOfEnemy
     } else {
       enemy.currentHP = currentHealthOfEnemy
     }
