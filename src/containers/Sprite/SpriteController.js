@@ -11,6 +11,10 @@ import swordsmanAttackNWNEData from '../../public/assets/sprites/swordsman-attac
 import swordsmanAttackNWNEImage from '../../public/assets/sprites/swordsman-attack-nw-ne.png'
 import swordsmanAttackSWSEData from '../../public/assets/sprites/swordsman-attack-sw-se.json'
 import swordsmanAttackSWSEImage from '../../public/assets/sprites/swordsman-attack-sw-se.png'
+import swordsmanAttackedData from '../../public/assets/sprites/swordsman-attacked.json'
+import swordsmanAttackedImage from '../../public/assets/sprites/swordsman-attacked.png'
+import swordsmanDyingData from '../../public/assets/sprites/swordsman-dying.json'
+import swordsmanDyingImage from '../../public/assets/sprites/swordsman-dying.png'
 
 const SpriteController = ({ creature, action, orientation }) => {
   const creatures = {
@@ -34,6 +38,14 @@ const SpriteController = ({ creature, action, orientation }) => {
       'attack-sw-se': {
         data: swordsmanAttackSWSEData,
         image: swordsmanAttackSWSEImage
+      },
+      attacked: {
+        data: swordsmanAttackedData,
+        image: swordsmanAttackedImage
+      },
+      dying: {
+        data: swordsmanDyingData,
+        image: swordsmanDyingImage
       }
     }
   }

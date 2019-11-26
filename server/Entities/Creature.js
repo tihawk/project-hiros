@@ -53,6 +53,14 @@ class Creature {
       enemy.currentHP = currentHealthOfEnemy
     }
   }
+
+  checkIfDead () {
+    if (this.stackMultiplier <= 0) {
+      return actionTypes.dying
+    } else {
+      return actionTypes.attacked
+    }
+  }
 }
 
 module.exports = Creature

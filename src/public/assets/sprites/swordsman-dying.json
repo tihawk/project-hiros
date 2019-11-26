@@ -1,0 +1,159 @@
+{
+  "frames": {
+    "0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 55,
+        "h": 88
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 60,
+        "y": 5,
+        "w": 55,
+        "h": 88
+      },
+      "sourceSize": {
+        "w": 133,
+        "h": 97
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "2": {
+      "frame": {
+        "x": 55,
+        "y": 0,
+        "w": 73,
+        "h": 88
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 53,
+        "y": 3,
+        "w": 73,
+        "h": 88
+      },
+      "sourceSize": {
+        "w": 133,
+        "h": 97
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "1": {
+      "frame": {
+        "x": 0,
+        "y": 88,
+        "w": 67,
+        "h": 86
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 44,
+        "y": 8,
+        "w": 67,
+        "h": 86
+      },
+      "sourceSize": {
+        "w": 133,
+        "h": 97
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "3": {
+      "frame": {
+        "x": 67,
+        "y": 88,
+        "w": 54,
+        "h": 79
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 61,
+        "y": 0,
+        "w": 54,
+        "h": 79
+      },
+      "sourceSize": {
+        "w": 133,
+        "h": 97
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "4": {
+      "frame": {
+        "x": 121,
+        "y": 88,
+        "w": 49,
+        "h": 73
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 54,
+        "y": 7,
+        "w": 49,
+        "h": 73
+      },
+      "sourceSize": {
+        "w": 133,
+        "h": 97
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "5": {
+      "frame": {
+        "x": 128,
+        "y": 0,
+        "w": 43,
+        "h": 37
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 33,
+        "y": 48,
+        "w": 43,
+        "h": 37
+      },
+      "sourceSize": {
+        "w": 133,
+        "h": 97
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.0",
+    "image": "swordsman-dying.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 171,
+      "h": 174
+    },
+    "scale": 1
+  }
+}

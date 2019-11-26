@@ -112,14 +112,23 @@ const attacking = () => {
 
   finishedAttacking.then(res => {
     console.log(res)
-    const action = actions.returnCreatureToIdle()
-    actions.endTurn()
+    const action = actions.handleCreatureAttacked()
     updateState()
     io.sockets.emit('action', action)
-  }).catch(err => {
-    console.log(err)
-    updateState()
-    io.sockets.emit('action', action)
+
+    const finishedBeingAttacked = new Promise((resolve, reject) => {
+      setInterval(() => {
+        resolve('enough of being attacked')
+      }, action.time)
+    })
+
+    finishedBeingAttacked.then(res => {
+      console.log(res)
+      const action = actions.finishBeingAttacked()
+      actions.endTurn()
+      updateState()
+      io.sockets.emit('action', action)
+    })
   })
 }
 

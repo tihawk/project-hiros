@@ -236,13 +236,24 @@ class ActionController {
     this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes[attackType])
     this.board[this.turn.creature.tileIndex].creature.setOrientation(orientation)
     this.board[this.turn.creature.tileIndex].creature.attack(this.board[this.indexOfTileToAttack].creature)
-    this.indexOfTileToAttack = null
+
     return this.action
   }
 
-  returnCreatureToIdle () {
-    this.resetAction()
+  handleCreatureAttacked () {
     this.board[this.turn.creature.tileIndex].creature.resetAction()
+    const actionType = this.board[this.indexOfTileToAttack].creature.checkIfDead()
+    this.board[this.indexOfTileToAttack].creature.setAction(actionType)
+
+    this.setAction(true, actionType, 600)
+    return this.action
+  }
+
+  finishBeingAttacked () {
+    this.resetAction()
+    this.board[this.indexOfTileToAttack].creature.resetAction()
+    this.indexOfTileToAttack = null
+
     return this.action
   }
 
@@ -255,7 +266,7 @@ class ActionController {
     } else {
       this.turn.player = this.players[0]
     }
-    this.turn.creature.tileIndex = this.board.findIndex(tile => tile.hasCreature && tile.creature.player === this.turn.player)
+    this.turn.creature.tileIndex = this.board.findIndex(tile => tile.hasCreature && tile.creature.player === this.turn.player && tile.creature.action !== actionTypes.dying)
     this.calculateRange()
   }
 }
