@@ -52,16 +52,16 @@ io.on('connection', (socket) => {
   })
   socket.on('disconnect', () => {
     console.log('[disconnect]', players)
-    actions.resetAll()
-    actions.setLoading('WaitingForPlayers')
-    players.delete(socket.id)
-    updateState()
-    socket.emit('state', {
-      loading: {
-        isLoading: true,
-        message: 'ClickReady'
-      }
-    })
+    // actions.resetAll()
+    // actions.setLoading('WaitingForPlayers')
+    // players.delete(socket.id)
+    // updateState()
+    // socket.emit('state', {
+    //   loading: {
+    //     isLoading: true,
+    //     message: 'ClickReady'
+    //   }
+    // })
   })
   socket.on('click', data => {
     if (players.has(socket.id) && actions.turn.player === socket.id) {

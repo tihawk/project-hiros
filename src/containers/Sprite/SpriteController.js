@@ -21,50 +21,65 @@ const SpriteController = ({ creature, action, orientation }) => {
     Swordsman: {
       idle: {
         data: swordsmanIdleData,
-        image: swordsmanIdleImage
+        image: swordsmanIdleImage,
+        shouldAnimate: false,
+        loop: false
       },
       walk: {
         data: swordsmanWalkData,
         image: swordsmanWalkImage,
-        framesPerStep: Math.floor(Object.keys(swordsmanWalkData.frames).length) / 2
+        framesPerStep: Math.floor(Object.keys(swordsmanWalkData.frames).length) / 2,
+        shouldAnimate: true,
+        loop: true
       },
       'attack-w-e': {
         data: swordsmanAttackWEData,
         image: swordsmanAttackWEImage,
-        framesPerStep: Object.keys(swordsmanAttackWEData.frames).length
+        framesPerStep: Object.keys(swordsmanAttackWEData.frames).length,
+        shouldAnimate: true,
+        loop: false
       },
       'attack-nw-ne': {
         data: swordsmanAttackNWNEData,
         image: swordsmanAttackNWNEImage,
-        framesPerStep: Object.keys(swordsmanAttackNWNEData.frames).length
+        framesPerStep: Object.keys(swordsmanAttackNWNEData.frames).length,
+        shouldAnimate: true,
+        loop: false
       },
       'attack-sw-se': {
         data: swordsmanAttackSWSEData,
         image: swordsmanAttackSWSEImage,
-        framesPerStep: Object.keys(swordsmanAttackSWSEData.frames).length
+        framesPerStep: Object.keys(swordsmanAttackSWSEData.frames).length,
+        shouldAnimate: true,
+        loop: false
       },
       attacked: {
         data: swordsmanAttackedData,
         image: swordsmanAttackedImage,
-        framesPerStep: Object.keys(swordsmanAttackedData.frames).length
+        framesPerStep: Object.keys(swordsmanAttackedData.frames).length,
+        shouldAnimate: true,
+        loop: false
       },
       dying: {
         data: swordsmanDyingData,
         image: swordsmanDyingImage,
-        framesPerStep: Object.keys(swordsmanDyingData.frames).length
+        framesPerStep: Object.keys(swordsmanDyingData.frames).length,
+        shouldAnimate: true,
+        loop: false
       }
     }
   }
-  const { data, image, framesPerStep } = creatures[creature][action]
+  const { data, image, framesPerStep, shouldAnimate, loop } = creatures[creature][action]
 
   return (
     <Sprite
       src={image}
       framesPerStep={framesPerStep}
-      steps={1}
       data={data}
       orientation={orientation}
       action={action}
+      loop={loop}
+      shouldAnimate={shouldAnimate}
     />
   )
 }

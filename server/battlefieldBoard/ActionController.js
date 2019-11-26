@@ -251,7 +251,9 @@ class ActionController {
 
   finishBeingAttacked () {
     this.resetAction()
-    this.board[this.indexOfTileToAttack].creature.resetAction()
+    if (this.board[this.indexOfTileToAttack].creature.action !== actionTypes.dying) {
+      this.board[this.indexOfTileToAttack].creature.resetAction()
+    }
     this.indexOfTileToAttack = null
 
     return this.action
