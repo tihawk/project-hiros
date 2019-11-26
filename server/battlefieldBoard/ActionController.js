@@ -220,7 +220,7 @@ class ActionController {
 
       if (this.isToAttack) {
         // this.isToAttack = false
-        this.setAction(true, actionTypes.attackWE, 600)
+        this.setAction(true, actionTypes.attackWE, 500)
       } else {
         this.resetAction()
       }
@@ -242,16 +242,18 @@ class ActionController {
 
   handleCreatureAttacked () {
     this.board[this.turn.creature.tileIndex].creature.resetAction()
-    const actionType = this.board[this.indexOfTileToAttack].creature.checkIfDead()
-    this.board[this.indexOfTileToAttack].creature.setAction(actionType)
+    const { actionType, isAlive } = this.board[this.indexOfTileToAttack].creature.checkIfAlive()
+    if (!isAlive) {
+      this.battlefield.addCorpse(this.indexOfTileToAttack)
+    }
 
-    this.setAction(true, actionType, 600)
+    this.setAction(true, actionType, 500)
     return this.action
   }
 
   finishBeingAttacked () {
     this.resetAction()
-    if (this.board[this.indexOfTileToAttack].creature.action !== actionTypes.dying) {
+    if (this.board[this.indexOfTileToAttack].hasCreature) {
       this.board[this.indexOfTileToAttack].creature.resetAction()
     }
     this.indexOfTileToAttack = null

@@ -17,6 +17,7 @@ class Creature {
     this.special = { ...special }
 
     this.currentHP = hp
+    this.isAlive = true
     this.action = null
     this.orientation = null
     this.stackMultiplier = null
@@ -54,12 +55,16 @@ class Creature {
     }
   }
 
-  checkIfDead () {
+  checkIfAlive () {
+    let actionType
     if (this.stackMultiplier <= 0) {
-      return actionTypes.dying
+      this.isAlive = false
+      actionType = actionTypes.dying
     } else {
-      return actionTypes.attacked
+      actionType = actionTypes.attacked
     }
+    this.setAction(actionType)
+    return { isAlive: this.isAlive, actionType }
   }
 }
 

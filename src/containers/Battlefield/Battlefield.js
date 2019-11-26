@@ -117,7 +117,7 @@ class Battlefield extends Component {
         console.log('animating')
         const tileToElement = document.getElementById(action.indexOfTileToMoveTo)
         const tileFromElement = document.getElementById(this.state.turn.creature.tileIndex)
-        const spriteToMoveElement = tileFromElement.firstChild
+        const spriteToMoveElement = tileFromElement.lastChild
         const distanceX = tileToElement.getBoundingClientRect().left - tileFromElement.getBoundingClientRect().left
         const distanceY = tileToElement.getBoundingClientRect().top - tileFromElement.getBoundingClientRect().top
 
@@ -152,13 +152,19 @@ class Battlefield extends Component {
                       onMouseLeave={this.hideCreatureInfo}
                       id={hexIndex}
                     >
+                      {hex.hasCorpse
+                        ? <SpriteController
+                          creature={hex.corpse.name}
+                          action={hex.corpse.action}
+                          orientation={hex.corpse.orientation}
+                        />
+                        : null}
                       {hex.hasCreature
                         ? <SpriteController
                           creature={hex.creature.name}
                           action={hex.creature.action}
                           orientation={hex.creature.orientation}
-                        />
-                        : null}
+                        /> : null}
                     </div>
                   </li>
                 )

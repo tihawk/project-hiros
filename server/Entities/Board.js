@@ -43,6 +43,13 @@ class Board {
     this.board[indexOfTileFrom].hasCreature = false
     this.board[indexOfTileFrom].creature = undefined
   }
+
+  addCorpse (tileIndex) {
+    this.board[tileIndex].hasCreature = false
+    this.board[tileIndex].hasCorpse = true
+    this.board[tileIndex].corpse = this.board[tileIndex].creature
+    this.board[tileIndex].creature = undefined
+  }
 }
 
 module.exports = Board
