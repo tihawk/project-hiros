@@ -85,18 +85,22 @@ const movingAndMaybeAttacking = (time) => {
     }, time)
   })
 
-  finishedMoving.then(res => {
-    console.log(res)
-    const action = actions.handleFinishedMoving()
+  finishedMoving
+    .then(res => {
+      console.log(res)
+      const action = actions.handleFinishedMoving()
 
-    if (String(action.type).startsWith('attack-')) {
-      attacking()
-    } else {
-      actions.endTurn()
-      updateState()
-      io.sockets.emit('action', action)
-    }
-  })
+      if (String(action.type).startsWith('attack-')) {
+        attacking()
+      } else {
+        actions.endTurn()
+        updateState()
+        io.sockets.emit('action', action)
+      }
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 const attacking = () => {
@@ -129,7 +133,13 @@ const attacking = () => {
       updateState()
       io.sockets.emit('action', action)
     })
+      .catch(err => {
+        console.log(err)
+      })
   })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 const updateState = () => {

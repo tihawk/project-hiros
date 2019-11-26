@@ -8,6 +8,7 @@ class Sprite extends Component {
 
     tick = 0
     frame = 0
+    step = 0
     action = 'idle'
 
     componentDidMount () {
@@ -30,17 +31,21 @@ class Sprite extends Component {
         const { framesPerStep } = this.props
         const states = Object.keys(this.props.data.frames).length
 
+        // if (this.step <= this.steps) {
         if (this.tick === framesPerStep) {
+          this.step += 1
           this.tick = 0
           this.setState({ state: (state + 1) % states })
         }
         this.tick += 1
 
         this.frame = requestAnimationFrame(this.animate)
+        // }
       }
     }
 
     render () {
+      this.steps = this.props.steps
       this.action = this.props.action
       const { state } = this.state
       let tile = {

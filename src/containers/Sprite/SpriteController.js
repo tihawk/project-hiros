@@ -25,36 +25,43 @@ const SpriteController = ({ creature, action, orientation }) => {
       },
       walk: {
         data: swordsmanWalkData,
-        image: swordsmanWalkImage
+        image: swordsmanWalkImage,
+        framesPerStep: Math.floor(Object.keys(swordsmanWalkData.frames).length) / 2
       },
       'attack-w-e': {
         data: swordsmanAttackWEData,
-        image: swordsmanAttackWEImage
+        image: swordsmanAttackWEImage,
+        framesPerStep: Object.keys(swordsmanAttackWEData.frames).length
       },
       'attack-nw-ne': {
         data: swordsmanAttackNWNEData,
-        image: swordsmanAttackNWNEImage
+        image: swordsmanAttackNWNEImage,
+        framesPerStep: Object.keys(swordsmanAttackNWNEData.frames).length
       },
       'attack-sw-se': {
         data: swordsmanAttackSWSEData,
-        image: swordsmanAttackSWSEImage
+        image: swordsmanAttackSWSEImage,
+        framesPerStep: Object.keys(swordsmanAttackSWSEData.frames).length
       },
       attacked: {
         data: swordsmanAttackedData,
-        image: swordsmanAttackedImage
+        image: swordsmanAttackedImage,
+        framesPerStep: Object.keys(swordsmanAttackedData.frames).length
       },
       dying: {
         data: swordsmanDyingData,
-        image: swordsmanDyingImage
+        image: swordsmanDyingImage,
+        framesPerStep: Object.keys(swordsmanDyingData.frames).length
       }
     }
   }
-  const { data, image } = creatures[creature][action]
+  const { data, image, framesPerStep } = creatures[creature][action]
 
   return (
     <Sprite
       src={image}
-      framesPerStep={Math.floor(Object.keys(data.frames).length / 2)}
+      framesPerStep={framesPerStep}
+      steps={1}
       data={data}
       orientation={orientation}
       action={action}
