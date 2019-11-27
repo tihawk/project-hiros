@@ -21,6 +21,7 @@ const InfoPanel = ({ t, creatureData, id }) => {
       </div>
       <div className={classes.redPanel}>
         <div className={classes.infoSubtile}>
+          <div>Speed: {Math.floor(creatureData.spd)}</div>
           <div>Health Left: {Math.floor(creatureData.currentHP)}</div>
         </div>
       </div>

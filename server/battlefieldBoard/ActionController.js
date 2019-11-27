@@ -1,6 +1,7 @@
 const helper = require('./helper')
 const Swordsman = require('../Entities/Creatures/Swordsman')
 const Army = require('../Entities/Army')
+const InitiativeQueue = require('../Entities/PriorityQueue')
 const Board = require('../Entities/Board')
 const { actionTypes, orientations } = require('../Entities/Enums').creature
 
@@ -152,7 +153,7 @@ class ActionController {
     for (let i = 0; i < 2; i++) {
       const army = new Army(this.players[i])
       for (let j = 0; j < 7; j++) {
-        army.addMember(new Swordsman(1,
+        army.addMember(new Swordsman(Math.floor(Math.random() * (10 - 1)) + 1,
           actionTypes.idle, i === 0 ? orientations.right : orientations.left,
           this.players[i]), j)
       }
@@ -160,10 +161,15 @@ class ActionController {
     }
   }
 
-  populateGrid () {
+  initBattlefield () {
     this.resetLoading()
     this.populateArmies()
     this.battlefield.populateBoard(this.armies)
+    this.board = this.battlefield.getBoard()
+    this.queue = new InitiativeQueue(this.board)
+    // console.log(this.queue.queue)
+    this.turn = this.queue.getNextTurnObject()
+    console.log(this.turn)
     this.calculateRange()
   }
 
@@ -262,15 +268,9 @@ class ActionController {
   }
 
   endTurn () {
-    // TODOONLY A PROTOTYPE
     const currentTurn = { ...this.turn }
+    this.turn = this.queue.getNextTurnObject()
     this.turn.number = currentTurn.number + 1
-    if (currentTurn.player === this.players[0]) {
-      this.turn.player = this.players[1]
-    } else {
-      this.turn.player = this.players[0]
-    }
-    this.turn.creature.tileIndex = this.board.findIndex(tile => tile.hasCreature && tile.creature.player === this.turn.player && tile.creature.action !== actionTypes.dying)
     this.calculateRange()
   }
 }

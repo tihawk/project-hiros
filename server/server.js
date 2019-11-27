@@ -28,7 +28,7 @@ io.on('connection', (socket) => {
           actions.addPlayer(value)
         })
         actions.setFirstTurn()
-        actions.populateGrid()
+        actions.initBattlefield()
       }
     }
     updateState()

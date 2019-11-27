@@ -17,16 +17,21 @@ class Board {
   }
 
   populateBoard (armies) {
+    const spread = 2
+    let army1Counter = 0
+    let army2Counter = 0
     for (const tile of this.board) {
-      if (tile.x === 0 && tile.y < 7) {
-        if (armies[0].army[tile.y]) {
+      if (tile.x === 0 && tile.y % spread === 0) {
+        if (armies[0].army[army1Counter]) {
           tile.hasCreature = true
-          tile.creature = armies[0].army[tile.y]
+          tile.creature = armies[0].army[army1Counter]
+          army1Counter += 1
         }
-      } else if (tile.x === 14 && tile.y < 7) {
-        if (armies[1].army[tile.y]) {
+      } else if (tile.x === 14 && tile.y % spread === 0) {
+        if (armies[1].army[army2Counter]) {
           tile.hasCreature = true
-          tile.creature = armies[1].army[tile.y]
+          tile.creature = armies[1].army[army2Counter]
+          army2Counter += 1
         }
       }
     }
