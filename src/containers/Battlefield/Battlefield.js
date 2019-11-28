@@ -140,10 +140,8 @@ class Battlefield extends Component {
   checkTypeOfTile = (hexIndex) => {
     if (parseInt(this.state.turn.creature.tileIndex) === hexIndex) {
       return classes.active
-    } else if (this.state.board[hexIndex].hasCreature) {
-      if (this.state.board[hexIndex].creature.player === this.state.turn.player) {
+    } else if (this.state.board[hexIndex].hasCreature && this.state.board[hexIndex].creature.player === this.state.turn.player) {
         return classes.unsteppable
-      }
     } else if (this.state.turn.creature.range.includes(hexIndex)) {
       return classes.inRange
     }
