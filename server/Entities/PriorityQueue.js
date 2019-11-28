@@ -19,7 +19,7 @@ class PriorityQueue {
     for (const tileIndex in board) {
       if (board[tileIndex].hasCreature) {
         this.queue.push({
-          tileIndex: tileIndex,
+          tileIndex: parseInt(tileIndex),
           armyIndex: board[tileIndex].creature.armyIndex,
           playerIndex: this.players.indexOf(board[tileIndex].creature.player),
           creature: board[tileIndex].creature
