@@ -3,8 +3,9 @@
 }
 
 .field {
-    margin: 10px;
     position: relative;
+    margin: 10px;
+    max-width: 100vmax;
     background-image: url(../../public/assets/battlegrounds/CmBkMag.png);
     background-size: cover;
     background-repeat: no-repeat;
@@ -122,9 +123,6 @@ li:nth-child(30n+30)
     margin: 0;
     padding: 0;
     background: none;
-    /* background-image: url(../../public/assets/textures/hex-intricate.png);
-    background-size: cover;
-    background-repeat: no-repeat; */
 }
 
 .footer {

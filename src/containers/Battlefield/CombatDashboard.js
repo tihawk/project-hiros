@@ -15,7 +15,8 @@ class CombatDashboard extends Component {
   }
 
   scrollToBottom = () => {
-    this.messagesEnd.scrollIntoView({ behavior: 'smooth' })
+    // this.messagesEnd.scrollTop({ behavior: 'smooth' })
+    this.messagesEnd.parentNode.scrollTop = this.messagesEnd.offsetTop
   }
 
   render () {

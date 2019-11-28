@@ -32,10 +32,8 @@ class Battlefield extends Component {
     this.socket.on('state', data => {
       this.setState({ ...data })
       const newMessage = 'Round ' + this.state.turn.roundNum + ', Turn ' + this.state.turn.turnNum
-      const combatDashboardMessages = [...this.state.combatDashboardMessages]
-      combatDashboardMessages.push(newMessage)
       this.setState({
-        combatDashboardMessages
+        combatDashboardMessages: this.state.combatDashboardMessages.concat(newMessage)
       })
     })
     this.socket.on('action', action => {
@@ -141,7 +139,7 @@ class Battlefield extends Component {
     if (parseInt(this.state.turn.creature.tileIndex) === hexIndex) {
       return classes.active
     } else if (this.state.board[hexIndex].hasCreature && this.state.board[hexIndex].creature.player === this.state.turn.player) {
-        return classes.unsteppable
+      return classes.unsteppable
     } else if (this.state.turn.creature.range.includes(hexIndex)) {
       return classes.inRange
     }
