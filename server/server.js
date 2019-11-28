@@ -27,7 +27,7 @@ io.on('connection', (socket) => {
         players.forEach(value => {
           actions.addPlayer(value)
         })
-        actions.setFirstTurn()
+        // actions.setFirstTurn()
         actions.initBattlefield()
       }
     }

@@ -58,16 +58,16 @@ class ActionController {
     this.players.push(id)
   }
 
-  setFirstTurn () {
-    this.turn = {
-      player: this.players[0],
-      creature: {
-        tileIndex: 0,
-        range: []
-      },
-      number: 0
-    }
-  }
+  // setFirstTurn () {
+  //   this.turn = {
+  //     player: this.players[0],
+  //     creature: {
+  //       tileIndex: 0,
+  //       range: []
+  //     },
+  //     number: 0
+  //   }
+  // }
 
   setLoading (message) {
     this.loading = {
@@ -153,7 +153,7 @@ class ActionController {
     for (let i = 0; i < 2; i++) {
       const army = new Army(this.players[i])
       for (let j = 0; j < 7; j++) {
-        army.addMember(new Swordsman(Math.floor(Math.random() * (10 - 1)) + 1,
+        army.addMember(new Swordsman(Math.floor(Math.random() * (3 - 1)) + 1,
           actionTypes.idle, i === 0 ? orientations.right : orientations.left,
           this.players[i]), j)
       }
@@ -166,7 +166,7 @@ class ActionController {
     this.populateArmies()
     this.battlefield.populateBoard(this.armies)
     this.board = this.battlefield.getBoard()
-    this.queue = new InitiativeQueue(this.board)
+    this.queue = new InitiativeQueue(this.board, this.players)
     // console.log(this.queue.queue)
     this.turn = this.queue.getNextTurnObject()
     console.log(this.turn)

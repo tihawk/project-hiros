@@ -7,6 +7,7 @@ class Army {
   addMember (creature, position) {
     if (position < 7) {
       if (!this.army[position]) {
+        creature.armyIndex = position
         this.army.splice(position, 1, creature)
       }
     }
