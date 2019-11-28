@@ -27,6 +27,7 @@
   },
   "eslintConfig": {
     "extends": [
+      "eslint:recommended",
       "react-app",
       "standard"
     ],

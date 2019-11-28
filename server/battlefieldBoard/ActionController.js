@@ -17,7 +17,8 @@ class ActionController {
         tileIndex: 0,
         range: []
       },
-      number: 0
+      roundNum: 0,
+      turnNum: 0
     }
     this.loading = {
       isLoading: true,
@@ -45,7 +46,8 @@ class ActionController {
         tileIndex: 0,
         range: []
       },
-      number: 0
+      roundNum: 0,
+      turnNum: 0
     }
     this.resetLoading()
     this.resetAction()
@@ -57,17 +59,6 @@ class ActionController {
   addPlayer (id) {
     this.players.push(id)
   }
-
-  // setFirstTurn () {
-  //   this.turn = {
-  //     player: this.players[0],
-  //     creature: {
-  //       tileIndex: 0,
-  //       range: []
-  //     },
-  //     number: 0
-  //   }
-  // }
 
   setLoading (message) {
     this.loading = {
@@ -268,9 +259,7 @@ class ActionController {
   }
 
   endTurn () {
-    const currentTurn = { ...this.turn }
     this.turn = this.queue.getNextTurnObject()
-    this.turn.number = currentTurn.number + 1
     this.calculateRange()
   }
 }

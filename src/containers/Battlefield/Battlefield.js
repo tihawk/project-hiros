@@ -22,7 +22,8 @@ class Battlefield extends Component {
       time: null,
       type: null
     },
-    creatureHoveredOver: {}
+    creatureHoveredOver: {},
+    combatDashboardMessages: []
   }
 
   componentDidMount () {
@@ -30,6 +31,13 @@ class Battlefield extends Component {
     this.socket = socketIOClient(endpoint)
     this.socket.on('state', data => {
       this.setState({ ...data })
+      const newMessage = 'Round ' + this.state.turn.roundNum + ', Turn ' + this.state.turn.turnNum
+      const combatDashboardMessages = [...this.state.combatDashboardMessages]
+      combatDashboardMessages.push(newMessage)
+      console.log(this.state.combatDashboardMessages)
+      this.setState({
+        combatDashboardMessages
+      })
     })
     this.socket.on('action', action => {
       this.setState({ action })
@@ -173,7 +181,7 @@ class Battlefield extends Component {
             <CreatureInfo id={this.state.players[1]} creatureData={creatureHoveredOver} />
           </div>}
         <div>
-          <CombatDashboard playerReady={this.playerReady} playerDisconnect={this.playerDisconnect} />
+          <CombatDashboard playerReady={this.playerReady} playerDisconnect={this.playerDisconnect} messages={this.state.combatDashboardMessages} />
           <CombatFooter />
         </div>
       </div>

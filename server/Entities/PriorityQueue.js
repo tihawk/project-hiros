@@ -6,17 +6,17 @@ class PriorityQueue {
     this.queueCopy = []
     this.dequeued = []
 
+    this.roundNum = 0
+    this.turnNum = 0
+    this.lastPlayerLastRound = 1
+
     this.getNewQueue()
   }
 
   getNewQueue () {
+    this.roundNum += 1
+    this.turnNum = 0
     const board = this.board
-    // const armies = this.armies
-    // for (const army of armies) {
-    //   for (const memberIndex in army.army) {
-    //     this.queue.push({ armyIndex: memberIndex })
-    //   }
-    // }
     for (const tileIndex in board) {
       if (board[tileIndex].hasCreature) {
         const elemToPush = {
@@ -33,34 +33,27 @@ class PriorityQueue {
   }
 
   updateQueue () {
+    // sort by speed initiative and army position
     this.queue.sort((elemA, elemB) => {
       const initiative = elemB.creature.stackMultiplier * elemB.creature.spd - elemA.creature.stackMultiplier * elemA.creature.spd
       if (initiative < 0) return -1
       if (initiative > 0) return 1
-      //   if (elemA.playerIndex > elemB.playerIndex) return 1
-      //   if (elemA.playerIndex < elemB.playerIndex) return -1
       if (elemA.armyIndex > elemB.armyIndex) return 1
       if (elemA.armyIndex < elemB.armyIndex) return -1
       return 0
-      //   if (initiative === 0) {
-      // if (elemA.playerIndex === elemB.playerIndex) {
-      //   const elemAIndex = this.queueCopy.findIndex(elem => elem.armyIndex === elemA.armyIndex && elem.tileIndex === elemA.tileIndex)
-      //   if (elemAIndex === -1) console.log(elemA)
-      //   if (elemAIndex !== 0) {
-      //     const prevElem = this.queueCopy[elemAIndex - 1]
-      //     if (prevElem.playerIndex === elemAIndex.playerIndex) {
-      //       initiative = 1
-      //     } else {
-      //       initiative = -1
-      //     }
-      //   } else {
-      //     initiative = elemA.playerIndex - elemB.playerIndex
-      //   }
-      // }
-    //   }
-    //   return initiative
     })
-    // this.queue.sort((elemA, elemB) => elemB.creature.stackMultiplier * elemB.creature.spd - elemA.creature.stackMultiplier * elemA.creature.spd)
+    // sort by making sure that in case of first two stacks have the same initiative, and are of different
+    // players, first plays the player who didn't play last round (or in case of first round, player on the left)
+    const firstElem = { ...this.queue[0] }
+    const secondElem = { ...this.queue[1] }
+    const initiative = secondElem.creature.stackMultiplier * secondElem.creature.spd - firstElem.creature.stackMultiplier * firstElem.creature.spd
+    if (initiative === 0) {
+      if (this.lastPlayerLastRound === firstElem.playerIndex && firstElem.playerIndex !== secondElem.playerIndex) {
+        this.queue.splice(0, 1, secondElem)
+        this.queue.splice(1, 1, firstElem)
+      }
+    }
+    // sort by alternating players when they have stacks of same initiative
     for (let i = 1; i < this.queue.length - 1; i++) {
       const prevElem = this.queue[i - 1]
       const elem = this.queue[i]
@@ -75,10 +68,12 @@ class PriorityQueue {
         }
       }
     }
+    this.lastPlayerLastRound = this.queue[this.queue.length - 1].playerIndex
     return this.queue
   }
 
   getNextTurnObject () {
+    this.turnNum += 1
     if (this.queue.length === 0) {
       this.getNewQueue()
     }
@@ -98,7 +93,8 @@ class PriorityQueue {
         tileIndex: tileIndex,
         range: []
       },
-      number: null
+      roundNum: this.roundNum,
+      turnNum: this.turnNum
     }
     return turn
   }
