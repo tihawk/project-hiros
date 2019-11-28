@@ -3,7 +3,6 @@ class PriorityQueue {
     this.board = board
     this.players = players
     this.queue = []
-    this.queueCopy = []
     this.dequeued = []
 
     this.roundNum = 0
@@ -19,14 +18,12 @@ class PriorityQueue {
     const board = this.board
     for (const tileIndex in board) {
       if (board[tileIndex].hasCreature) {
-        const elemToPush = {
+        this.queue.push({
           tileIndex: tileIndex,
           armyIndex: board[tileIndex].creature.armyIndex,
           playerIndex: this.players.indexOf(board[tileIndex].creature.player),
           creature: board[tileIndex].creature
-        }
-        this.queue.push({ ...elemToPush })
-        this.queueCopy.push({ ...elemToPush })
+        })
       }
     }
     this.updateQueue()

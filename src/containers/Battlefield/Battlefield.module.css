@@ -110,6 +110,23 @@ li:nth-child(30n+30)
     background-repeat: no-repeat;
 }
 
+.active {
+    margin: 0;
+    padding: 0;
+    background-image: url(../../public/assets/textures/hex-active.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.unsteppable {
+    margin: 0;
+    padding: 0;
+    background: none;
+    /* background-image: url(../../public/assets/textures/hex-intricate.png);
+    background-size: cover;
+    background-repeat: no-repeat; */
+}
+
 .footer {
     position: fixed;
     left: 0;

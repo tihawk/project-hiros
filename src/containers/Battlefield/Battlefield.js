@@ -34,7 +34,6 @@ class Battlefield extends Component {
       const newMessage = 'Round ' + this.state.turn.roundNum + ', Turn ' + this.state.turn.turnNum
       const combatDashboardMessages = [...this.state.combatDashboardMessages]
       combatDashboardMessages.push(newMessage)
-      console.log(this.state.combatDashboardMessages)
       this.setState({
         combatDashboardMessages
       })
@@ -138,6 +137,18 @@ class Battlefield extends Component {
     }
   }
 
+  checkTypeOfTile = (hexIndex) => {
+    if (parseInt(this.state.turn.creature.tileIndex) === hexIndex) {
+      return classes.active
+    } else if (this.state.board[hexIndex].hasCreature) {
+      if (this.state.board[hexIndex].creature.player === this.state.turn.player) {
+        return classes.unsteppable
+      }
+    } else if (this.state.turn.creature.range.includes(hexIndex)) {
+      return classes.inRange
+    }
+  }
+
   render () {
     // const { t } = this.props
     const { board, creatureHoveredOver } = this.state
@@ -153,7 +164,10 @@ class Battlefield extends Component {
                 return (
                   <li key={hexIndex}>
                     <div
-                      className={[classes.hexagon, this.state.turn.creature.range.includes(hexIndex) ? classes.inRange : 'hi'].join(' ')}
+                      className={[
+                        classes.hexagon,
+                        this.checkTypeOfTile(hexIndex)
+                      ].join(' ')}
                       onClick={(e) => this.handleTileClicked(e, hexIndex)}
                       onMouseMove={(e) => this.handleTileHover(e, hexIndex, hex)}
                       onMouseEnter={() => this.showCreatureInfo(hex.creature || null)}
