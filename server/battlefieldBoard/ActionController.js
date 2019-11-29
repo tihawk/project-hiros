@@ -168,6 +168,7 @@ class ActionController {
   }
 
   handleTileClicked (tileIndex, corner) {
+    this.isToAttack = false
     if (this.turn.creature.range.includes(tileIndex)) {
       if (!this.board[tileIndex].hasCreature) {
         console.log('calling moving')
@@ -185,6 +186,7 @@ class ActionController {
   }
 
   handleCreatureAttack (tileIndex, corner) {
+    console.log('[handleCreatureAttack]')
     this.isToAttack = true
     this.indexOfTileToAttack = tileIndex
 
@@ -219,7 +221,6 @@ class ActionController {
       this.calculateRange()
 
       if (this.isToAttack) {
-        // this.isToAttack = false
         this.setAction(true, actionTypes.attackWE, 500)
       } else {
         this.resetAction()
