@@ -24,25 +24,16 @@ io.on('connection', (socket) => {
       players.add(socket.id)
       if (players.size === 2) {
         console.log('populating grid')
-        players.forEach(value => {
-          actions.addPlayer(value)
-        })
-        // actions.setFirstTurn()
-        actions.initBattlefield()
+        actions.resetAll()
+        actions.initBattlefield(players)
       }
     }
     updateState()
     console.log(players)
   })
   socket.on('player-disconnect', () => {
-    if (players.has(socket.id)) {
-      console.log('user disconnected')
-      actions.resetAll()
-      actions.setLoading('WaitingForPlayers')
-      players.delete(socket.id)
-      console.log(players)
-    }
-    updateState()
+    console.log('user disconnected')
+    players.delete(socket.id)
     socket.emit('state', {
       loading: {
         isLoading: true,
@@ -52,16 +43,13 @@ io.on('connection', (socket) => {
   })
   socket.on('disconnect', () => {
     console.log('[disconnect]', players)
-    // actions.resetAll()
-    // actions.setLoading('WaitingForPlayers')
-    // players.delete(socket.id)
-    // updateState()
-    // socket.emit('state', {
-    //   loading: {
-    //     isLoading: true,
-    //     message: 'ClickReady'
-    //   }
-    // })
+    players.delete(socket.id)
+    socket.emit('state', {
+      loading: {
+        isLoading: true,
+        message: 'ClickReady'
+      }
+    })
   })
   socket.on('click', data => {
     if (players.has(socket.id) && actions.turn.player === socket.id) {

@@ -152,7 +152,10 @@ class ActionController {
     }
   }
 
-  initBattlefield () {
+  initBattlefield (players) {
+    players.forEach(value => {
+      this.addPlayer(value)
+    })
     this.resetLoading()
     this.populateArmies()
     this.battlefield.populateBoard(this.armies)
