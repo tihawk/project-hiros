@@ -3,7 +3,17 @@ const socketIO = require('socket.io')
 const http = require('http')
 const app = express()
 const server = http.Server(app)
-const io = socketIO(server)
+const io = socketIO(server, {
+  handlePreflightRequest: (req, res) => {
+    const headers = {
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-clientid',
+      'Access-Control-Allow-Origin': req.headers.origin, // or the specific origin you want to give access to,
+      'Access-Control-Allow-Credentials': true
+    }
+    res.writeHead(200, headers)
+    res.end()
+  }
+})
 
 const ActionController = require('./battlefieldBoard/ActionController')
 
@@ -13,27 +23,28 @@ server.listen(PORT, () => {
   console.log('Starting server on port', PORT)
 })
 
-const players = new Set([])
+const playerSockets = new Set([])
 const actions = new ActionController()
 io.on('connection', (socket) => {
-  if (players.size >= 2) {
+  // console.log(socket)
+  if (playerSockets.size >= 2) {
     sendStateTo(socket)
   }
   socket.on('player-ready', () => {
-    if (players.size < 2) {
-      players.add(socket.id)
-      if (players.size === 2) {
+    if (playerSockets.size < 2) {
+      playerSockets.add(socket.handshake.headers['x-clientid'])
+      if (playerSockets.size === 2) {
         console.log('populating grid')
         actions.resetAll()
-        actions.initBattlefield(players)
+        actions.initBattlefield(playerSockets)
       }
     }
     updateState()
-    console.log(players)
+    console.log(playerSockets)
   })
   socket.on('player-disconnect', () => {
     console.log('user disconnected')
-    players.delete(socket.id)
+    playerSockets.delete(socket.handshake.headers['x-clientid'])
     socket.emit('state', {
       loading: {
         isLoading: true,
@@ -42,17 +53,17 @@ io.on('connection', (socket) => {
     })
   })
   socket.on('disconnect', () => {
-    console.log('[disconnect]', players)
-    players.delete(socket.id)
-    socket.emit('state', {
-      loading: {
-        isLoading: true,
-        message: 'ClickReady'
-      }
-    })
+    console.log('[disconnect]', playerSockets)
+    // playerSockets.delete(socket.id)
+    // socket.emit('state', {
+    //   loading: {
+    //     isLoading: true,
+    //     message: 'ClickReady'
+    //   }
+    // })
   })
   socket.on('click', data => {
-    if (players.has(socket.id) && actions.turn.player === socket.id) {
+    if (playerSockets.has(socket.handshake.headers['x-clientid']) && actions.turn.player === socket.handshake.headers['x-clientid']) {
       const action = actions.handleTileClicked(data.tileIndex, data.corner)
       updateState()
       io.sockets.emit('action', action)

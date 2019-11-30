@@ -23,12 +23,21 @@ class Battlefield extends Component {
       type: null
     },
     creatureHoveredOver: {},
-    combatDashboardMessages: []
+    combatDashboardMessages: [],
+    nickname: String(Math.random())
   }
 
   componentDidMount () {
     const { endpoint } = this.state
-    this.socket = socketIOClient(endpoint)
+    this.socket = socketIOClient(endpoint, {
+      transportOptions: {
+        polling: {
+          extraHeaders: {
+            'x-clientid': this.state.nickname
+          }
+        }
+      }
+    })
     this.socket.on('state', data => {
       this.setState({ ...data })
       const newMessage = 'Round ' + this.state.turn.roundNum + ', Turn ' + this.state.turn.turnNum
@@ -83,7 +92,7 @@ class Battlefield extends Component {
   }
 
   handleTileClicked = (e, tileIndex) => {
-    if (this.state.turn.player === this.socket.id) {
+    if (this.state.turn.player === this.state.nickname) {
       const corner = whichCornerOfHex(e)
       this.socket.emit('click', { tileIndex, corner })
     }
@@ -92,7 +101,7 @@ class Battlefield extends Component {
   handleTileHover = (e, hexIndex, { hasCreature, creature, x, y }) => {
     const { style } = e.target
 
-    if (this.state.turn.player === this.socket.id) {
+    if (this.state.turn.player === this.state.nickname) {
       const { range } = this.state.turn.creature
       const inRange = range.includes(hexIndex)
 
