@@ -148,7 +148,7 @@ li:nth-child(30n+30)
     display: flex;
     justify-content: space-around;
     align-items: center;
-    height: 48px;
+    height: 42px;
     margin: 0px 2px;
     background-image: url(../../public/assets/textures/461223166.jpg);
     background-repeat: repeat-x;
@@ -163,6 +163,7 @@ li:nth-child(30n+30)
     height: 100%;
     flex-flow: 2;
     width: 100%;
+    font-size: 0.9em;
     overflow-y: scroll;
 }
 
@@ -172,7 +173,8 @@ button {
     flex-grow: 1;
     background-image: url(../../public/assets/textures/461223166.jpg);
     background-color: brown;
-    border-right: 2px solid gold;
+    border: none;
+    border-right: 1px solid gold;
 }
 
 .infoPanel {
