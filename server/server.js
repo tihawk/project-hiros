@@ -23,28 +23,27 @@ server.listen(PORT, () => {
   console.log('Starting server on port', PORT)
 })
 
-const playerSockets = new Set([])
+const players = new Set([])
 const actions = new ActionController()
 io.on('connection', (socket) => {
-  // console.log(socket)
-  if (playerSockets.size >= 2) {
+  if (players.size >= 2) {
     sendStateTo(socket)
   }
   socket.on('player-ready', () => {
-    if (playerSockets.size < 2) {
-      playerSockets.add(socket.handshake.headers['x-clientid'])
-      if (playerSockets.size === 2) {
+    if (players.size < 2) {
+      players.add(socket.handshake.headers['x-clientid'])
+      if (players.size === 2) {
         console.log('populating grid')
         actions.resetAll()
-        actions.initBattlefield(playerSockets)
+        actions.initBattlefield(players)
       }
     }
     updateState()
-    console.log(playerSockets)
+    console.log(players)
   })
   socket.on('player-disconnect', () => {
     console.log('user disconnected')
-    playerSockets.delete(socket.handshake.headers['x-clientid'])
+    players.delete(socket.handshake.headers['x-clientid'])
     socket.emit('state', {
       loading: {
         isLoading: true,
@@ -53,7 +52,7 @@ io.on('connection', (socket) => {
     })
   })
   socket.on('disconnect', () => {
-    console.log('[disconnect]', playerSockets)
+    console.log('[disconnect]', players)
     // playerSockets.delete(socket.id)
     // socket.emit('state', {
     //   loading: {
@@ -63,7 +62,7 @@ io.on('connection', (socket) => {
     // })
   })
   socket.on('click', data => {
-    if (playerSockets.has(socket.handshake.headers['x-clientid']) && actions.turn.player === socket.handshake.headers['x-clientid']) {
+    if (players.has(socket.handshake.headers['x-clientid']) && actions.turn.player === socket.handshake.headers['x-clientid']) {
       const action = actions.handleTileClicked(data.tileIndex, data.corner)
       updateState()
       io.sockets.emit('action', action)
