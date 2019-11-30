@@ -23,12 +23,23 @@ class CombatDashboard extends Component {
     const { notAllowedToAct } = this.props
     return (
       <div className={classes.dashboard}>
-        <button onClick={this.props.playerReady}>plr rdy</button>
-        <button onClick={this.props.playerDisconnect}>
-          <img style={{ height: '75%' }} alt="smtin" src="https://previews.123rf.com/images/tmricons/tmricons1707/tmricons170700580/81207012-shuffle-sign-icon-random-button-.jpg" />
+        <button onClick={this.props.playerReady}
+          title="Click to start/join a battle"
+        >
+          <div className={classes.settingsButton}></div>
         </button>
-        <button>btn</button>
-        <button>btn</button>
+        <button
+          onClick={this.props.playerDisconnect}
+          title="Surrender"
+        >
+          <div className={classes.surrenderButton}></div>
+        </button>
+        <button disabled>
+          <div className={classes.retreatButton}></div>
+        </button>
+        <button disabled>
+          <div className={classes.autoCombatButton}></div>
+        </button>
         <div className={classes.log}>
           {this.state.messages.map((message, index) => {
             return <div key={index}>{message}</div>
@@ -36,8 +47,18 @@ class CombatDashboard extends Component {
           <div style={{ float: 'left', clear: 'both' }}
             ref={(el) => { this.messagesEnd = el }}></div>
         </div>
-        <button onClick={() => this.setState({ messages: this.state.messages.concat('random message') })}>btn</button>
-        <button>btn</button>
+        <button
+          title="Cast Spell (disabled)"
+          onClick={() => this.setState({ messages: this.state.messages.concat('random message') })}
+        >
+          <div className={classes.spellsButton}></div>
+        </button>
+        <button
+          disabled={true}
+          title="Wait (disabled)"
+        >
+          <div className={classes.waitButton}></div>
+        </button>
         <button title="Defend"
           disabled={notAllowedToAct}
           onClick={this.props.onDefend}

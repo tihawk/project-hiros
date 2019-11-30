@@ -148,7 +148,7 @@ li:nth-child(30n+30)
     display: flex;
     justify-content: space-around;
     align-items: center;
-    height: 60px;
+    height: 48px;
     margin: 0px 2px;
     background-image: url(../../public/assets/textures/461223166.jpg);
     background-repeat: repeat-x;
@@ -168,6 +168,7 @@ li:nth-child(30n+30)
 
 button {
     height: 100%;
+    padding: 0;
     flex-grow: 1;
     background-image: url(../../public/assets/textures/461223166.jpg);
     background-color: brown;
@@ -225,11 +226,71 @@ button {
     font-size: 1vw;
 }
 
+.settingsButton {
+    height: 100%;
+    width: 50px;
+    background: unset;
+    background-image: url(../../public/assets/combat-bar/settings.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.surrenderButton {
+    height: 100%;
+    width: 50px;
+    background: unset;
+    background-image: url(../../public/assets/combat-bar/surrender.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.retreatButton {
+    height: 100%;
+    width: 50px;
+    background: unset;
+    background-image: url(../../public/assets/combat-bar/retreat.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.autoCombatButton {
+    height: 100%;
+    width: 50px;
+    background: unset;
+    background-image: url(../../public/assets/combat-bar/auto-combat.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.spellsButton {
+    height: 100%;
+    width: 50px;
+    background: unset;
+    background-image: url(../../public/assets/combat-bar/spells.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.waitButton {
+    height: 100%;
+    width: 50px;
+    background: unset;
+    background-image: url(../../public/assets/combat-bar/wait.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 .defendButton {
     height: 100%;
     width: 50px;
     background: unset;
-    background-image: url(../../public/assets/primary-skills/defend.png);
+    background-image: url(../../public/assets/combat-bar/defend.png);
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
