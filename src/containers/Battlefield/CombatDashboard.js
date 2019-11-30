@@ -20,6 +20,7 @@ class CombatDashboard extends Component {
   }
 
   render () {
+    const { notAllowedToAct } = this.props
     return (
       <div className={classes.dashboard}>
         <button onClick={this.props.playerReady}>plr rdy</button>
@@ -37,7 +38,12 @@ class CombatDashboard extends Component {
         </div>
         <button onClick={() => this.setState({ messages: this.state.messages.concat('random message') })}>btn</button>
         <button>btn</button>
-        <button>btn</button>
+        <button title="Defend"
+          disabled={notAllowedToAct}
+          onClick={this.props.onDefend}
+        >
+          <div className={classes.defendButton}></div>
+        </button>
       </div>
     )
   }

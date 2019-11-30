@@ -14,15 +14,15 @@ const InfoPanel = ({ t, creatureData, id }) => {
       <div className={classes.redPanel}>
         <div className={classes.infoSubtile}>
           <div>Attack: {creatureData.att}</div>
-          <div>Defence: {creatureData.def}</div>
+          <div>Defence: {creatureData.def}({Math.round(creatureData.currentDef)})</div>
           <div>Damage: {creatureData.dMin}-{creatureData.dMax}</div>
           <div>Health: {creatureData.hp}</div>
         </div>
       </div>
       <div className={classes.redPanel}>
         <div className={classes.infoSubtile}>
-          <div>Speed: {Math.floor(creatureData.spd)}</div>
-          <div>Health Left: {Math.floor(creatureData.currentHP)}</div>
+          <div>Speed: {Math.round(creatureData.spd)}</div>
+          <div>Health Left: {Math.round(creatureData.currentHP)}</div>
         </div>
       </div>
     </div>

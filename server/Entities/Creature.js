@@ -16,6 +16,8 @@ class Creature {
     this.cost = cost
     this.special = { ...special }
 
+    this.isDefend = false
+    this.currentDef = def
     this.currentHP = hp
     this.isAlive = true
     this.action = null
@@ -40,10 +42,16 @@ class Creature {
     this.action = actionTypes.idle
   }
 
+  setDefend (isDefend) {
+    this.isDefend = isDefend
+    this.currentDef = isDefend === true ? this.def + 0.3 * this.def : this.def
+  }
+
   attack (enemy) {
     const randDamage = Math.random() * (this.dMax - this.dMin) + this.dMin
-    const X = this.att > enemy.def ? 0.05 : 0.02
-    const damage = (1 + ((this.att - enemy.def) * X)) * this.stackMultiplier * randDamage
+    const enemyDef = enemy.currentDef
+    const X = this.att > enemyDef ? 0.05 : 0.02
+    const damage = (1 + ((this.att - enemyDef) * X)) * this.stackMultiplier * randDamage
 
     const currentHealthOfEnemy = enemy.currentHP - damage
     if (currentHealthOfEnemy < 0) {

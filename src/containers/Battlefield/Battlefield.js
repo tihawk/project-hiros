@@ -13,6 +13,9 @@ import CreatureInfo from './CreatureInfo'
 class Battlefield extends Component {
   state = {
     endpoint: 'http://localhost:5000',
+    turn: {
+      player: null
+    },
     loading: {
       isLoading: true,
       message: 'ClickReady'
@@ -144,6 +147,12 @@ class Battlefield extends Component {
     }
   }
 
+  handleDefend = e => {
+    e.preventDefault()
+    console.log('[handleDefend]')
+    this.socket.emit('defend')
+  }
+
   checkTypeOfTile = (hexIndex) => {
     if (parseInt(this.state.turn.creature.tileIndex) === hexIndex) {
       return classes.active
@@ -200,7 +209,13 @@ class Battlefield extends Component {
             <CreatureInfo id={this.state.players[1]} creatureData={creatureHoveredOver} />
           </div>}
         <div>
-          <CombatDashboard playerReady={this.playerReady} playerDisconnect={this.playerDisconnect} messages={this.state.combatDashboardMessages} />
+          <CombatDashboard
+            playerReady={this.playerReady}
+            playerDisconnect={this.playerDisconnect}
+            messages={this.state.combatDashboardMessages}
+            notAllowedToAct={!(this.state.turn.player === this.state.nickname)}
+            onDefend={this.handleDefend}
+          />
           <CombatFooter />
         </div>
       </div>

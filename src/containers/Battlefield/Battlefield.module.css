@@ -148,7 +148,7 @@ li:nth-child(30n+30)
     display: flex;
     justify-content: space-around;
     align-items: center;
-    height: 50px;
+    height: 60px;
     margin: 0px 2px;
     background-image: url(../../public/assets/textures/461223166.jpg);
     background-repeat: repeat-x;
@@ -169,9 +169,7 @@ li:nth-child(30n+30)
 button {
     height: 100%;
     flex-grow: 1;
-    /* width: 100%; */
     background-image: url(../../public/assets/textures/461223166.jpg);
-    /* background-repeat: repeat-x; */
     background-color: brown;
     border-right: 2px solid gold;
 }
@@ -225,4 +223,14 @@ button {
     text-align: center;
     color: white;
     font-size: 1vw;
+}
+
+.defendButton {
+    height: 100%;
+    width: 50px;
+    background: unset;
+    background-image: url(../../public/assets/primary-skills/defend.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }

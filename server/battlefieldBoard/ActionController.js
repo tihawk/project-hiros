@@ -262,9 +262,19 @@ class ActionController {
     return this.action
   }
 
+  handleDefending () {
+    this.board[this.turn.creature.tileIndex].creature.setDefend(true)
+    this.endTurn()
+  }
+
   endTurn () {
     this.turn = this.queue.getNextTurnObject()
     this.calculateRange()
+    this.startNewTurn()
+  }
+
+  startNewTurn () {
+    this.board[this.turn.creature.tileIndex].creature.setDefend(false)
   }
 }
 

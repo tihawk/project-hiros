@@ -51,18 +51,11 @@ io.on('connection', (socket) => {
       }
     })
   })
-  socket.on('disconnect', () => {
-    console.log('[disconnect]', players)
-    // playerSockets.delete(socket.id)
-    // socket.emit('state', {
-    //   loading: {
-    //     isLoading: true,
-    //     message: 'ClickReady'
-    //   }
-    // })
+  socket.on('disconnect', (reason) => {
+    console.log('[disconnect]', players, socket.id, socket.handshake.headers['x-clientid'], reason)
   })
   socket.on('click', data => {
-    if (players.has(socket.handshake.headers['x-clientid']) && actions.turn.player === socket.handshake.headers['x-clientid']) {
+    if (playerExistsAndIsHisTurn(socket)) {
       const action = actions.handleTileClicked(data.tileIndex, data.corner)
       updateState()
       io.sockets.emit('action', action)
@@ -74,7 +67,17 @@ io.on('connection', (socket) => {
       }
     }
   })
+  socket.on('defend', () => {
+    if (playerExistsAndIsHisTurn(socket)) {
+      actions.handleDefending()
+      updateState()
+    }
+  })
 })
+
+const playerExistsAndIsHisTurn = (socket) => {
+  return players.has(socket.handshake.headers['x-clientid']) && actions.turn.player === socket.handshake.headers['x-clientid']
+}
 
 const movingAndMaybeAttacking = (time) => {
   const finishedMoving = new Promise((resolve, reject) => {
