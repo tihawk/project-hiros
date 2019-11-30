@@ -1,5 +1,5 @@
 function sortBySpeedInitiativeAndPosition (elemA, elemB) {
-  const initiative = elemB.creature.stackMultiplier * elemB.creature.spd - elemA.creature.stackMultiplier * elemA.creature.spd
+  const initiative = getInitiative(elemB, elemA)
   if (initiative < 0) return -1
   if (initiative > 0) return 1
   if (elemA.armyIndex > elemB.armyIndex) return 1
@@ -8,11 +8,13 @@ function sortBySpeedInitiativeAndPosition (elemA, elemB) {
 }
 
 function swapElementsWithSameInitiativeIfPlayerAlreadyHadItsTurn (queue, lastPlayerLastRound, secondElem, firstElem) {
-  const initiative = secondElem.creature.stackMultiplier * secondElem.creature.spd - firstElem.creature.stackMultiplier * firstElem.creature.spd
+  const initiative = getInitiative(secondElem, firstElem)
   if (initiative === 0) {
     if (lastPlayerLastRound === firstElem.playerIndex && firstElem.playerIndex !== secondElem.playerIndex) {
+      console.log('swapping first player from', firstElem.playerIndex, firstElem.creature.stackMultiplier, secondElem.playerIndex, secondElem.creature.stackMultiplier)
       queue.splice(0, 1, secondElem)
       queue.splice(1, 1, firstElem)
+      console.log('to', secondElem.playerIndex, secondElem.creature.stackMultiplier, firstElem.playerIndex, firstElem.creature.stackMultiplier)
     }
   }
 }
@@ -91,9 +93,12 @@ class PriorityQueue {
     // sort by making sure that in case of first two stacks have the same initiative, and are of different
     // players, first plays the player who didn't play last round (or in case of first round, player on the left)
     const firstElem = { ...this.queue[0] }
-    const secondElem = { ...this.queue[1] }
-    swapElementsWithSameInitiativeIfPlayerAlreadyHadItsTurn(
-      this.queue, this.lastPlayerLastRound, secondElem, firstElem)
+    const index = findIndexOfNextWithSameInitiativeOfDifferentPlayer(firstElem, this.queue.slice(1)) + 1
+    if (index - 1 !== -1) {
+      const secondElem = { ...this.queue[index] }
+      swapElementsWithSameInitiativeIfPlayerAlreadyHadItsTurn(
+        this.queue, this.lastPlayerLastRound, secondElem, firstElem)
+    }
 
     // sort by alternating players when they have stacks of same initiative
     for (let i = 1; i < this.queue.length - 1; i++) {
