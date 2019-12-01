@@ -71,7 +71,11 @@ class Creature {
       this.isAlive = false
       actionType = actionTypes.dying
     } else {
-      actionType = actionTypes.attacked
+      if (this.isDefend) {
+        actionType = actionTypes.defend
+      } else {
+        actionType = actionTypes.attacked
+      }
     }
     this.setAction(actionType)
     return { isAlive: this.isAlive, actionType }

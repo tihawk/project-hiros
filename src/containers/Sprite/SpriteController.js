@@ -13,6 +13,8 @@ import swordsmanAttackSWSEData from '../../public/assets/sprites/swordsman-attac
 import swordsmanAttackSWSEImage from '../../public/assets/sprites/swordsman-attack-sw-se.png'
 import swordsmanAttackedData from '../../public/assets/sprites/swordsman-attacked.json'
 import swordsmanAttackedImage from '../../public/assets/sprites/swordsman-attacked.png'
+import swordsmanDefendData from '../../public/assets/sprites/swordsman-defend.json'
+import swordsmanDefendImage from '../../public/assets/sprites/swordsman-defend.png'
 import swordsmanDyingData from '../../public/assets/sprites/swordsman-dying.json'
 import swordsmanDyingImage from '../../public/assets/sprites/swordsman-dying.png'
 
@@ -56,6 +58,13 @@ const SpriteController = ({ creature, action, orientation }) => {
       attacked: {
         data: swordsmanAttackedData,
         image: swordsmanAttackedImage,
+        framesPerStep: Object.keys(swordsmanAttackedData.frames).length,
+        shouldAnimate: true,
+        loop: false
+      },
+      defend: {
+        data: swordsmanDefendData,
+        image: swordsmanDefendImage,
         framesPerStep: Object.keys(swordsmanAttackedData.frames).length,
         shouldAnimate: true,
         loop: false

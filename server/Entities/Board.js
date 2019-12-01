@@ -1,5 +1,3 @@
-const { actionTypes } = require('./Enums').creature
-
 class Board {
   constructor () {
     const grid = []
