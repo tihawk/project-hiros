@@ -143,7 +143,7 @@ class ActionController {
     this.armies = []
     for (let i = 0; i < 2; i++) {
       const army = new Army(this.players[i])
-      for (let j = 0; j < 7; j++) {
+      for (let j = 0; j < 3; j++) {
         army.addMember(new Swordsman(Math.floor(Math.random() * (3 - 1)) + 1,
           actionTypes.idle, i === 0 ? orientations.right : orientations.left,
           this.players[i]), j)
@@ -171,11 +171,11 @@ class ActionController {
     this.isToAttack = false
     if (this.turn.creature.range.includes(tileIndex)) {
       if (!this.board[tileIndex].hasCreature) {
-        console.log('calling moving')
+        console.log('[handleTileClicked] calling moving')
         this.handleCreatureMove(tileIndex)
       } else if (this.board[tileIndex].hasCreature) {
         if (this.board[tileIndex].creature.player !== this.turn.player) {
-          console.log('calling attack')
+          console.log('[handleTileClicked] calling attack')
           this.handleCreatureAttack(tileIndex, corner)
         }
       } else {
@@ -186,12 +186,12 @@ class ActionController {
   }
 
   handleCreatureAttack (tileIndex, corner) {
-    console.log('[handleCreatureAttack]')
     this.isToAttack = true
     this.indexOfTileToAttack = tileIndex
 
     const neighbour = this.getNeighbour(tileIndex, corner)
     const indexOfNeighbour = this.board.findIndex(tile => tile.x === neighbour.x && tile.y === neighbour.y)
+    console.log('[handleCreatureAttack] found neighbour to be', indexOfNeighbour, 'and attacker is at', this.turn.creature.tileIndex)
 
     if (indexOfNeighbour !== -1) {
       this.handleCreatureMove(indexOfNeighbour)
@@ -199,8 +199,9 @@ class ActionController {
   }
 
   handleCreatureMove (indexOfTileToMoveTo) {
+    console.log('[handleCreatureMove]')
     if (!this.board[indexOfTileToMoveTo].hasCreature) {
-      console.log('moving...')
+      console.log('[handleCreatureMove] moving...')
 
       const { distance, orientation } = this.getDistanceOrientationAndDepth(this.board[this.turn.creature.tileIndex], this.board[indexOfTileToMoveTo])
       this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes.walk)
@@ -209,6 +210,7 @@ class ActionController {
       const time = distance * 300
       this.setAction(true, actionTypes.walk, time, indexOfTileToMoveTo)
     } else if (indexOfTileToMoveTo === this.turn.creature.tileIndex) {
+      console.log('[handleCreatureMove] setting action to attack')
       this.setAction(true, actionTypes.attackWE, 600)
     }
   }
