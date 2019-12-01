@@ -3,6 +3,10 @@ const phases = [
   'wait'
 ]
 
+function getNextPhase (currentPhase) {
+  return phases[(phases.indexOf(currentPhase) + 1) % (phases.length)]
+}
+
 function sortBySpeedInitiativeAndPosition (elemA, elemB) {
   const initiative = getInitiative(elemB, elemA)
   if (initiative < 0) return -1
@@ -74,14 +78,18 @@ class PriorityQueue {
   }
 
   initNextPhase () {
-    this.currentPhase = phases[(phases.indexOf(this.currentPhase) + 1) % (phases.length)]
+    this.currentPhase = getNextPhase(this.currentPhase)
     if (this.currentPhase === phases[0]) {
       console.log('[initNextPhase] switching to normal phase')
       this.getNewQueue()
     } else if (this.currentPhase === phases[1]) {
       console.log('[initNextPhase] switching to wait phase')
-      this.queue = this.waitQueue
-      this.waitQueue = []
+      if (this.waitQueue.length > 0) {
+        this.queue = this.waitQueue
+        this.waitQueue = []
+      } else {
+        this.initNextPhase()
+      }
     } else {
       console.log('[initNextPhase] detected impossible phase index')
     }
