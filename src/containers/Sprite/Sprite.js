@@ -14,10 +14,10 @@ class Sprite extends Component {
 
     stackNum = styled.div`
       position: absolute;
-      z-index: 2;
+      z-index: 3;
       pointer-events: none;
       top: 50px;
-      left: ${({ orientation }) => orientation > 0 ? 50 : -25}px;
+      left: ${({ orientation }) => orientation > 0 ? 70 : -40}px;
       width: 35px;
       background-color: rgba(${({ player }) => player * 255}, 0, 255, 0.6);
       border: 1px solid gold;
