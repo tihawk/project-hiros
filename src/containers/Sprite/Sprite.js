@@ -78,12 +78,13 @@ class Sprite extends Component {
         left: 0,
         top: 0
       }
-      if (this.props.data.frames[state]) {
+      const frameData = this.props.data.frames[state] || null
+      if (frameData) {
         tile = {
-          width: this.props.data.frames[state].frame.w,
-          height: this.props.data.frames[state].frame.h,
-          left: this.props.data.frames[state].frame.x,
-          top: this.props.data.frames[state].frame.y
+          width: frameData.frame.w,
+          height: frameData.frame.h,
+          left: frameData.frame.x,
+          top: frameData.frame.y
         }
       }
       const { src } = this.props

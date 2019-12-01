@@ -1,5 +1,6 @@
 const helper = require('./helper')
 const Swordsman = require('../Entities/Creatures/Swordsman')
+const Naga = require('../Entities/Creatures/Naga')
 const Army = require('../Entities/Army')
 const InitiativeQueue = require('../Entities/PriorityQueue')
 const Board = require('../Entities/Board')
@@ -144,9 +145,15 @@ class ActionController {
     for (let i = 0; i < 2; i++) {
       const army = new Army(this.players[i])
       for (let j = 0; j < 3; j++) {
-        army.addMember(new Swordsman(Math.floor(Math.random() * (3 - 1)) + 1,
-          actionTypes.idle, i === 0 ? orientations.right : orientations.left,
-          this.players[i]), j)
+        if (i === 0) {
+          army.addMember(new Swordsman(Math.floor(Math.random() * (10 - 1)) + 1,
+            actionTypes.idle, i === 0 ? orientations.right : orientations.left,
+            this.players[i]), j)
+        } else {
+          army.addMember(new Swordsman(Math.floor(Math.random() * (5 - 1)) + 1,
+            actionTypes.idle, i === 0 ? orientations.right : orientations.left,
+            this.players[i]), j)
+        }
       }
       this.armies.push(army)
     }
