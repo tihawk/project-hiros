@@ -40,12 +40,14 @@ class CombatDashboard extends Component {
         <button disabled>
           <div className={classes.autoCombatButton}></div>
         </button>
-        <div className={classes.log}>
-          {this.state.messages.map((message, index) => {
-            return <div key={index}>{message}</div>
-          })}
-          <div style={{ float: 'left', clear: 'both' }}
-            ref={(el) => { this.messagesEnd = el }}></div>
+        <div className={classes.redPanel}>
+          <div className={classes.log}>
+            {this.state.messages.map((message, index) => {
+              return <div key={index}>{message}</div>
+            })}
+            <div style={{ float: 'left', clear: 'both' }}
+              ref={(el) => { this.messagesEnd = el }}></div>
+          </div>
         </div>
         <button
           title="Cast Spell (disabled)"

@@ -163,8 +163,47 @@ li:nth-child(30n+30)
     height: 100%;
     flex-flow: 2;
     width: 100%;
-    font-size: 0.9em;
+    background-image: url(../../public/assets/textures/461223166.jpg);
+    background-repeat: repeat-x;
+    background-color: brown;
+    font-size: 0.7em;
     overflow-y: scroll;
+}
+
+.log::-webkit-scrollbar {
+    background-image: url(../../public/assets/textures/461223166.jpg);
+    background-repeat: repeat-y;
+    background-color: brown;
+}
+
+.log::-webkit-scrollbar-thumb {
+    visibility: hidden;
+}
+
+.log::-webkit-scrollbar-track {
+    visibility: hidden;
+}
+
+.log::-webkit-scrollbar-button:single-button:vertical:decrement {
+    height: 15px;
+    background-image: url(../../public/assets/combat-bar/up-arrow.png);
+    background-size: contain;
+    background-position: top;
+    background-repeat: no-repeat;
+    border-left: 1px solid gold;
+    border-top: 1px solid gold;
+    border-right: 1px solid gold;
+}
+
+.log::-webkit-scrollbar-button:single-button:vertical:increment {
+    height: 15px;
+    background-image: url(../../public/assets/combat-bar/down-arrow.png);
+    background-size: contain;
+    background-position: bottom;
+    background-repeat: no-repeat;
+    border-left: 1px solid gold;
+    border-right: 1px solid gold;
+    border-bottom: 1px solid gold;
 }
 
 button {
@@ -174,7 +213,8 @@ button {
     background-image: url(../../public/assets/textures/461223166.jpg);
     background-color: brown;
     border: none;
-    border-right: 1px solid gold;
+    border-left: 0.5px solid gold;
+    border-right: 0.5px solid gold;
 }
 
 .infoPanel {
@@ -211,6 +251,7 @@ button {
 
 .redPanel {
     width: 100%;
+    height: 100%;
     margin: 1px;
     background-color: darkred;
     border: 1px solid gold;
