@@ -16,7 +16,7 @@ class Sprite extends Component {
       position: absolute;
       z-index: 3;
       pointer-events: none;
-      top: 50px;
+      top: 35px;
       left: ${({ orientation }) => orientation > 0 ? 70 : -40}px;
       width: 35px;
       background-color: rgba(${({ player }) => player * 255}, 0, 255, 0.6);
