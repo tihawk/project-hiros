@@ -5,7 +5,8 @@ const Container = styled.div`
   overflow: hidden;
   width: ${({ width }) => width}px;
   height: ${({ height }) => height}px;
-  transform: scale(${({ scale }) => `${scale.x}, ${scale.y}`}) translate(${({ scale }) => scale.x * 25}%, -50%);
+  transform-origin: top left;
+  transform: scale(${({ scale }) => `${scale.x}, ${scale.y}`}) translate(${({ scale }) => scale.x > 0 ? -38 : -50}%, -55%);
 `
 const Image = styled.img`
   transform: translate(-${({ left }) => left}px, -${({ top }) => top}px);

@@ -1,23 +1,47 @@
 {
   "frames": {
-    "1": {
+    "0": {
       "frame": {
         "x": 0,
         "y": 0,
-        "w": 88,
-        "h": 77
+        "w": 450,
+        "h": 400
       },
       "rotated": false,
-      "trimmed": true,
+      "trimmed": false,
       "spriteSourceSize": {
-        "x": 26,
-        "y": 22,
-        "w": 88,
-        "h": 77
+        "x": 0,
+        "y": 0,
+        "w": 450,
+        "h": 400
       },
       "sourceSize": {
-        "w": 135,
-        "h": 110
+        "w": 450,
+        "h": 400
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "1": {
+      "frame": {
+        "x": 0,
+        "y": 400,
+        "w": 450,
+        "h": 400
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 450,
+        "h": 400
+      },
+      "sourceSize": {
+        "w": 450,
+        "h": 400
       },
       "pivot": {
         "x": 0.5,
@@ -26,70 +50,22 @@
     },
     "2": {
       "frame": {
-        "x": 88,
+        "x": 450,
         "y": 0,
-        "w": 112,
-        "h": 81
+        "w": 450,
+        "h": 400
       },
       "rotated": false,
-      "trimmed": true,
+      "trimmed": false,
       "spriteSourceSize": {
-        "x": 17,
-        "y": 18,
-        "w": 112,
-        "h": 81
-      },
-      "sourceSize": {
-        "w": 135,
-        "h": 110
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "4": {
-      "frame": {
-        "x": 200,
+        "x": 0,
         "y": 0,
-        "w": 48,
-        "h": 85
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 56,
-        "y": 14,
-        "w": 48,
-        "h": 85
+        "w": 450,
+        "h": 400
       },
       "sourceSize": {
-        "w": 135,
-        "h": 110
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "5": {
-      "frame": {
-        "x": 248,
-        "y": 0,
-        "w": 55,
-        "h": 85
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 28,
-        "y": 14,
-        "w": 55,
-        "h": 85
-      },
-      "sourceSize": {
-        "w": 135,
-        "h": 110
+        "w": 450,
+        "h": 400
       },
       "pivot": {
         "x": 0.5,
@@ -98,46 +74,70 @@
     },
     "3": {
       "frame": {
-        "x": 303,
-        "y": 0,
-        "w": 99,
-        "h": 87
+        "x": 450,
+        "y": 400,
+        "w": 450,
+        "h": 400
       },
       "rotated": false,
-      "trimmed": true,
+      "trimmed": false,
       "spriteSourceSize": {
-        "x": 30,
-        "y": 12,
-        "w": 99,
-        "h": 87
+        "x": 0,
+        "y": 0,
+        "w": 450,
+        "h": 400
       },
       "sourceSize": {
-        "w": 135,
-        "h": 110
+        "w": 450,
+        "h": 400
       },
       "pivot": {
         "x": 0.5,
         "y": 0.5
       }
     },
-    "0": {
+    "4": {
       "frame": {
-        "x": 402,
-        "y": 0,
-        "w": 61,
-        "h": 99
+        "x": 0,
+        "y": 800,
+        "w": 450,
+        "h": 400
       },
       "rotated": false,
-      "trimmed": true,
+      "trimmed": false,
       "spriteSourceSize": {
-        "x": 54,
+        "x": 0,
         "y": 0,
-        "w": 61,
-        "h": 99
+        "w": 450,
+        "h": 400
       },
       "sourceSize": {
-        "w": 135,
-        "h": 110
+        "w": 450,
+        "h": 400
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "5": {
+      "frame": {
+        "x": 450,
+        "y": 800,
+        "w": 450,
+        "h": 400
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 450,
+        "h": 400
+      },
+      "sourceSize": {
+        "w": 450,
+        "h": 400
       },
       "pivot": {
         "x": 0.5,
@@ -151,8 +151,8 @@
     "image": "swordsman-attacked.png",
     "format": "RGBA8888",
     "size": {
-      "w": 463,
-      "h": 99
+      "w": 900,
+      "h": 1200
     },
     "scale": 1
   }

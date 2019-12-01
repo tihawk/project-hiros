@@ -22,7 +22,7 @@ const SpriteController = ({ creature, action, orientation }) => {
       idle: {
         data: swordsmanIdleData,
         image: swordsmanIdleImage,
-        shouldAnimate: false,
+        shouldAnimate: true,
         loop: false
       },
       walk: {
