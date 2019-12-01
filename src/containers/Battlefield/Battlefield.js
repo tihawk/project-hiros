@@ -200,6 +200,8 @@ class Battlefield extends Component {
                           creature={hex.creature.name}
                           action={hex.creature.action}
                           orientation={hex.creature.orientation}
+                          player={this.state.players.indexOf(hex.creature.player)}
+                          stackSize={hex.creature.stackMultiplier}
                         /> : null}
                     </div>
                   </li>

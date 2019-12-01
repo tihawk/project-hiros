@@ -1,7 +1,7 @@
 const { actionTypes } = require('./Enums').creature
 
 class Creature {
-  constructor (name, town, lvl, att, def, dMin, dMax, hp, spd, grw, val, cost, special = {}) {
+  constructor (name, town, lvl, att, def, dMin, dMax, hp, spd, grw, val, cost, size = 1, special = {}) {
     this.name = name
     this.town = town
     this.level = lvl
@@ -14,6 +14,7 @@ class Creature {
     this.grw = grw
     this.value = val
     this.cost = cost
+    this.size = size
     this.special = { ...special }
 
     this.isDefend = false

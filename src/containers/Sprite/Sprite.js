@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import styled from 'styled-components'
 import Tile from './Tile'
 
 class Sprite extends Component {
@@ -10,6 +11,20 @@ class Sprite extends Component {
     frame = 0
     action = 'idle'
     shouldAnimate = false
+
+    stackNum = styled.div`
+      position: absolute;
+      z-index: 2;
+      pointer-events: none;
+      top: 50px;
+      left: ${({ orientation }) => orientation > 0 ? 50 : -25}px;
+      width: 35px;
+      background-color: rgba(${({ player }) => player * 255}, 0, 255, 0.6);
+      border: 1px solid gold;
+      font-size: 0.7em;
+      text-align: center;
+      color: gold;
+    `
 
     componentDidUpdate (prevProps) {
       const { shouldAnimate, framesPerStep, loop } = this.props
@@ -87,18 +102,30 @@ class Sprite extends Component {
           top: frameData.frame.y
         }
       }
-      const { src } = this.props
-      const { orientation } = this.props
+      const { src, orientation, player, stackSize } = this.props
+      console.log(stackSize)
       const scale = {
         x: this.props.data.meta.scale * orientation,
         y: this.props.data.meta.scale
       }
 
-      return <Tile
-        src={src}
-        tile={tile}
-        scale={scale}
-      />
+      return (
+        <div>
+          <Tile
+            src={src}
+            tile={tile}
+            scale={scale}
+          />
+          {player !== undefined
+            ? <this.stackNum
+              player={player}
+              orientation={orientation}
+            >
+              {stackSize}
+            </this.stackNum>
+            : null}
+        </div>
+      )
     }
 }
 
