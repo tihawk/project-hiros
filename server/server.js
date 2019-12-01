@@ -67,6 +67,16 @@ io.on('connection', (socket) => {
       }
     }
   })
+  socket.on('wait', () => {
+    if (playerExistsAndIsHisTurn(socket)) {
+      if (actions.queue.currentPhase !== 'wait') {
+        actions.handleWaiting()
+        updateState()
+      } else {
+        console.log('[socket.on.wait] tried to wait during a wait phase')
+      }
+    }
+  })
   socket.on('defend', () => {
     if (playerExistsAndIsHisTurn(socket)) {
       actions.handleDefending()
@@ -150,7 +160,8 @@ const updateState = () => {
     board: actions.board,
     turn: actions.turn,
     loading: actions.loading,
-    action: actions.action
+    action: actions.action,
+    phase: actions.queue.currentPhase
   })
 }
 
@@ -160,6 +171,7 @@ const sendStateTo = (socket) => {
     board: actions.board,
     turn: actions.turn,
     loading: actions.loading,
-    action: actions.action
+    action: actions.action,
+    phase: actions.queue.currentPhase
   })
 }

@@ -1,3 +1,8 @@
+const phases = [
+  'normal',
+  'wait'
+]
+
 function sortBySpeedInitiativeAndPosition (elemA, elemB) {
   const initiative = getInitiative(elemB, elemA)
   if (initiative < 0) return -1
@@ -57,8 +62,10 @@ class PriorityQueue {
     this.board = board
     this.players = players
     this.queue = []
+    this.waitQueue = []
     this.dequeued = []
 
+    this.currentPhase = phases[0]
     this.roundNum = 0
     this.turnNum = 0
     this.lastPlayerLastRound = 1
@@ -66,9 +73,24 @@ class PriorityQueue {
     this.getNewQueue()
   }
 
+  initNextPhase () {
+    this.currentPhase = phases[(phases.indexOf(this.currentPhase) + 1) % (phases.length)]
+    if (this.currentPhase === phases[0]) {
+      console.log('[initNextPhase] switching to normal phase')
+      this.getNewQueue()
+    } else if (this.currentPhase === phases[1]) {
+      console.log('[initNextPhase] switching to wait phase')
+      this.queue = this.waitQueue
+      this.waitQueue = []
+    } else {
+      console.log('[initNextPhase] detected impossible phase index')
+    }
+  }
+
   getNewQueue () {
     this.roundNum += 1
     this.turnNum = 0
+    this.dequeued = []
     const board = this.board
     for (const tileIndex in board) {
       if (board[tileIndex].hasCreature) {
@@ -126,20 +148,24 @@ class PriorityQueue {
     return this.queue
   }
 
-  getNextTurnObject () {
+  getNextTurnObject (waiting = false) {
+    if (waiting === true) {
+      this.waitQueue.unshift(this.dequeued[0])
+      console.log('[getNextTurnObject] pushing new element to waitQueue\n', this.waitQueue.map(el => { return { plInd: el.playerIndex, armInd: el.armyIndex, stack: el.creature.stackMultiplier } }))
+    }
     this.turnNum += 1
     if (this.queue.length === 0) {
-      this.getNewQueue()
+      this.initNextPhase()
     }
     let next = this.queue.splice(0, 1)
     while (!this.board[next[0].tileIndex].hasCreature) {
       if (this.queue.length === 0) {
-        this.getNewQueue()
+        this.initNextPhase()
       }
       next = this.queue.splice(0, 1)
     }
-    // console.log(next)
-    this.dequeued.push(...next)
+
+    this.dequeued.unshift(...next)
     const { tileIndex, creature } = next[0]
     const turn = {
       player: creature.player,
@@ -151,6 +177,10 @@ class PriorityQueue {
       turnNum: this.turnNum
     }
     return turn
+  }
+
+  setToWaitingAndGetNextTurnObject () {
+    return this.getNextTurnObject(true)
   }
 }
 

@@ -11,6 +11,9 @@ class ActionController {
     this.battlefield = new Board()
     this.board = this.battlefield.getBoard()
     this.armies = []
+    this.queue = {
+      currentPhase: 'normal'
+    }
     this.turn = {
       player: '',
       creature: {
@@ -270,7 +273,15 @@ class ActionController {
     return this.action
   }
 
+  handleWaiting () {
+    console.log('[handleWaiting]')
+    this.turn = this.queue.setToWaitingAndGetNextTurnObject()
+    this.calculateRange()
+    this.startNewTurn()
+  }
+
   handleDefending () {
+    console.log('[handleDefending]')
     this.board[this.turn.creature.tileIndex].creature.setDefend(true)
     this.endTurn()
   }

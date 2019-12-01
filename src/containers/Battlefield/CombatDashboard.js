@@ -20,7 +20,7 @@ class CombatDashboard extends Component {
   }
 
   render () {
-    const { notAllowedToAct } = this.props
+    const { notAllowedToAct, phase } = this.props
     return (
       <div className={classes.dashboard}>
         <button onClick={this.props.playerReady}
@@ -56,12 +56,14 @@ class CombatDashboard extends Component {
           <div className={classes.spellsButton}></div>
         </button>
         <button
-          disabled={true}
-          title="Wait (disabled)"
+          title="Wait"
+          disabled={notAllowedToAct || phase === 'wait'}
+          onClick={this.props.onWait}
         >
           <div className={classes.waitButton}></div>
         </button>
-        <button title="Defend"
+        <button
+          title="Defend"
           disabled={notAllowedToAct}
           onClick={this.props.onDefend}
         >

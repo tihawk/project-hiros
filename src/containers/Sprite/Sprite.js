@@ -103,7 +103,6 @@ class Sprite extends Component {
         }
       }
       const { src, orientation, player, stackSize } = this.props
-      console.log(stackSize)
       const scale = {
         x: this.props.data.meta.scale * orientation,
         y: this.props.data.meta.scale

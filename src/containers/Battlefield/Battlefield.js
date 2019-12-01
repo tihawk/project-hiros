@@ -147,6 +147,12 @@ class Battlefield extends Component {
     }
   }
 
+  handleWait = e => {
+    e.preventDefault()
+    console.log('[handleWait]')
+    this.socket.emit('wait')
+  }
+
   handleDefend = e => {
     e.preventDefault()
     console.log('[handleDefend]')
@@ -216,6 +222,8 @@ class Battlefield extends Component {
             playerDisconnect={this.playerDisconnect}
             messages={this.state.combatDashboardMessages}
             notAllowedToAct={!(this.state.turn.player === this.state.nickname)}
+            phase={this.state.phase}
+            onWait={this.handleWait}
             onDefend={this.handleDefend}
           />
           <CombatFooter />

@@ -41,7 +41,6 @@ class Creature {
   }
 
   resetAction () {
-    console.log('original orient', this.originalOrientation)
     this.action = actionTypes.idle
     this.orientation = this.originalOrientation
   }
