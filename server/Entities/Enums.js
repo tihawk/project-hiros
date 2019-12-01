@@ -6,6 +6,7 @@ const creature = {
     attackNWNE: 'attack-nw-ne',
     attackSWSE: 'attack-sw-se',
     attacked: 'attacked',
+    defend: 'defend',
     dying: 'dying'
   },
   orientations: {

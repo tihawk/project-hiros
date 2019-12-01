@@ -22,6 +22,7 @@ class Creature {
     this.isAlive = true
     this.action = null
     this.orientation = null
+    this.originalOrientation = null
     this.stackMultiplier = null
 
     this.setAction = this.setAction.bind(this)
@@ -39,7 +40,9 @@ class Creature {
   }
 
   resetAction () {
+    console.log('original orient', this.originalOrientation)
     this.action = actionTypes.idle
+    this.orientation = this.originalOrientation
   }
 
   setDefend (isDefend) {

@@ -6,6 +6,7 @@ class Halberdier extends Creature {
 
     this.stackMultiplier = stack
     this.action = action
+    this.originalOrientation = orientation
     this.orientation = orientation
     this.player = player
 
