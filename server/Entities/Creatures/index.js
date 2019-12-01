@@ -1,0 +1,17 @@
+// Castle
+exports.Pikeman = require('./Pikeman')
+exports.Halberdier = require('./Halberdier')
+exports.Archer = require('./Archer')
+exports.Marksman = require('./Marksman')
+exports.Griffin = require('./Griffin')
+exports.RoyalGriffin = require('./RoyalGriffin')
+exports.Swordsman = require('./Swordsman')
+exports.Crusader = require('./Crusader')
+exports.Monk = require('./Monk')
+exports.Zealot = require('./Zealot')
+exports.Cavalier = require('./Cavalier')
+exports.Champion = require('./Champion')
+exports.Angel = require('./Angel')
+exports.Archangel = require('./Archangel')
+// Tower
+exports.Naga = require('./Naga')
