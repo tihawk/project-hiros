@@ -31,7 +31,7 @@ function swapElementsWithSameInitiativeIfPlayerAlreadyHadItsTurn (queue, lastPla
 }
 
 function getInitiative (nextElem, elem) {
-  return nextElem.creature.stackMultiplier * nextElem.creature.spd - elem.creature.stackMultiplier * elem.creature.spd
+  return nextElem.creature.spd - elem.creature.spd
 }
 
 function needsSwapToBeAlternating (prevElem, elem, nextElem) {
