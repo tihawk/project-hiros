@@ -1,5 +1,7 @@
 const phases = [
   'normal',
+  'war machine',
+  'morale',
   'wait'
 ]
 
@@ -83,6 +85,12 @@ class PriorityQueue {
       console.log('[initNextPhase] switching to normal phase')
       this.getNewQueue()
     } else if (this.currentPhase === phases[1]) {
+      console.log('[initNextPhase] switching to war machine phase')
+      this.initNextPhase()
+    } else if (this.currentPhase === phases[2]) {
+      console.log('[initNextPhase] switching to morale phase')
+      this.initNextPhase()
+    } else if (this.currentPhase === phases[3]) {
       console.log('[initNextPhase] switching to wait phase')
       if (this.waitQueue.length > 0) {
         this.queue = this.waitQueue
