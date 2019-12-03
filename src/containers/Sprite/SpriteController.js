@@ -1,9 +1,9 @@
 import React from 'react'
 import Sprite from './Sprite'
-import * as sprites from './SpritesIndex'
+import sprites from './SpritesIndex'
 
 const SpriteController = ({ creature, action, orientation, player, stackSize }) => {
-  const { data, image, framesPerStep, shouldAnimate, loop } = sprites.creatures[creature][action]
+  const { data, image, framesPerStep, shouldAnimate, loop } = sprites[creature][action]
 
   return (
     <Sprite
