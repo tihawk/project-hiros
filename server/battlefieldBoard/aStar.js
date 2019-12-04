@@ -15,9 +15,12 @@ class Node {
   }
 }
 
-function aStar (board, start, goal) {
+function aStar (board, range, startOddRow, goalOddRow) {
   const open = []
   const closed = []
+
+  const start = helper.oddRowHexToCube({ ...startOddRow })
+  const goal = helper.oddRowHexToCube({ ...goalOddRow })
 
   const startNode = new Node(null, start)
   startNode.g = startNode.h = startNode.f = 0
@@ -51,6 +54,29 @@ function aStar (board, start, goal) {
 
     // generate children
     const children = []
+    for (const neighbour of helper.cubeNeighboursList) {
+      const nodePosition = {
+        x: currentNode.position.x + neighbour.x,
+        y: currentNode.position.y + neighbour.y,
+        z: currentNode.position.z + neighbour.z
+      }
+
+      const nodePositionOddRow = helper.cubeHexToOddRow(nodePosition)
+      const indexOfNodePosition = helper.indexFromOddRow(nodePositionOddRow)
+      // make sure in range
+      if (!range.includes(indexOfNodePosition)) {
+        continue
+      }
+
+      // make sure walkable
+      if (board[indexOfNodePosition].hasCreature || board[indexOfNodePosition].hasObstacle || board[indexOfNodePosition].hasWall) {
+        continue
+      }
+
+      const newNode = new Node(currentNode, nodePosition)
+
+      children.push(newNode)
+    }
 
     // loop through children
     for (const child of children) {
@@ -63,8 +89,8 @@ function aStar (board, start, goal) {
 
       // generate f g h
       child.g = currentNode.g + 1
-      child.h = // distance from child node to end node
-        child.f = child.g + child.f
+      child.h = helper.calculateCubeDistance({ ...child.position }, endNode.position.x, endNode.position.y, endNode.position.z)
+      child.f = child.g + child.f
 
       // child is in open already, and with a smaller g
       for (const openNode of open) {
