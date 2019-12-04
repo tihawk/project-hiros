@@ -115,6 +115,7 @@ function aStar (board, range, startOddRow, goalOddRow) {
       open.push(child)
     }
   }
+  return false
 }
 
 module.exports = aStar

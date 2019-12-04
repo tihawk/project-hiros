@@ -178,6 +178,8 @@ class ActionController {
   }
 
   handleTileClicked (tileIndex, corner) {
+    const path = findPath(this.board, this.turn.creature.range, this.board[this.turn.creature.tileIndex], this.board[tileIndex])
+    console.log(path)
     this.isToAttack = false
     if (this.turn.creature.range.includes(tileIndex)) {
       if (!this.board[tileIndex].hasCreature) {
@@ -203,7 +205,7 @@ class ActionController {
     const indexOfNeighbour = this.board.findIndex(tile => tile.x === neighbour.x && tile.y === neighbour.y)
     console.log('[handleCreatureAttack] found neighbour to be', indexOfNeighbour, 'and attacker is at', this.turn.creature.tileIndex)
 
-    if (indexOfNeighbour !== -1) {
+    if (indexOfNeighbour !== -1 && this.turn.creature.range.includes(indexOfNeighbour)) {
       this.handleCreatureMove(indexOfNeighbour)
     }
   }
