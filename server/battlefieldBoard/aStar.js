@@ -10,8 +10,8 @@ class Node {
     this.f = 0
   }
 
-  isEqual (other) {
-    return this.position === other.position
+  isEqualTo (other) {
+    return this.position.x === other.position.x && this.position.y === other.position.y && this.position.z === other.position.z
   }
 }
 
@@ -34,19 +34,25 @@ function aStar (board, range, startOddRow, goalOddRow) {
     let currentIndex = 0
 
     open.forEach((node, index) => {
+    //   console.log(node.f, currentNode.f)
       if (node.f < currentNode.f) {
         currentNode = node
         currentIndex = index
       }
     })
 
-    closed.push(...open.slice(0, 1))
+    // console.log(currentIndex)
 
-    if (currentNode === endNode) {
+    open.splice(currentIndex, 1)
+    closed.push(currentNode)
+
+    if (currentNode.isEqualTo(endNode)) {
       const path = []
       let current = currentNode
       while (current) {
-        path.push(current.position)
+        const oddRow = helper.cubeHexToOddRow(current.position)
+        const index = helper.indexFromOddRow(oddRow)
+        path.push(index)
         current = current.parent
       }
       return path.reverse()
@@ -63,6 +69,7 @@ function aStar (board, range, startOddRow, goalOddRow) {
 
       const nodePositionOddRow = helper.cubeHexToOddRow(nodePosition)
       const indexOfNodePosition = helper.indexFromOddRow(nodePositionOddRow)
+
       // make sure in range
       if (!range.includes(indexOfNodePosition)) {
         continue
@@ -74,18 +81,21 @@ function aStar (board, range, startOddRow, goalOddRow) {
       }
 
       const newNode = new Node(currentNode, nodePosition)
-
       children.push(newNode)
     }
 
     // loop through children
     for (const child of children) {
+      let isToContinue = false
       // child is in closed
       for (const closedChild of closed) {
-        if (child === closedChild) {
-          continue
+        if (child.isEqualTo(closedChild)) {
+          isToContinue = true
+          break
         }
       }
+
+      if (isToContinue) continue
 
       // generate f g h
       child.g = currentNode.g + 1
@@ -94,10 +104,13 @@ function aStar (board, range, startOddRow, goalOddRow) {
 
       // child is in open already, and with a smaller g
       for (const openNode of open) {
-        if (child === openNode && child.g > openNode.g) {
-          continue
+        if (child.isEqualTo(openNode) && child.g > openNode.g) {
+          isToContinue = true
+          break
         }
       }
+
+      if (isToContinue) continue
 
       open.push(child)
     }

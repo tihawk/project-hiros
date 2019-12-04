@@ -3,6 +3,7 @@ const Creatures = require('../Entities/Creatures')
 const Army = require('../Entities/Army')
 const InitiativeQueue = require('../Entities/PriorityQueue')
 const Board = require('../Entities/Board')
+const findPath = require('./aStar')
 const { actionTypes, orientations } = require('../Entities/Enums').creature
 
 class ActionController {
@@ -209,6 +210,9 @@ class ActionController {
 
   handleCreatureMove (indexOfTileToMoveTo) {
     console.log('[handleCreatureMove]')
+    console.log('testing pathfinding')
+    const path = findPath(this.board, this.turn.creature.range, this.board[this.turn.creature.tileIndex], this.board[indexOfTileToMoveTo])
+    console.log(path)
     if (!this.board[indexOfTileToMoveTo].hasCreature) {
       console.log('[handleCreatureMove] moving...')
 
