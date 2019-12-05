@@ -1,3 +1,4 @@
+/* eslint-disable no-labels */
 const helper = require('./helper')
 
 class Node {
@@ -41,7 +42,7 @@ function aStar (board, range, startOddRow, goalOddRow) {
       }
     })
 
-    // console.log(currentIndex)
+    console.log(open.length)
 
     open.splice(currentIndex, 1)
     closed.push(currentNode)
@@ -57,6 +58,7 @@ function aStar (board, range, startOddRow, goalOddRow) {
       }
       path.shift()
       if (path.length > 0) return path.reverse()
+      else return false
     }
 
     // generate children
@@ -86,17 +88,17 @@ function aStar (board, range, startOddRow, goalOddRow) {
     }
 
     // loop through children
-    for (const child of children) {
-      let isToContinue = false
+    loop1: for (const child of children) {
+      // let isToContinue = false
       // child is in closed
       for (const closedChild of closed) {
         if (child.isEqualTo(closedChild)) {
-          isToContinue = true
-          break
+          // console.log('child is in closed')
+          continue loop1
         }
       }
 
-      if (isToContinue) continue
+      // if (isToContinue) continue
 
       // generate f g h
       child.g = currentNode.g + 1
@@ -104,14 +106,21 @@ function aStar (board, range, startOddRow, goalOddRow) {
       child.f = child.g + child.f
 
       // child is in open already, and with a smaller g
-      for (const openNode of open) {
-        if (child.isEqualTo(openNode) && child.g > openNode.g) {
-          isToContinue = true
-          break
+      for (const index in open) {
+        if (child.isEqualTo(open[index])) {
+          console.log('child is in open')
+          if (child.g > open[index].g) {
+            console.log('child is worse than existing')
+            continue loop1
+          } else {
+            console.log('child is better than existing. replacing it')
+            open.splice(index, 1, child)
+            continue loop1
+          }
         }
       }
 
-      if (isToContinue) continue
+      // if (isToContinue) continue
 
       open.push(child)
     }

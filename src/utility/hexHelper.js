@@ -30,7 +30,7 @@ exports.cubeNeighbourFromCube = (x, y, z, corner) => {
     case ('sw'):
       return { x: x - 1, y: y, z: z + 1 }
     default:
-      return null
+      return { x, y, z }
   }
 }
 

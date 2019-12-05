@@ -119,15 +119,12 @@ class Battlefield extends Component {
       const inRange = range.includes(hexIndex)
       const corner = whichCornerOfHex(e)
       const neighbour = this.getNeighbour(hexIndex, corner)
-      let neighbourInRange = false
-      if (neighbour) {
-        const indexOfNeighbour = hexFuncs.indexFromOddRow(neighbour)
-        neighbourInRange = range.includes(indexOfNeighbour)
-      }
+      const indexOfNeighbour = hexFuncs.indexFromOddRow(neighbour)
+      const neighbourInRange = range.includes(indexOfNeighbour)
 
       if (inRange) {
         if (hasCreature) {
-          if (creature.player !== this.state.turn.player && neighbourInRange) {
+          if (creature.player !== this.state.turn.player && neighbourInRange && !this.state.board[indexOfNeighbour].hasCreature) {
             const corner = whichCornerOfHex(e)
             style.cursor = `${corner}-resize`
             this.setState({ combatFooterMessage: 'Attack ' + creature.name })
@@ -141,7 +138,7 @@ class Battlefield extends Component {
         }
       } else if (neighbourInRange) {
         if (hasCreature) {
-          if (creature.player !== this.state.turn.player) {
+          if (creature.player !== this.state.turn.player && !this.state.board[indexOfNeighbour].hasCreature) {
             const corner = whichCornerOfHex(e)
             style.cursor = `${corner}-resize`
             this.setState({ combatFooterMessage: 'Attack ' + creature.name })
