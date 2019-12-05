@@ -115,7 +115,7 @@ class Battlefield extends Component {
 
       if (inRange) {
         if (hasCreature) {
-          if (helper.isTileWithEnemyAndNeighbourInRangeAndNeighbourEmpty(creature, this.state.turn.player, neighbourInRange, this.state.board[indexOfNeighbour])) {
+          if (helper.isTileWithEnemyAndNeighbourInRangeAndNeighbourEmpty(creature, this.state.turn, neighbourInRange, this.state.board[indexOfNeighbour])) {
             const corner = whichCornerOfHex(e)
             style.cursor = `${corner}-resize`
             this.setState({ combatFooterMessage: 'Attack ' + creature.name })
@@ -129,7 +129,7 @@ class Battlefield extends Component {
         }
       } else if (neighbourInRange) {
         if (hasCreature) {
-          if (helper.isTileWithEnemyAndNeighbourInRangeAndNeighbourEmpty(creature, this.state.turn.player, neighbourInRange, this.state.board[indexOfNeighbour])) {
+          if (helper.isTileWithEnemyAndNeighbourInRangeAndNeighbourEmpty(creature, this.state.turn, neighbourInRange, this.state.board[indexOfNeighbour])) {
             const corner = whichCornerOfHex(e)
             style.cursor = `${corner}-resize`
             this.setState({ combatFooterMessage: 'Attack ' + creature.name })

@@ -147,7 +147,7 @@ class ActionController {
     this.armies = []
     for (let i = 0; i < 2; i++) {
       const army = new Army(this.players[i])
-      for (let j = 0; j < 5; j++) {
+      for (let j = 0; j < 2; j++) {
         const random = Math.random()
         const member = random < 0.5 ? new Creatures.Swordsman(Math.floor(Math.random() * (10 - 1)) + 1,
           actionTypes.idle, i === 0 ? orientations.right : orientations.left,
@@ -201,8 +201,14 @@ class ActionController {
     const indexOfNeighbour = this.board.findIndex(tile => tile.x === neighbour.x && tile.y === neighbour.y)
     console.log('[handleCreatureAttack] found neighbour to be', indexOfNeighbour, 'and attacker is at', this.turn.creature.tileIndex)
 
-    if (indexOfNeighbour !== -1 && !this.board[indexOfNeighbour].hasCreature) {
-      this.handleCreatureMove(indexOfNeighbour)
+    if (indexOfNeighbour !== -1) {
+      if (this.board[indexOfNeighbour].hasCreature) {
+        if (this.turn.creature.tileIndex === indexOfNeighbour) {
+          this.handleCreatureMove(indexOfNeighbour)
+        }
+      } else {
+        this.handleCreatureMove(indexOfNeighbour)
+      }
     }
   }
 

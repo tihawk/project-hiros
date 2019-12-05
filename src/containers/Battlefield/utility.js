@@ -1,7 +1,19 @@
 import * as hexFuncs from '../../utility/hexHelper'
 
-export function isTileWithEnemyAndNeighbourInRangeAndNeighbourEmpty (creature, player, isNeighbourInRange, tileOfNeighbour) {
-  return creature.player !== player && isNeighbourInRange && !tileOfNeighbour.hasCreature
+export function isTileWithEnemyAndNeighbourInRangeAndNeighbourEmpty (creature, turn, isNeighbourInRange, tileOfNeighbour) {
+  if (creature.player !== turn.player && isNeighbourInRange) {
+    if (tileOfNeighbour.hasCreature) {
+      if (tileOfNeighbour === turn.creature.tileIndex) {
+        return true
+      } else {
+        return false
+      }
+    } else {
+      return true
+    }
+  } else {
+    return false
+  }
 }
 
 export function getNeighbourIndex (board, tileIndex, corner) {
