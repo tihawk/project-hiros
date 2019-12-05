@@ -7,7 +7,7 @@ import CombatFooter from './CombatFooter'
 import CombatDashboard from './CombatDashboard'
 import SpriteController from '../Sprite/SpriteController'
 import { whichCornerOfHex } from '../../utility/utility'
-import * as hexFuncs from '../../utility/hexHelper'
+import * as helper from './utility'
 import '../../App.css'
 import CreatureInfo from './CreatureInfo'
 
@@ -103,14 +103,6 @@ class Battlefield extends Component {
     }
   }
 
-  getNeighbour (tileIndex, corner) {
-    if (this.state.board[tileIndex]) {
-      const { x, y, z } = hexFuncs.oddRowHexToCube(this.state.board[tileIndex])
-      const resultCube = hexFuncs.cubeNeighbourFromCube(x, y, z, corner)
-      return hexFuncs.cubeHexToOddRow(resultCube)
-    }
-  }
-
   handleTileHover = (e, hexIndex, { hasCreature, creature, x, y }) => {
     const { style } = e.target
 
@@ -118,13 +110,12 @@ class Battlefield extends Component {
       const { range } = this.state.turn.creature
       const inRange = range.includes(hexIndex)
       const corner = whichCornerOfHex(e)
-      const neighbour = this.getNeighbour(hexIndex, corner)
-      const indexOfNeighbour = hexFuncs.indexFromOddRow(neighbour)
+      const indexOfNeighbour = helper.getNeighbourIndex(this.state.board, hexIndex, corner)
       const neighbourInRange = range.includes(indexOfNeighbour)
 
       if (inRange) {
         if (hasCreature) {
-          if (creature.player !== this.state.turn.player && neighbourInRange && !this.state.board[indexOfNeighbour].hasCreature) {
+          if (helper.isTileWithEnemyAndNeighbourInRangeAndNeighbourEmpty(creature, this.state.turn.player, neighbourInRange, this.state.board[indexOfNeighbour])) {
             const corner = whichCornerOfHex(e)
             style.cursor = `${corner}-resize`
             this.setState({ combatFooterMessage: 'Attack ' + creature.name })
@@ -138,7 +129,7 @@ class Battlefield extends Component {
         }
       } else if (neighbourInRange) {
         if (hasCreature) {
-          if (creature.player !== this.state.turn.player && !this.state.board[indexOfNeighbour].hasCreature) {
+          if (helper.isTileWithEnemyAndNeighbourInRangeAndNeighbourEmpty(creature, this.state.turn.player, neighbourInRange, this.state.board[indexOfNeighbour])) {
             const corner = whichCornerOfHex(e)
             style.cursor = `${corner}-resize`
             this.setState({ combatFooterMessage: 'Attack ' + creature.name })
