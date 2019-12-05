@@ -27,6 +27,7 @@ class Battlefield extends Component {
     },
     creatureHoveredOver: {},
     combatDashboardMessages: [],
+    combatFooterMessage: '',
     nickname: String(Math.random())
   }
 
@@ -113,17 +114,22 @@ class Battlefield extends Component {
           if (creature.player !== this.state.turn.player) {
             const corner = whichCornerOfHex(e)
             style.cursor = `${corner}-resize`
+            this.setState({ combatFooterMessage: 'Attack ' + creature.name })
           } else {
             style.cursor = 'not-allowed'
+            this.setState({ combatFooterMessage: '' })
           }
         } else if (!hasCreature) {
           style.cursor = 'pointer'
+          this.setState({ combatFooterMessage: 'Move ' + this.state.board[this.state.turn.creature.tileIndex].creature.name + ' here' })
         }
       } else if (!inRange) {
         style.cursor = 'not-allowed'
+        this.setState({ combatFooterMessage: '' })
       }
     } else {
       style.cursor = 'not-allowed'
+      this.setState({ combatFooterMessage: '' })
     }
   }
 
@@ -226,7 +232,7 @@ class Battlefield extends Component {
             onWait={this.handleWait}
             onDefend={this.handleDefend}
           />
-          <CombatFooter />
+          <CombatFooter message={this.state.combatFooterMessage} />
         </div>
       </div>
     )
