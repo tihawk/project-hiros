@@ -55,7 +55,8 @@ function aStar (board, range, startOddRow, goalOddRow) {
         path.push(index)
         current = current.parent
       }
-      return path.reverse()
+      path.shift()
+      if (path.length > 0) return path.reverse()
     }
 
     // generate children

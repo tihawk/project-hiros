@@ -178,21 +178,15 @@ class ActionController {
   }
 
   handleTileClicked (tileIndex, corner) {
-    const path = findPath(this.board, this.turn.creature.range, this.board[this.turn.creature.tileIndex], this.board[tileIndex])
-    console.log(path)
     this.isToAttack = false
-    if (this.turn.creature.range.includes(tileIndex)) {
-      if (!this.board[tileIndex].hasCreature) {
-        console.log('[handleTileClicked] calling moving')
-        this.handleCreatureMove(tileIndex)
-      } else if (this.board[tileIndex].hasCreature) {
-        if (this.board[tileIndex].creature.player !== this.turn.player) {
-          console.log('[handleTileClicked] calling attack')
-          this.handleCreatureAttack(tileIndex, corner)
-        }
-      } else {
-      // placeholder condition
+    if (this.board[tileIndex].hasCreature) {
+      if (this.board[tileIndex].creature.player !== this.turn.player) {
+        console.log('[handleTileClicked] calling attack')
+        this.handleCreatureAttack(tileIndex, corner)
       }
+    } else if (this.turn.creature.range.includes(tileIndex)) {
+      console.log('[handleTileClicked] calling moving')
+      this.handleCreatureMove(tileIndex)
     }
     return this.action
   }
@@ -205,17 +199,22 @@ class ActionController {
     const indexOfNeighbour = this.board.findIndex(tile => tile.x === neighbour.x && tile.y === neighbour.y)
     console.log('[handleCreatureAttack] found neighbour to be', indexOfNeighbour, 'and attacker is at', this.turn.creature.tileIndex)
 
-    if (indexOfNeighbour !== -1 && this.turn.creature.range.includes(indexOfNeighbour)) {
+    if (indexOfNeighbour !== -1) {
       this.handleCreatureMove(indexOfNeighbour)
     }
   }
 
   handleCreatureMove (indexOfTileToMoveTo) {
     console.log('[handleCreatureMove]')
-    console.log('testing pathfinding')
-    const path = findPath(this.board, this.turn.creature.range, this.board[this.turn.creature.tileIndex], this.board[indexOfTileToMoveTo])
-    console.log(path)
-    if (!this.board[indexOfTileToMoveTo].hasCreature) {
+    console.log('[handleCreatureMove] running pathfinding')
+    const path = findPath(
+      this.board,
+      this.turn.creature.range,
+      this.board[this.turn.creature.tileIndex],
+      this.board[indexOfTileToMoveTo]
+    )
+    console.log('[handleCreatureMove] found path:\n', path)
+    if (path) {
       console.log('[handleCreatureMove] moving...')
 
       const { distance, orientation } = this.getDistanceOrientationAndDepth(this.board[this.turn.creature.tileIndex], this.board[indexOfTileToMoveTo])
