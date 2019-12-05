@@ -7,6 +7,7 @@ import CombatFooter from './CombatFooter'
 import CombatDashboard from './CombatDashboard'
 import SpriteController from '../Sprite/SpriteController'
 import { whichCornerOfHex } from '../../utility/utility'
+import * as hexFuncs from '../../utility/hexHelper'
 import '../../App.css'
 import CreatureInfo from './CreatureInfo'
 
@@ -102,16 +103,31 @@ class Battlefield extends Component {
     }
   }
 
+  getNeighbour (tileIndex, corner) {
+    if (this.state.board[tileIndex]) {
+      const { x, y, z } = hexFuncs.oddRowHexToCube(this.state.board[tileIndex])
+      const resultCube = hexFuncs.cubeNeighbourFromCube(x, y, z, corner)
+      return hexFuncs.cubeHexToOddRow(resultCube)
+    }
+  }
+
   handleTileHover = (e, hexIndex, { hasCreature, creature, x, y }) => {
     const { style } = e.target
 
     if (this.state.turn.player === this.state.nickname) {
       const { range } = this.state.turn.creature
       const inRange = range.includes(hexIndex)
+      const corner = whichCornerOfHex(e)
+      const neighbour = this.getNeighbour(hexIndex, corner)
+      let neighbourInRange = false
+      if (neighbour) {
+        const indexOfNeighbour = hexFuncs.indexFromOddRow(neighbour)
+        neighbourInRange = range.includes(indexOfNeighbour)
+      }
 
       if (inRange) {
         if (hasCreature) {
-          if (creature.player !== this.state.turn.player) {
+          if (creature.player !== this.state.turn.player && neighbourInRange) {
             const corner = whichCornerOfHex(e)
             style.cursor = `${corner}-resize`
             this.setState({ combatFooterMessage: 'Attack ' + creature.name })
@@ -123,7 +139,21 @@ class Battlefield extends Component {
           style.cursor = 'pointer'
           this.setState({ combatFooterMessage: 'Move ' + this.state.board[this.state.turn.creature.tileIndex].creature.name + ' here' })
         }
-      } else if (!inRange) {
+      } else if (neighbourInRange) {
+        if (hasCreature) {
+          if (creature.player !== this.state.turn.player) {
+            const corner = whichCornerOfHex(e)
+            style.cursor = `${corner}-resize`
+            this.setState({ combatFooterMessage: 'Attack ' + creature.name })
+          } else {
+            style.cursor = 'not-allowed'
+            this.setState({ combatFooterMessage: '' })
+          }
+        } else {
+          style.cursor = 'not-allowed'
+          this.setState({ combatFooterMessage: '' })
+        }
+      } else if (!inRange && !neighbourInRange) {
         style.cursor = 'not-allowed'
         this.setState({ combatFooterMessage: '' })
       }
