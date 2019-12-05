@@ -15,6 +15,19 @@ const creature = {
   }
 }
 
+const formations = {
+  loose: {
+    1: [5],
+    2: [2, 8],
+    3: [2, 5, 8],
+    4: [0, 4, 6, 10],
+    5: [0, 2, 5, 8, 10],
+    6: [0, 2, 4, 6, 8, 10],
+    7: [0, 2, 4, 5, 6, 8, 10]
+  }
+}
+
 module.exports = {
-  creature
+  creature,
+  formations
 }

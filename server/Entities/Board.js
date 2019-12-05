@@ -1,3 +1,5 @@
+const { loose } = require('./Enums').formations
+
 class Board {
   constructor () {
     const grid = []
@@ -15,18 +17,19 @@ class Board {
   }
 
   populateBoard (armies) {
-    const spread = 2
     let army1Counter = 0
     let army2Counter = 0
+    const formation1 = loose[armies[0].army.filter(el => el !== null).length]
+    const formation2 = loose[armies[1].army.filter(el => el !== null).length]
     for (const tile of this.board) {
-      if (tile.x === 0 && tile.y % spread === 0) {
-        if (armies[0].army[army1Counter]) {
+      if (tile.x === 0) {
+        if (formation1.includes(tile.y)) {
           tile.hasCreature = true
           tile.creature = armies[0].army[army1Counter]
           army1Counter += 1
         }
-      } else if (tile.x === 14 && tile.y % spread === 0) {
-        if (armies[1].army[army2Counter]) {
+      } else if (tile.x === 14) {
+        if (formation2.includes(tile.y)) {
           tile.hasCreature = true
           tile.creature = armies[1].army[army2Counter]
           army2Counter += 1

@@ -147,7 +147,7 @@ class ActionController {
     this.armies = []
     for (let i = 0; i < 2; i++) {
       const army = new Army(this.players[i])
-      for (let j = 0; j < 3; j++) {
+      for (let j = 0; j < 5; j++) {
         const random = Math.random()
         const member = random < 0.5 ? new Creatures.Swordsman(Math.floor(Math.random() * (10 - 1)) + 1,
           actionTypes.idle, i === 0 ? orientations.right : orientations.left,
