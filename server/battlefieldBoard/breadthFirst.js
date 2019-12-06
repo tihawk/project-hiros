@@ -34,9 +34,6 @@ function calculateRange (board, startIndex, speed) {
         z: currentNode.position.z + neighbour.z
       }
 
-      const distanceFromStart = helper.calculateCubeDistance(nodePosition, start.x, start.y, start.z)
-      if (distanceFromStart > speed) continue
-
       const nodeOddRow = helper.cubeHexToOddRow(nodePosition)
       if (nodeOddRow.x < 0 || nodeOddRow.x > 14) continue
 
