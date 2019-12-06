@@ -4,6 +4,7 @@ const Army = require('../Entities/Army')
 const InitiativeQueue = require('../Entities/PriorityQueue')
 const Board = require('../Entities/Board')
 const findPath = require('./aStar')
+const findRange = require('./breadthFirst')
 const { actionTypes, orientations } = require('../Entities/Enums').creature
 
 class ActionController {
@@ -132,15 +133,22 @@ class ActionController {
   calculateRange () {
     const { tileIndex } = this.turn.creature
     const { spd } = this.board[tileIndex].creature
-    const { x, y, z } = helper.oddRowHexToCube(this.board[tileIndex])
-    const coordsCube = this.board.map(tile => helper.oddRowHexToCube(tile))
+    // const { x, y, z } = helper.oddRowHexToCube(this.board[tileIndex])
+    // const coordsCube = this.board.map(tile => helper.oddRowHexToCube(tile))
 
-    const range = []
-    for (let i = 0; i < coordsCube.length; i++) {
-      const dist = helper.calculateCubeDistance(coordsCube[i], x, y, z)
-      if (dist <= spd) range.push(i)
-    }
-    this.turn.creature.range = range
+    // const range = []
+    // for (let i = 0; i < coordsCube.length; i++) {
+    //   const dist = helper.calculateCubeDistance(coordsCube[i], x, y, z)
+    //   if (dist <= spd) range.push(i)
+    // }
+    // this.turn.creature.range = range
+
+    this.turn.creature.range = findRange(this.board, tileIndex, spd)
+
+    console.log(this.turn.creature.range)
+
+    // console.log('finding range')
+    // console.log(findRange(this.board, tileIndex, spd))
   }
 
   populateArmies () {
