@@ -113,39 +113,21 @@ class Battlefield extends Component {
       const indexOfNeighbour = helper.getNeighbourIndex(this.state.board, hexIndex, corner)
       const neighbourInRange = range.includes(indexOfNeighbour)
 
-      if (inRange) {
-        if (hasCreature) {
-          if (helper.isTileWithEnemyAndNeighbourInRangeAndNeighbourEmptyOrOfActiveCreature(
-            creature, this.state.turn, neighbourInRange, this.state.board[indexOfNeighbour], indexOfNeighbour
-          )) {
-            const corner = whichCornerOfHex(e)
-            style.cursor = `${corner}-resize`
-            this.setState({ combatFooterMessage: 'Attack ' + creature.name })
-          } else {
-            style.cursor = 'not-allowed'
-            this.setState({ combatFooterMessage: '' })
-          }
-        } else if (!hasCreature) {
-          style.cursor = 'pointer'
-          this.setState({ combatFooterMessage: 'Move ' + this.state.board[this.state.turn.creature.tileIndex].creature.name + ' here' })
-        }
-      } else if (neighbourInRange) {
-        if (hasCreature) {
-          if (helper.isTileWithEnemyAndNeighbourInRangeAndNeighbourEmptyOrOfActiveCreature(
-            creature, this.state.turn, neighbourInRange, this.state.board[indexOfNeighbour], indexOfNeighbour
-          )) {
-            const corner = whichCornerOfHex(e)
-            style.cursor = `${corner}-resize`
-            this.setState({ combatFooterMessage: 'Attack ' + creature.name })
-          } else {
-            style.cursor = 'not-allowed'
-            this.setState({ combatFooterMessage: '' })
-          }
+      if (hasCreature) {
+        if (helper.isTileWithEnemyAndNeighbourInRangeAndNeighbourEmptyOrOfActiveCreature(
+          creature, this.state.turn, neighbourInRange, this.state.board[indexOfNeighbour], indexOfNeighbour
+        )) {
+          const corner = whichCornerOfHex(e)
+          style.cursor = `${corner}-resize`
+          this.setState({ combatFooterMessage: 'Attack ' + creature.name })
         } else {
           style.cursor = 'not-allowed'
           this.setState({ combatFooterMessage: '' })
         }
-      } else if (!inRange && !neighbourInRange) {
+      } else if (inRange) {
+        style.cursor = 'pointer'
+        this.setState({ combatFooterMessage: 'Move ' + this.state.board[this.state.turn.creature.tileIndex].creature.name + ' here' })
+      } else {
         style.cursor = 'not-allowed'
         this.setState({ combatFooterMessage: '' })
       }

@@ -34,16 +34,18 @@ function calculateRange (board, startIndex, speed) {
         z: currentNode.position.z + neighbour.z
       }
 
+      const distanceFromStart = helper.calculateCubeDistance(nodePosition, start.x, start.y, start.z)
+      if (distanceFromStart > speed) continue
+
       const nodeOddRow = helper.cubeHexToOddRow(nodePosition)
+      if (nodeOddRow.x < 0 || nodeOddRow.x > 14) continue
+
       const nodeIndex = helper.indexFromOddRow(nodeOddRow)
-
       if (!board[nodeIndex]) continue
-
       if (board[nodeIndex].hasCreature || board[nodeIndex].hasObstacle || board[nodeIndex].hasWall) continue
 
       const neighbourNode = new Node(currentNode, nodePosition)
-
-      neighbourNode.cost = helper.calculateCubeDistance({ ...start }, nodePosition.x, nodePosition.y, nodePosition.z)
+      neighbourNode.cost = currentNode.cost + 1
       if (neighbourNode.cost >= speed) continue
 
       neighbourNodes.push(neighbourNode)
@@ -56,13 +58,6 @@ function calculateRange (board, startIndex, speed) {
         if (visitedNode.isEqualTo(neighbour)) {
           continue loop1
         }
-      }
-
-      //   neighbour.cost = neighbour.parent.cost + 1
-      //   console.log(neighbour.cost)
-
-      if (neighbour.cost > speed) {
-        continue
       }
       frontier.push(neighbour)
       visited.push(neighbour)

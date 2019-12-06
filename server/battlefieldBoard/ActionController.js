@@ -145,8 +145,6 @@ class ActionController {
 
     this.turn.creature.range = findRange(this.board, tileIndex, spd)
 
-    console.log(this.turn.creature.range)
-
     // console.log('finding range')
     // console.log(findRange(this.board, tileIndex, spd))
   }

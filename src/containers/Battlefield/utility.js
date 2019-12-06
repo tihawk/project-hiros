@@ -1,18 +1,22 @@
 import * as hexFuncs from '../../utility/hexHelper'
 
 export function isTileWithEnemyAndNeighbourInRangeAndNeighbourEmptyOrOfActiveCreature (creature, turn, isNeighbourInRange, tileOfNeighbour, indexOfNeighbour) {
-  if (creature.player !== turn.player && isNeighbourInRange) {
-    if (tileOfNeighbour.hasCreature) {
-      if (indexOfNeighbour === turn.creature.tileIndex) {
-        return true
+  if (creature.player !== turn.player) {
+    if (isNeighbourInRange) {
+      if (tileOfNeighbour.hasCreature) {
+        if (indexOfNeighbour === turn.creature.tileIndex) {
+          return true
+        } else {
+          return false
+        }
       } else {
-        return false
+        return true
       }
-    } else {
+    } else if (indexOfNeighbour === turn.creature.tileIndex) {
       return true
+    } else {
+      return false
     }
-  } else {
-    return false
   }
 }
 
