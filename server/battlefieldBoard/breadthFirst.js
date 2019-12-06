@@ -43,7 +43,7 @@ function calculateRange (board, startIndex, speed) {
 
       const neighbourNode = new Node(currentNode, nodePosition)
       neighbourNode.cost = currentNode.cost + 1
-      if (neighbourNode.cost >= speed) continue
+      if (neighbourNode.cost > speed) continue
 
       neighbourNodes.push(neighbourNode)
     }
