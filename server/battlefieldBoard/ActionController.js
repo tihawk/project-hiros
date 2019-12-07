@@ -7,10 +7,11 @@ const findPath = require('./aStar')
 const findRange = require('./breadthFirst')
 const { actionTypes, orientations } = require('../Entities/Enums').creature
 
-function getNeighbour (tile, corner) {
+function getNeighbourIndex (tile, corner) {
   const { x, y, z } = helper.oddRowHexToCube(tile)
   const resultCube = helper.cubeNeighbourFromCube(x, y, z, corner)
-  return helper.cubeHexToOddRow(resultCube)
+  const neighbourOddRow = helper.cubeHexToOddRow(resultCube)
+  return helper.indexFromOddRow(neighbourOddRow)
 }
 
 function getDistanceOrientationAndDepth (tileFrom, tileTo) {
@@ -68,13 +69,6 @@ class ActionController {
       message: 'WaitingForPlayers'
     }
     this.actions = []
-    this.action = {
-      inAction: false,
-      time: null,
-      type: null,
-      orientation: orientations.left,
-      indexOfTileToMoveTo: null
-    }
 
     this.isToAttack = false
     this.indexOfTileToAttack = null
@@ -96,7 +90,6 @@ class ActionController {
       turnNum: 0
     }
     this.resetLoading()
-    this.resetAction()
 
     this.isToAttack = false
     this.indexOfTileToAttack = null
@@ -120,25 +113,14 @@ class ActionController {
     }
   }
 
-  setAction (inAction, type, orientation, time = null, indexOfTileToMoveTo = null) {
-    this.action = {
-      inAction,
+  addAction (type, orientation, time = null, indexOfTileToMoveTo = null) {
+    const action = {
       time,
       type,
       orientation,
       indexOfTileToMoveTo
     }
-    this.actions.push(this.action)
-  }
-
-  resetAction () {
-    this.action = {
-      inAction: false,
-      time: null,
-      type: null,
-      orientation: orientations.left,
-      indexOfTileToMoveTo: null
-    }
+    this.actions.push(action)
   }
 
   populateArmies () {
@@ -171,7 +153,6 @@ class ActionController {
     this.battlefield.populateBoard(this.armies)
     this.board = this.battlefield.getBoard()
     this.queue = new InitiativeQueue(this.board, this.players)
-    // console.log(this.queue.queue)
     this.turn = this.queue.getNextTurnObject()
     console.log(this.turn)
     this.turn.creature.range = calculateRange(this.board, this.turn.creature.tileIndex)
@@ -195,8 +176,7 @@ class ActionController {
     this.isToAttack = true
     this.indexOfTileToAttack = tileIndex
 
-    const neighbour = getNeighbour(this.board[tileIndex], corner)
-    const indexOfNeighbour = this.board.findIndex(tile => tile.x === neighbour.x && tile.y === neighbour.y)
+    const indexOfNeighbour = getNeighbourIndex(this.board[tileIndex], corner)
     console.log('[handleCreatureAttack] found neighbour to be', indexOfNeighbour, 'and attacker is at', this.turn.creature.tileIndex)
 
     if (indexOfNeighbour !== -1) {
@@ -228,27 +208,19 @@ class ActionController {
       this.board[this.turn.creature.tileIndex].creature.setOrientation(orientation)
 
       const time = distance * 300
-      this.setAction(true, actionTypes.walk, orientation, time, indexOfTileToMoveTo)
-      this.handleFinishedMoving()
-    } else if (indexOfTileToMoveTo === this.turn.creature.tileIndex) {
-      this.performTheAttack()
-    }
-  }
+      this.addAction(actionTypes.walk, orientation, time, indexOfTileToMoveTo)
 
-  handleFinishedMoving () {
-    console.log('finished moving')
-    if (this.action.inAction) {
-      this.battlefield.moveCreature(this.turn.creature.tileIndex, this.action.indexOfTileToMoveTo)
-      this.turn.creature.tileIndex = this.action.indexOfTileToMoveTo
+      console.log('finished moving')
+      this.battlefield.moveCreature(this.turn.creature.tileIndex, indexOfTileToMoveTo)
+      this.turn.creature.tileIndex = indexOfTileToMoveTo
       this.turn.creature.range = calculateRange(this.board, this.turn.creature.tileIndex)
 
       if (this.isToAttack) {
         this.performTheAttack()
-      } else {
-        this.resetAction()
       }
+    } else if (indexOfTileToMoveTo === this.turn.creature.tileIndex) {
+      this.performTheAttack()
     }
-    // return this.actions
   }
 
   performTheAttack () {
@@ -256,36 +228,32 @@ class ActionController {
     const { orientation, depth } = getDistanceOrientationAndDepth(this.board[this.turn.creature.tileIndex], this.board[this.indexOfTileToAttack])
     const attackType = 'attack' + depth
     console.log('[handleCreatureMove] setting action to attack')
-    this.setAction(true, actionTypes[attackType], orientation, 600)
+    this.addAction(actionTypes[attackType], orientation, 600)
 
     this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes[attackType])
     this.board[this.turn.creature.tileIndex].creature.setOrientation(orientation)
     this.board[this.turn.creature.tileIndex].creature.attack(this.board[this.indexOfTileToAttack].creature)
 
     this.handleCreatureAttacked()
-    // return this.action
   }
 
   handleCreatureAttacked () {
     this.board[this.turn.creature.tileIndex].creature.resetAction()
     const { actionType, isAlive } = this.board[this.indexOfTileToAttack].creature.checkIfAlive()
+    this.addAction(actionType, this.board[this.indexOfTileToAttack].creature.orientation, 500)
+
     if (!isAlive) {
       this.battlefield.addCorpse(this.indexOfTileToAttack)
     }
 
-    this.setAction(true, actionType, this.board[this.indexOfTileToAttack].creature.orientation, 500)
     this.finishBeingAttacked()
-    // return this.action
   }
 
   finishBeingAttacked () {
-    this.resetAction()
     if (this.board[this.indexOfTileToAttack].hasCreature) {
       this.board[this.indexOfTileToAttack].creature.resetAction()
     }
     this.indexOfTileToAttack = null
-
-    // return this.action
   }
 
   handleWaiting () {

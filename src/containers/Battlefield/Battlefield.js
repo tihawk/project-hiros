@@ -133,40 +133,46 @@ class Battlefield extends Component {
     }
   }
 
+  async handleWalking (action) {
+    console.log('animating')
+    this.state.board[this.state.turn.creature.tileIndex].creature.action = (action.type)
+    this.state.board[this.state.turn.creature.tileIndex].creature.orientation = action.orientation
+
+    const tileToElement = document.getElementById(action.indexOfTileToMoveTo)
+    const tileFromElement = document.getElementById(this.state.turn.creature.tileIndex)
+    const spriteToMoveElement = tileFromElement.lastChild
+    const distanceX = tileToElement.getBoundingClientRect().left - tileFromElement.getBoundingClientRect().left
+    const distanceY = tileToElement.getBoundingClientRect().top - tileFromElement.getBoundingClientRect().top
+
+    const keyFrames = [
+      { left: '0', top: '0' },
+      { left: distanceX + 'px', top: distanceY + 'px' }
+    ]
+
+    const animation = spriteToMoveElement.animate(keyFrames, action.time)
+
+    const animationPromise = new Promise((resolve, reject) => {
+      animation.onfinish = (finished) => {
+        resolve(finished)
+      }
+      animation.oncancel = (cancelled) => {
+        reject(cancelled)
+      }
+    })
+
+    await animationPromise
+  }
+
   handleActions = (actionChain) => {
-    // console.log('[handleMovement] called, checking if is to animate')
     const dealWithActions = async () => {
       for (const action of actionChain) {
-        if (action.inAction) {
-          if (action.indexOfTileToMoveTo !== null && action.type === 'walk') {
-            console.log('animating')
-            this.state.board[this.state.turn.creature.tileIndex].creature.action = (action.type)
-            this.state.board[this.state.turn.creature.tileIndex].creature.orientation = action.orientation
-
-            const tileToElement = document.getElementById(action.indexOfTileToMoveTo)
-            const tileFromElement = document.getElementById(this.state.turn.creature.tileIndex)
-            const spriteToMoveElement = tileFromElement.lastChild
-            const distanceX = tileToElement.getBoundingClientRect().left - tileFromElement.getBoundingClientRect().left
-            const distanceY = tileToElement.getBoundingClientRect().top - tileFromElement.getBoundingClientRect().top
-
-            const keyFrames = [
-              { left: '0', top: '0' },
-              { left: distanceX + 'px', top: distanceY + 'px' }
-            ]
-
-            const animation = spriteToMoveElement.animate(keyFrames, action.time)
-
-            const animationPromise = new Promise((resolve, reject) => {
-              animation.onfinish = (finished) => {
-                resolve(finished)
-              }
-              animation.oncancel = (cancelled) => {
-                reject(cancelled)
-              }
-            })
-
-            await animationPromise
-          }
+        console.log(action)
+        if (action.type === 'walk') {
+          await this.handleWalking(action)
+        } else if (String(action.type).startsWith('attack-')) {
+          console.log('attacking')
+        } else if (action.type === 'attacked') {
+          console.log('being attacked')
         }
       }
     }
