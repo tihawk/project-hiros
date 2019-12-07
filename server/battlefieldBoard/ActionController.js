@@ -72,6 +72,7 @@ class ActionController {
       inAction: false,
       time: null,
       type: null,
+      orientation: orientations.left,
       indexOfTileToMoveTo: null
     }
 
@@ -119,11 +120,12 @@ class ActionController {
     }
   }
 
-  setAction (inAction, type, time = null, indexOfTileToMoveTo = null) {
+  setAction (inAction, type, orientation, time = null, indexOfTileToMoveTo = null) {
     this.action = {
       inAction,
       time,
       type,
+      orientation,
       indexOfTileToMoveTo
     }
     this.actions.push(this.action)
@@ -134,6 +136,7 @@ class ActionController {
       inAction: false,
       time: null,
       type: null,
+      orientation: orientations.left,
       indexOfTileToMoveTo: null
     }
   }
@@ -225,11 +228,9 @@ class ActionController {
       this.board[this.turn.creature.tileIndex].creature.setOrientation(orientation)
 
       const time = distance * 300
-      this.setAction(true, actionTypes.walk, time, indexOfTileToMoveTo)
+      this.setAction(true, actionTypes.walk, orientation, time, indexOfTileToMoveTo)
       this.handleFinishedMoving()
     } else if (indexOfTileToMoveTo === this.turn.creature.tileIndex) {
-      console.log('[handleCreatureMove] setting action to attack')
-      this.setAction(true, actionTypes.attackWE, 600)
       this.performTheAttack()
     }
   }
@@ -242,7 +243,6 @@ class ActionController {
       this.turn.creature.range = calculateRange(this.board, this.turn.creature.tileIndex)
 
       if (this.isToAttack) {
-        this.setAction(true, actionTypes.attackWE, 500)
         this.performTheAttack()
       } else {
         this.resetAction()
@@ -255,6 +255,8 @@ class ActionController {
     this.isToAttack = false
     const { orientation, depth } = getDistanceOrientationAndDepth(this.board[this.turn.creature.tileIndex], this.board[this.indexOfTileToAttack])
     const attackType = 'attack' + depth
+    console.log('[handleCreatureMove] setting action to attack')
+    this.setAction(true, actionTypes[attackType], orientation, 600)
 
     this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes[attackType])
     this.board[this.turn.creature.tileIndex].creature.setOrientation(orientation)
@@ -271,7 +273,7 @@ class ActionController {
       this.battlefield.addCorpse(this.indexOfTileToAttack)
     }
 
-    this.setAction(true, actionType, 500)
+    this.setAction(true, actionType, this.board[this.indexOfTileToAttack].creature.orientation, 500)
     this.finishBeingAttacked()
     // return this.action
   }

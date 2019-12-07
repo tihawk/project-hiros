@@ -140,9 +140,8 @@ class Battlefield extends Component {
         if (action.inAction) {
           if (action.indexOfTileToMoveTo !== null && action.type === 'walk') {
             console.log('animating')
-            const { orientation } = helper.getDistanceOrientationAndDepth(this.state.board[this.state.turn.creature.tileIndex], this.state.board[action.indexOfTileToMoveTo])
             this.state.board[this.state.turn.creature.tileIndex].creature.action = (action.type)
-            this.state.board[this.state.turn.creature.tileIndex].creature.orientation = orientation
+            this.state.board[this.state.turn.creature.tileIndex].creature.orientation = action.orientation
 
             const tileToElement = document.getElementById(action.indexOfTileToMoveTo)
             const tileFromElement = document.getElementById(this.state.turn.creature.tileIndex)
