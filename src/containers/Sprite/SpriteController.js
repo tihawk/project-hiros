@@ -2,7 +2,7 @@ import React from 'react'
 import Sprite from './Sprite'
 import sprites from './SpritesIndex'
 
-const SpriteController = ({ creature, action, orientation, player, stackSize }) => {
+const SpriteController = ({ creature, action, orientation, player, stackSize, onFinish }) => {
   const { data, image, framesPerStep, shouldAnimate, loop } = sprites[creature][action]
 
   return (
@@ -16,6 +16,7 @@ const SpriteController = ({ creature, action, orientation, player, stackSize }) 
       shouldAnimate={shouldAnimate}
       player={player}
       stackSize={stackSize}
+      onFinish={onFinish}
     />
   )
 }

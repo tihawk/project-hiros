@@ -27,7 +27,7 @@ class Sprite extends Component {
     `
 
     componentDidUpdate (prevProps) {
-      const { shouldAnimate, framesPerStep, loop } = this.props
+      const { shouldAnimate, framesPerStep, loop, onFinish } = this.props
 
       if (shouldAnimate && prevProps.shouldAnimate) {
         const states = Object.keys(this.props.data.frames).length
@@ -38,6 +38,7 @@ class Sprite extends Component {
           return
         }
         if (nextState === 0 && !loop) {
+          onFinish()
           return
         }
 

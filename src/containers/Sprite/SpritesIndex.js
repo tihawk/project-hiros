@@ -48,6 +48,7 @@ creaturesList.forEach(creature => {
     sprites[creature][action].framesPerStep = Math.floor(Object.keys(data.frames).length) / (action === 'walk' ? 2 : 1)
     sprites[creature][action].shouldAnimate = action !== 'idle'
     sprites[creature][action].loop = action === 'walk'
+    sprites[creature][action].onFinish = () => console.log('finished with', action)
   })
 })
 

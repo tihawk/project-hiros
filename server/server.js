@@ -163,7 +163,7 @@ const updateState = () => {
     board: actionController.board,
     turn: actionController.turn,
     loading: actionController.loading,
-    // action: actionController.actions,
+    actions: actionController.actions,
     phase: actionController.queue.currentPhase
   })
 }
@@ -174,7 +174,7 @@ const sendStateTo = (socket) => {
     board: actionController.board,
     turn: actionController.turn,
     loading: actionController.loading,
-    // action: actionController.actions,
+    actions: actionController.actions,
     phase: actionController.queue.currentPhase
   })
 }

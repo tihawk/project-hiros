@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import socketIOClient from 'socket.io-client'
 import { withTranslation } from 'react-i18next'
+import update from 'immutability-helper'
 import classes from './Battlefield.module.css'
 import InfoPanel from './InfoPanel'
 import CombatFooter from './CombatFooter'
@@ -21,11 +22,7 @@ class Battlefield extends Component {
       isLoading: true,
       message: 'ClickReady'
     },
-    action: {
-      inAction: false,
-      time: null,
-      type: null
-    },
+    inAction: false,
     creatureHoveredOver: {},
     combatDashboardMessages: [],
     combatFooterMessage: '',
@@ -51,7 +48,7 @@ class Battlefield extends Component {
       })
     })
     this.socket.on('actions', actionChain => {
-      this.setState({ action: actionChain })
+      this.setState({ inAction: true })
       if (actionChain.length > 0) {
         this.handleActions(actionChain)
       }
@@ -135,11 +132,18 @@ class Battlefield extends Component {
 
   async handleWalking (action) {
     console.log('animating')
-    this.state.board[this.state.turn.creature.tileIndex].creature.action = (action.type)
-    this.state.board[this.state.turn.creature.tileIndex].creature.orientation = action.orientation
+    const { time, type, orientation, indexOfTileToMoveTo } = action
+    const indexOfTileFrom = this.state.turn.creature.tileIndex
 
-    const tileToElement = document.getElementById(action.indexOfTileToMoveTo)
-    const tileFromElement = document.getElementById(this.state.turn.creature.tileIndex)
+    let board = this.state.board
+    board = update(board, { [indexOfTileFrom]: { creature: { action: { $set: type } } } })
+    board = update(board, { [indexOfTileFrom]: { creature: { orientation: { $set: orientation } } } })
+    this.setState({ board })
+    this.state.board[this.state.turn.creature.tileIndex].creature.action = (type)
+    this.state.board[this.state.turn.creature.tileIndex].creature.orientation = orientation
+
+    const tileToElement = document.getElementById(indexOfTileToMoveTo)
+    const tileFromElement = document.getElementById(indexOfTileFrom)
     const spriteToMoveElement = tileFromElement.lastChild
     const distanceX = tileToElement.getBoundingClientRect().left - tileFromElement.getBoundingClientRect().left
     const distanceY = tileToElement.getBoundingClientRect().top - tileFromElement.getBoundingClientRect().top
@@ -149,19 +153,60 @@ class Battlefield extends Component {
       { left: distanceX + 'px', top: distanceY + 'px' }
     ]
 
-    const animation = spriteToMoveElement.animate(keyFrames, action.time)
+    const animation = spriteToMoveElement.animate(keyFrames, time)
 
     const animationPromise = new Promise((resolve, reject) => {
       animation.onfinish = (finished) => {
+        let board = this.state.board
+        const creature = board[indexOfTileFrom].creature || board[indexOfTileToMoveTo].creature
+        creature.action = 'idle'
+        creature.orientation = creature.originalOrientation
+        board = update(board, { [indexOfTileToMoveTo]: { hasCreature: { $set: true } } })
+        board = update(board, { [indexOfTileToMoveTo]: { creature: { $set: creature } } })
+        board = update(board, { [indexOfTileFrom]: { hasCreature: { $set: false } } })
+        this.setState({ board })
+
+        this.setState({turn: {
+          ...this.state.turn,
+          creature: {
+            ...this.state.turn.creature,
+            tileIndex: indexOfTileToMoveTo
+          }
+        }})
+
+        // this.state.turn.creature.tileIndex = indexOfTileToMoveTo
         resolve(finished)
       }
       animation.oncancel = (cancelled) => {
+        let board = this.state.board
+        const creature = board[indexOfTileFrom].creature
+        creature.action = 'idle'
+        creature.orientation = creature.originalOrientation
+        board = update(board, { [indexOfTileToMoveTo]: { hasCreature: { $set: true } } })
+        board = update(board, { [indexOfTileToMoveTo]: { creature: { $set: creature } } })
+        board = update(board, { [indexOfTileFrom]: { hasCreature: { $set: false } } })
+        this.setState({ board })
+        this.setState({turn: {
+          ...this.state.turn,
+          creature: {
+            ...this.state.turn.creature,
+            tileIndex: indexOfTileToMoveTo
+          }
+        }})
+
+        // this.state.turn.creature.tileIndex = indexOfTileToMoveTo
         reject(cancelled)
       }
     })
 
     await animationPromise
   }
+
+  sleep (ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+  }
+
+  onFinish = () => console.log('finished with')
 
   handleActions = (actionChain) => {
     const dealWithActions = async () => {
@@ -171,13 +216,28 @@ class Battlefield extends Component {
           await this.handleWalking(action)
         } else if (String(action.type).startsWith('attack-')) {
           console.log('attacking')
+          let board = this.state.board
+          board = update(board, { [action.indexOfTileToMoveTo]: { creature: { action: { $set: action.type } } } })
+          board = update(board, { [action.indexOfTileToMoveTo]: { creature: { orientation: { $set: action.orientation } } } })
+          this.setState({board})
+          const animationPromise = new Promise((resolve, reject) => {
+            this.onFinish = (finished) => {
+              console.log(finished)
+              resolve(finished)
+            }
+          })
+
+          await animationPromise
         } else if (action.type === 'attacked') {
           console.log('being attacked')
+        } else if (action.type === 'dying') {
+          console.log('dying')
         }
       }
     }
 
     dealWithActions().then(() => {
+      this.setState({inAction: false})
       this.socket.emit('completed-actions')
     })
   }
@@ -208,7 +268,7 @@ class Battlefield extends Component {
     // const { t } = this.props
     const { board, creatureHoveredOver } = this.state
 
-    const fieldClasses = [classes.field, this.state.action.inAction ? classes.inAction : null].join(' ')
+    const fieldClasses = [classes.field, this.state.inAction === true ? classes.inAction : null].join(' ')
     return (
       <div className={fieldClasses}>
         { this.state.loading.isLoading === true ? <InfoPanel message={this.state.loading.message} />
@@ -243,6 +303,7 @@ class Battlefield extends Component {
                           orientation={hex.creature.orientation}
                           player={this.state.players.indexOf(hex.creature.player)}
                           stackSize={hex.creature.stackMultiplier}
+                          onFinish={this.onFinish}
                         /> : null}
                     </div>
                   </li>

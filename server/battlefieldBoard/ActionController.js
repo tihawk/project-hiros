@@ -228,7 +228,7 @@ class ActionController {
     const { orientation, depth } = getDistanceOrientationAndDepth(this.board[this.turn.creature.tileIndex], this.board[this.indexOfTileToAttack])
     const attackType = 'attack' + depth
     console.log('[handleCreatureMove] setting action to attack')
-    this.addAction(actionTypes[attackType], orientation, 600)
+    this.addAction(actionTypes[attackType], orientation, 600, this.turn.creature.tileIndex)
 
     this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes[attackType])
     this.board[this.turn.creature.tileIndex].creature.setOrientation(orientation)
