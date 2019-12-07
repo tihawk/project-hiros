@@ -7,6 +7,44 @@ const findPath = require('./aStar')
 const findRange = require('./breadthFirst')
 const { actionTypes, orientations } = require('../Entities/Enums').creature
 
+function getNeighbour (tile, corner) {
+  const { x, y, z } = helper.oddRowHexToCube(tile)
+  const resultCube = helper.cubeNeighbourFromCube(x, y, z, corner)
+  return helper.cubeHexToOddRow(resultCube)
+}
+
+function getDistanceOrientationAndDepth (tileFrom, tileTo) {
+  const result = {}
+
+  const cubeTileFrom = helper.oddRowHexToCube(tileFrom)
+  const cubeTileTo = helper.oddRowHexToCube(tileTo)
+  const dist = helper.calculateCubeDistance(cubeTileFrom, cubeTileTo.x, cubeTileTo.y, cubeTileTo.z)
+  result.distance = dist
+
+  const y = cubeTileTo.y - cubeTileFrom.y
+  const z = cubeTileTo.z - cubeTileFrom.z
+  if (y > 0 || (y === 0 && z > 0)) {
+    result.orientation = orientations.left
+  } else {
+    result.orientation = orientations.right
+  }
+
+  if (z === 0) {
+    result.depth = 'WE'
+  } else if (z < 0) {
+    result.depth = 'NWNE'
+  } else {
+    result.depth = 'SWSE'
+  }
+
+  return result
+}
+
+function calculateRange (board, tileIndex) {
+  const { spd } = board[tileIndex].creature
+  return findRange(board, tileIndex, spd)
+}
+
 class ActionController {
   constructor () {
     this.players = []
@@ -97,58 +135,6 @@ class ActionController {
     }
   }
 
-  getNeighbour (tileIndex, corner) {
-    const { x, y, z } = helper.oddRowHexToCube(this.board[tileIndex])
-    const resultCube = helper.cubeNeighbourFromCube(x, y, z, corner)
-    return helper.cubeHexToOddRow(resultCube)
-  }
-
-  getDistanceOrientationAndDepth (tileFrom, tileTo) {
-    const result = {}
-
-    const cubeTileFrom = helper.oddRowHexToCube(tileFrom)
-    const cubeTileTo = helper.oddRowHexToCube(tileTo)
-    const dist = helper.calculateCubeDistance(cubeTileFrom, cubeTileTo.x, cubeTileTo.y, cubeTileTo.z)
-    result.distance = dist
-
-    const y = cubeTileTo.y - cubeTileFrom.y
-    const z = cubeTileTo.z - cubeTileFrom.z
-    if (y > 0 || (y === 0 && z > 0)) {
-      result.orientation = orientations.left
-    } else {
-      result.orientation = orientations.right
-    }
-
-    if (z === 0) {
-      result.depth = 'WE'
-    } else if (z < 0) {
-      result.depth = 'NWNE'
-    } else {
-      result.depth = 'SWSE'
-    }
-
-    return result
-  }
-
-  calculateRange () {
-    const { tileIndex } = this.turn.creature
-    const { spd } = this.board[tileIndex].creature
-    // const { x, y, z } = helper.oddRowHexToCube(this.board[tileIndex])
-    // const coordsCube = this.board.map(tile => helper.oddRowHexToCube(tile))
-
-    // const range = []
-    // for (let i = 0; i < coordsCube.length; i++) {
-    //   const dist = helper.calculateCubeDistance(coordsCube[i], x, y, z)
-    //   if (dist <= spd) range.push(i)
-    // }
-    // this.turn.creature.range = range
-
-    this.turn.creature.range = findRange(this.board, tileIndex, spd)
-
-    // console.log('finding range')
-    // console.log(findRange(this.board, tileIndex, spd))
-  }
-
   populateArmies () {
     this.armies = []
     for (let i = 0; i < 2; i++) {
@@ -182,7 +168,7 @@ class ActionController {
     // console.log(this.queue.queue)
     this.turn = this.queue.getNextTurnObject()
     console.log(this.turn)
-    this.calculateRange()
+    this.turn.creature.range = calculateRange(this.board, this.turn.creature.tileIndex)
   }
 
   handleTileClicked (tileIndex, corner) {
@@ -203,7 +189,7 @@ class ActionController {
     this.isToAttack = true
     this.indexOfTileToAttack = tileIndex
 
-    const neighbour = this.getNeighbour(tileIndex, corner)
+    const neighbour = getNeighbour(this.board[tileIndex], corner)
     const indexOfNeighbour = this.board.findIndex(tile => tile.x === neighbour.x && tile.y === neighbour.y)
     console.log('[handleCreatureAttack] found neighbour to be', indexOfNeighbour, 'and attacker is at', this.turn.creature.tileIndex)
 
@@ -231,7 +217,7 @@ class ActionController {
     if (path) {
       console.log('[handleCreatureMove] moving...')
 
-      const { distance, orientation } = this.getDistanceOrientationAndDepth(this.board[this.turn.creature.tileIndex], this.board[indexOfTileToMoveTo])
+      const { distance, orientation } = getDistanceOrientationAndDepth(this.board[this.turn.creature.tileIndex], this.board[indexOfTileToMoveTo])
       this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes.walk)
       this.board[this.turn.creature.tileIndex].creature.setOrientation(orientation)
 
@@ -248,7 +234,7 @@ class ActionController {
     if (this.action.inAction) {
       this.battlefield.moveCreature(this.turn.creature.tileIndex, this.action.indexOfTileToMoveTo)
       this.turn.creature.tileIndex = this.action.indexOfTileToMoveTo
-      this.calculateRange()
+      this.turn.creature.range = calculateRange(this.board, this.turn.creature.tileIndex)
 
       if (this.isToAttack) {
         this.setAction(true, actionTypes.attackWE, 500)
@@ -261,7 +247,7 @@ class ActionController {
 
   performTheAttack () {
     this.isToAttack = false
-    const { orientation, depth } = this.getDistanceOrientationAndDepth(this.board[this.turn.creature.tileIndex], this.board[this.indexOfTileToAttack])
+    const { orientation, depth } = getDistanceOrientationAndDepth(this.board[this.turn.creature.tileIndex], this.board[this.indexOfTileToAttack])
     const attackType = 'attack' + depth
 
     this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes[attackType])
@@ -295,7 +281,7 @@ class ActionController {
   handleWaiting () {
     console.log('[handleWaiting]')
     this.turn = this.queue.setToWaitingAndGetNextTurnObject()
-    this.calculateRange()
+    this.turn.creature.range = calculateRange(this.board, this.turn.creature.tileIndex)
     this.startNewTurn()
   }
 
@@ -307,7 +293,7 @@ class ActionController {
 
   endTurn () {
     this.turn = this.queue.getNextTurnObject()
-    this.calculateRange()
+    this.turn.creature.range = calculateRange(this.board, this.turn.creature.tileIndex)
     this.startNewTurn()
   }
 
