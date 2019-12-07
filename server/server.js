@@ -24,7 +24,7 @@ server.listen(PORT, () => {
 })
 
 const players = new Set([])
-const actions = new ActionController()
+const actionController = new ActionController()
 io.on('connection', (socket) => {
   if (players.size >= 2) {
     sendStateTo(socket)
@@ -34,8 +34,8 @@ io.on('connection', (socket) => {
       players.add(socket.handshake.headers['x-clientid'])
       if (players.size === 2) {
         console.log('populating grid')
-        actions.resetAll()
-        actions.initBattlefield(players)
+        actionController.resetAll()
+        actionController.initBattlefield(players)
       }
     }
     updateState()
@@ -56,21 +56,24 @@ io.on('connection', (socket) => {
   })
   socket.on('click', data => {
     if (playerExistsAndIsHisTurn(socket)) {
-      const action = actions.handleTileClicked(data.tileIndex, data.corner)
-      updateState()
-      io.sockets.emit('action', action)
+      const actions = actionController.handleTileClicked(data.tileIndex, data.corner)
+      io.sockets.emit('actions', actions)
+      actionController.endTurn()
 
-      if (action.type === 'walk') {
-        movingAndMaybeAttacking(action.time)
-      } else if (String(action.type).startsWith('attack-')) {
-        attacking()
-      }
+      // if (action.type === 'walk') {
+      //   movingAndMaybeAttacking(action.time)
+      // } else if (String(action.type).startsWith('attack-')) {
+      //   attacking()
+      // }
     }
+  })
+  socket.on('completed-actions', () => {
+    sendStateTo(socket)
   })
   socket.on('wait', () => {
     if (playerExistsAndIsHisTurn(socket)) {
-      if (actions.queue.currentPhase !== 'wait') {
-        actions.handleWaiting()
+      if (actionController.queue.currentPhase !== 'wait') {
+        actionController.handleWaiting()
         updateState()
       } else {
         console.log('[socket.on.wait] tried to wait during a wait phase')
@@ -79,99 +82,99 @@ io.on('connection', (socket) => {
   })
   socket.on('defend', () => {
     if (playerExistsAndIsHisTurn(socket)) {
-      actions.handleDefending()
+      actionController.handleDefending()
       updateState()
     }
   })
 })
 
 const playerExistsAndIsHisTurn = (socket) => {
-  return players.has(socket.handshake.headers['x-clientid']) && actions.turn.player === socket.handshake.headers['x-clientid']
+  return players.has(socket.handshake.headers['x-clientid']) && actionController.turn.player === socket.handshake.headers['x-clientid']
 }
 
-const movingAndMaybeAttacking = (time) => {
-  const finishedMoving = new Promise((resolve, reject) => {
-    setInterval(() => {
-      resolve('should be finished moving')
-    }, time)
-  })
+// const movingAndMaybeAttacking = (time) => {
+//   const finishedMoving = new Promise((resolve, reject) => {
+//     setInterval(() => {
+//       resolve('should be finished moving')
+//     }, time)
+//   })
 
-  finishedMoving
-    .then(res => {
-      console.log(res)
-      const action = actions.handleFinishedMoving()
+//   finishedMoving
+//     .then(res => {
+//       console.log(res)
+//       const action = actionController.handleFinishedMoving()
 
-      if (String(action.type).startsWith('attack-')) {
-        attacking()
-      } else {
-        actions.endTurn()
-        updateState()
-        io.sockets.emit('action', action)
-      }
-    })
-    .catch(err => {
-      console.log(err)
-    })
-}
+//       if (String(action.type).startsWith('attack-')) {
+//         attacking()
+//       } else {
+//         actionController.endTurn()
+//         updateState()
+//         io.sockets.emit('actions', action)
+//       }
+//     })
+//     .catch(err => {
+//       console.log(err)
+//     })
+// }
 
-const attacking = () => {
-  const action = actions.performTheAttack()
-  updateState()
-  io.sockets.emit('action', action)
+// const attacking = () => {
+//   const action = actionController.performTheAttack()
+//   updateState()
+//   io.sockets.emit('actions', action)
 
-  const finishedAttacking = new Promise((resolve, reject) => {
-    setInterval(() => {
-      resolve('enough attacking')
-    }, action.time)
-  })
+//   const finishedAttacking = new Promise((resolve, reject) => {
+//     setInterval(() => {
+//       resolve('enough attacking')
+//     }, action.time)
+//   })
 
-  finishedAttacking.then(res => {
-    console.log(res)
-    const action = actions.handleCreatureAttacked()
-    updateState()
-    io.sockets.emit('action', action)
+//   finishedAttacking.then(res => {
+//     console.log(res)
+//     const action = actionController.handleCreatureAttacked()
+//     updateState()
+//     io.sockets.emit('actions', action)
 
-    const finishedBeingAttacked = new Promise((resolve, reject) => {
-      setInterval(() => {
-        resolve('enough of being attacked')
-      }, action.time)
-    })
+//     const finishedBeingAttacked = new Promise((resolve, reject) => {
+//       setInterval(() => {
+//         resolve('enough of being attacked')
+//       }, action.time)
+//     })
 
-    finishedBeingAttacked.then(res => {
-      console.log(res)
-      const action = actions.finishBeingAttacked()
-      actions.endTurn()
-      updateState()
-      io.sockets.emit('action', action)
-    })
-      .catch(err => {
-        console.log(err)
-      })
-  })
-    .catch(err => {
-      console.log(err)
-    })
-}
+//     finishedBeingAttacked.then(res => {
+//       console.log(res)
+//       const action = actionController.finishBeingAttacked()
+//       actionController.endTurn()
+//       updateState()
+//       io.sockets.emit('actions', action)
+//     })
+//       .catch(err => {
+//         console.log(err)
+//       })
+//   })
+//     .catch(err => {
+//       console.log(err)
+//     })
+// }
 
 const updateState = () => {
   console.log('updating state')
   io.sockets.emit('state', {
-    players: actions.players,
-    board: actions.board,
-    turn: actions.turn,
-    loading: actions.loading,
-    action: actions.action,
-    phase: actions.queue.currentPhase
+    players: actionController.players,
+    board: actionController.board,
+    turn: actionController.turn,
+    loading: actionController.loading,
+    // action: actionController.actions,
+    phase: actionController.queue.currentPhase
   })
 }
 
 const sendStateTo = (socket) => {
   socket.emit('state', {
-    players: actions.players,
-    board: actions.board,
-    turn: actions.turn,
-    loading: actions.loading,
-    action: actions.action,
-    phase: actions.queue.currentPhase
+    players: actionController.players,
+    board: actionController.board,
+    turn: actionController.turn,
+    loading: actionController.loading,
+    // action: actionController.actions,
+    phase: actionController.queue.currentPhase
   })
 }

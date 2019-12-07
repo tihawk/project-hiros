@@ -67,6 +67,7 @@ class ActionController {
       isLoading: true,
       message: 'WaitingForPlayers'
     }
+    this.actions = []
     this.action = {
       inAction: false,
       time: null,
@@ -83,6 +84,7 @@ class ActionController {
     this.battlefield = new Board()
     this.board = this.battlefield.getBoard()
     this.armies = []
+    this.actions = []
     this.turn = {
       player: '',
       creature: {
@@ -124,6 +126,7 @@ class ActionController {
       type,
       indexOfTileToMoveTo
     }
+    this.actions.push(this.action)
   }
 
   resetAction () {
@@ -182,7 +185,7 @@ class ActionController {
       console.log('[handleTileClicked] calling moving')
       this.handleCreatureMove(tileIndex)
     }
-    return this.action
+    return this.actions
   }
 
   handleCreatureAttack (tileIndex, corner) {
@@ -223,9 +226,11 @@ class ActionController {
 
       const time = distance * 300
       this.setAction(true, actionTypes.walk, time, indexOfTileToMoveTo)
+      this.handleFinishedMoving()
     } else if (indexOfTileToMoveTo === this.turn.creature.tileIndex) {
       console.log('[handleCreatureMove] setting action to attack')
       this.setAction(true, actionTypes.attackWE, 600)
+      this.performTheAttack()
     }
   }
 
@@ -238,11 +243,12 @@ class ActionController {
 
       if (this.isToAttack) {
         this.setAction(true, actionTypes.attackWE, 500)
+        this.performTheAttack()
       } else {
         this.resetAction()
       }
     }
-    return this.action
+    // return this.actions
   }
 
   performTheAttack () {
@@ -254,7 +260,8 @@ class ActionController {
     this.board[this.turn.creature.tileIndex].creature.setOrientation(orientation)
     this.board[this.turn.creature.tileIndex].creature.attack(this.board[this.indexOfTileToAttack].creature)
 
-    return this.action
+    this.handleCreatureAttacked()
+    // return this.action
   }
 
   handleCreatureAttacked () {
@@ -265,7 +272,8 @@ class ActionController {
     }
 
     this.setAction(true, actionType, 500)
-    return this.action
+    this.finishBeingAttacked()
+    // return this.action
   }
 
   finishBeingAttacked () {
@@ -275,7 +283,7 @@ class ActionController {
     }
     this.indexOfTileToAttack = null
 
-    return this.action
+    // return this.action
   }
 
   handleWaiting () {
@@ -292,6 +300,7 @@ class ActionController {
   }
 
   endTurn () {
+    this.actions = []
     this.turn = this.queue.getNextTurnObject()
     this.turn.creature.range = calculateRange(this.board, this.turn.creature.tileIndex)
     this.startNewTurn()

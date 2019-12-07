@@ -50,20 +50,16 @@ class Battlefield extends Component {
         combatDashboardMessages: this.state.combatDashboardMessages.concat(newMessage)
       })
     })
-    this.socket.on('action', action => {
-      this.setState({ action })
-      if (action.inAction === true) {
-        this.handleActions(action)
+    this.socket.on('actions', actionChain => {
+      this.setState({ action: actionChain })
+      if (actionChain.length > 0) {
+        this.handleActions(actionChain)
       }
     })
     window.addEventListener('beforeunload', e => {
       e.preventDefault()
       this.playerDisconnect()
     })
-  }
-
-  componentDidUpdate () {
-
   }
 
   playerReady = () => {
@@ -137,24 +133,48 @@ class Battlefield extends Component {
     }
   }
 
-  handleActions = (action) => {
+  handleActions = (actionChain) => {
     // console.log('[handleMovement] called, checking if is to animate')
-    if (action.inAction) {
-      if (action.indexOfTileToMoveTo !== null && action.type === 'walk') {
-        console.log('animating')
-        const tileToElement = document.getElementById(action.indexOfTileToMoveTo)
-        const tileFromElement = document.getElementById(this.state.turn.creature.tileIndex)
-        const spriteToMoveElement = tileFromElement.lastChild
-        const distanceX = tileToElement.getBoundingClientRect().left - tileFromElement.getBoundingClientRect().left
-        const distanceY = tileToElement.getBoundingClientRect().top - tileFromElement.getBoundingClientRect().top
+    const dealWithActions = async () => {
+      for (const action of actionChain) {
+        if (action.inAction) {
+          if (action.indexOfTileToMoveTo !== null && action.type === 'walk') {
+            console.log('animating')
+            const { orientation } = helper.getDistanceOrientationAndDepth(this.state.board[this.state.turn.creature.tileIndex], this.state.board[action.indexOfTileToMoveTo])
+            this.state.board[this.state.turn.creature.tileIndex].creature.action = (action.type)
+            this.state.board[this.state.turn.creature.tileIndex].creature.orientation = orientation
 
-        const keyFrames = [
-          { left: '0', top: '0' },
-          { left: distanceX + 'px', top: distanceY + 'px' }
-        ]
-        spriteToMoveElement.animate(keyFrames, action.time)
+            const tileToElement = document.getElementById(action.indexOfTileToMoveTo)
+            const tileFromElement = document.getElementById(this.state.turn.creature.tileIndex)
+            const spriteToMoveElement = tileFromElement.lastChild
+            const distanceX = tileToElement.getBoundingClientRect().left - tileFromElement.getBoundingClientRect().left
+            const distanceY = tileToElement.getBoundingClientRect().top - tileFromElement.getBoundingClientRect().top
+
+            const keyFrames = [
+              { left: '0', top: '0' },
+              { left: distanceX + 'px', top: distanceY + 'px' }
+            ]
+
+            const animation = spriteToMoveElement.animate(keyFrames, action.time)
+
+            const animationPromise = new Promise((resolve, reject) => {
+              animation.onfinish = (finished) => {
+                resolve(finished)
+              }
+              animation.oncancel = (cancelled) => {
+                reject(cancelled)
+              }
+            })
+
+            await animationPromise
+          }
+        }
       }
     }
+
+    dealWithActions().then(() => {
+      this.socket.emit('completed-actions')
+    })
   }
 
   handleWait = e => {
