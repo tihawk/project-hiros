@@ -244,13 +244,7 @@ class ActionController {
 
     if (!isAlive) {
       this.battlefield.addCorpse(this.indexOfTileToAttack)
-    }
-
-    this.finishBeingAttacked()
-  }
-
-  finishBeingAttacked () {
-    if (this.board[this.indexOfTileToAttack].hasCreature) {
+    } else {
       this.board[this.indexOfTileToAttack].creature.resetAction()
     }
     this.indexOfTileToAttack = null
