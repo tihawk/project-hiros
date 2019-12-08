@@ -284,16 +284,8 @@ class Battlefield extends Component {
         console.log(action)
         if (action.type === 'walk') {
           await this.handleWalking(action)
-        }
-        if (String(action.type).startsWith('attack-')) {
+        } else {
           console.log('attacking')
-          await this.handleGenericAction(action)
-        }
-        if (action.type === 'attacked') {
-          console.log('being attacked')
-          await this.handleGenericAction(action)
-        } else if (action.type === 'dying') {
-          console.log('dying')
           await this.handleGenericAction(action)
         }
       }
