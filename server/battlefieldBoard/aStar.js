@@ -42,8 +42,6 @@ function aStar (board, range, startOddRow, goalOddRow) {
       }
     })
 
-    console.log(open.length)
-
     open.splice(currentIndex, 1)
     closed.push(currentNode)
 
@@ -108,12 +106,12 @@ function aStar (board, range, startOddRow, goalOddRow) {
       // child is in open already, and with a smaller g
       for (const index in open) {
         if (child.isEqualTo(open[index])) {
-          console.log('child is in open')
+          // console.log('child is in open')
           if (child.g > open[index].g) {
-            console.log('child is worse than existing')
+            // console.log('child is worse than existing')
             continue loop1
           } else {
-            console.log('child is better than existing. replacing it')
+            // console.log('child is better than existing. replacing it')
             open.splice(index, 1, child)
             continue loop1
           }

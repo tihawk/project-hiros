@@ -206,7 +206,6 @@ class ActionController {
       let previousNode = this.turn.creature.tileIndex
       console.log(indexOfTileToMoveTo)
       for (const node of path) {
-        console.log(node)
         const { distance, orientation } = getDistanceOrientationAndDepth(this.board[previousNode], this.board[node])
         this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes.walk)
         this.board[this.turn.creature.tileIndex].creature.setOrientation(orientation)
