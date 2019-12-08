@@ -18,6 +18,8 @@ files.swordsmanDefendData = require('../../public/assets/sprites/swordsman-defen
 files.swordsmanDefendImage = require('../../public/assets/sprites/swordsman-defend.png')
 files.swordsmanDyingData = require('../../public/assets/sprites/swordsman-dying.json')
 files.swordsmanDyingImage = require('../../public/assets/sprites/swordsman-dying.png')
+files.swordsmanDeadData = require('../../public/assets/sprites/swordsman-dead.json')
+files.swordsmanDeadImage = require('../../public/assets/sprites/swordsman-dead.png')
 
 files.nagaIdleData = require('../../public/assets/sprites/naga-idle.json')
 files.nagaIdleImage = require('../../public/assets/sprites/naga-idle.png')
@@ -37,6 +39,8 @@ files.nagaDefendData = require('../../public/assets/sprites/naga-defend.json')
 files.nagaDefendImage = require('../../public/assets/sprites/naga-defend.png')
 files.nagaDyingData = require('../../public/assets/sprites/naga-dying.json')
 files.nagaDyingImage = require('../../public/assets/sprites/naga-dying.png')
+files.nagaDeadData = require('../../public/assets/sprites/naga-dead.json')
+files.nagaDeadImage = require('../../public/assets/sprites/naga-dead.png')
 
 files.angelIdleData = require('../../public/assets/sprites/angel-idle.json')
 files.angelIdleImage = require('../../public/assets/sprites/angel-idle.png')
@@ -56,5 +60,7 @@ files.angelDefendData = require('../../public/assets/sprites/angel-defend.json')
 files.angelDefendImage = require('../../public/assets/sprites/angel-defend.png')
 files.angelDyingData = require('../../public/assets/sprites/angel-dying.json')
 files.angelDyingImage = require('../../public/assets/sprites/angel-dying.png')
+files.angelDeadData = require('../../public/assets/sprites/angel-dead.json')
+files.angelDeadImage = require('../../public/assets/sprites/angel-dead.png')
 
 export default files

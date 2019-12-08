@@ -7,7 +7,8 @@ const creature = {
     attackSWSE: 'attack-sw-se',
     attacked: 'attacked',
     defend: 'defend',
-    dying: 'dying'
+    dying: 'dying',
+    dead: 'dead'
   },
   orientations: {
     left: -1,

@@ -222,21 +222,59 @@ class Battlefield extends Component {
   }
 
   async handleGenericAction (action) {
+    const resetCreature = () => {
+      console.log('trying to reset creature')
+      if (action.type === 'dying') {
+        let board = this.state.board
+        const creatureOrCorpse = this.state.board[action.indexOfTileToMoveTo].hasCorpse ? 'corpse' : 'creature'
+        board = update(board, { [action.indexOfTileToMoveTo]: { [creatureOrCorpse]: { action: { $set: 'dead' } } } })
+        this.setState({ board })
+        return
+      }
+      let board = this.state.board
+      board = update(board, { [action.indexOfTileToMoveTo]: { creature: { action: { $set: 'idle' } } } })
+      board = update(board, { [action.indexOfTileToMoveTo]: { creature: { orientation: { $set: board[action.indexOfTileToMoveTo].creature.originalOrientation } } } })
+      this.setState({ board })
+    }
+
     let board = this.state.board
     board = update(board, { [action.indexOfTileToMoveTo]: { creature: { action: { $set: action.type } } } })
     board = update(board, { [action.indexOfTileToMoveTo]: { creature: { orientation: { $set: action.orientation } } } })
     this.setState({ board })
     const animationPromise = new Promise((resolve, reject) => {
-      this.onFinish = () => {
-        console.log('resolving')
-        board = this.state.board
-        board = update(board, { [action.indexOfTileToMoveTo]: { creature: { action: { $set: 'idle' } } } })
-        board = update(board, { [action.indexOfTileToMoveTo]: { creature: { orientation: { $set: board[action.indexOfTileToMoveTo].creature.originalOrientation } } } })
-        this.setState({ board })
-        resolve()
+      let finishedOnTime = false
+      try {
+        setTimeout(() => {
+          if (!finishedOnTime) {
+            console.log('timeouting')
+            board = this.state.board
+            try {
+              resetCreature()
+              resolve()
+            } catch {
+              console.log('failed at resetting')
+              this.socket.emit('completed-actions')
+            }
+          }
+        }, action.time)
+
+        this.onFinish = () => {
+          finishedOnTime = true
+          console.log('resolving')
+          board = this.state.board
+          try {
+            resetCreature()
+            resolve()
+          } catch {
+            console.log('trying to reset creature')
+            this.socket.emit('completed-actions')
+          }
+        }
+      } catch {
+        console.log('failed onFinish')
+        this.socket.emit('completed-actions')
       }
     })
-
     await animationPromise
   }
 

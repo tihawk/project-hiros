@@ -10,10 +10,6 @@
     border: 3px solid gold;
 }
 
-/* .hexagon.active.inAction {
-    pointer-events: initial;
-} */
-
 .field.inAction {
     pointer-events: none;
 }

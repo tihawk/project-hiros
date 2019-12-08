@@ -57,7 +57,7 @@ io.on('connection', (socket) => {
   socket.on('click', data => {
     if (playerExistsAndIsHisTurn(socket)) {
       const actions = actionController.handleTileClicked(data.tileIndex, data.corner)
-      if(actions.length > 0) {
+      if (actions.length > 0) {
         io.sockets.emit('actions', actions)
         actionController.endTurn()
       }
@@ -165,7 +165,7 @@ const updateState = () => {
     board: actionController.board,
     turn: actionController.turn,
     loading: actionController.loading,
-    // actions: actionController.actions,
+    actions: actionController.actions,
     phase: actionController.queue.currentPhase
   })
 }
@@ -176,7 +176,7 @@ const sendStateTo = (socket) => {
     board: actionController.board,
     turn: actionController.turn,
     loading: actionController.loading,
-    // actions: actionController.actions,
+    actions: actionController.actions,
     phase: actionController.queue.currentPhase
   })
 }

@@ -28,26 +28,31 @@ class Sprite extends Component {
     componentDidUpdate (prevProps) {
       const { shouldAnimate, framesPerStep, loop, onFinish } = this.props
 
-      if (shouldAnimate) {
-        const states = Object.keys(this.props.data.frames).length
-        const { state } = this.state
+      try {
+        if (shouldAnimate) {
+          const states = Object.keys(this.props.data.frames).length
+          const { state } = this.state
 
-        let nextState = (state + 1) % states
-        if (!shouldAnimate) {
-          return
+          let nextState = (state + 1) % states
+          if (!shouldAnimate) {
+            return
+          }
+          if (nextState === 0 && !loop) {
+            onFinish()
+            return
+          }
+
+          if (prevProps.action !== this.props.action) {
+            nextState = 0
+          }
+
+          this.interval = 1000 / (framesPerStep * 2)
+
+          this.animationId = requestAnimationFrame(time => this.animate(nextState, time))
         }
-        if (nextState === 0 && !loop) {
-          onFinish()
-          return
-        }
-
-        if (prevProps.action !== this.props.action) {
-          nextState = 0
-        }
-
-        this.interval = 1000 / (framesPerStep * 2)
-
-        this.animationId = requestAnimationFrame(time => this.animate(nextState, time))
+      } catch {
+        console.log('finishing animation with error')
+        onFinish()
       }
     }
 

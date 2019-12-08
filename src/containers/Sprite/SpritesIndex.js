@@ -15,7 +15,8 @@ const filesList = [
   'AttackWE',
   'Attacked',
   'Defend',
-  'Dying'
+  'Dying',
+  'Dead'
 ]
 
 const actionsList = [
@@ -28,7 +29,8 @@ const actionsList = [
   'attack-w-e',
   'attacked',
   'defend',
-  'dying'
+  'dying',
+  'dead'
 ]
 
 const sprites = {}
@@ -46,7 +48,7 @@ creaturesList.forEach(creature => {
     sprites[creature][action].data = data
     sprites[creature][action].image = files[String(creature).toLowerCase() + filesList[index] + 'Image']
     sprites[creature][action].framesPerStep = Math.floor(Object.keys(data.frames).length) / (action === 'walk' ? 2 : 1)
-    sprites[creature][action].shouldAnimate = action !== 'idle'
+    sprites[creature][action].shouldAnimate = !(action === 'idle' || action === 'dead')
     sprites[creature][action].loop = action === 'walk'
   })
 })

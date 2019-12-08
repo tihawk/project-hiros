@@ -1,4 +1,5 @@
 const { loose } = require('./Enums').formations
+const { actionTypes } = require('./Enums').creature
 
 class Board {
   constructor () {
@@ -54,6 +55,7 @@ class Board {
     this.board[tileIndex].hasCreature = false
     this.board[tileIndex].hasCorpse = true
     this.board[tileIndex].corpse = this.board[tileIndex].creature
+    this.board[tileIndex].corpse.setAction(actionTypes.dead)
     this.board[tileIndex].creature = undefined
   }
 }
