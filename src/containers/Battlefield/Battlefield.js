@@ -135,13 +135,6 @@ class Battlefield extends Component {
     }
   }
 
-  setPointerEventsToInitialBecauseIDontKnow (index, value) {
-    const element = document.getElementById(index)
-    element.scrollIntoView()
-    element.style.pointerEvents = value
-    console.log(element)
-  }
-
   async handleWalking (action) {
     console.log('animating')
     const { time, type, orientation, indexOfTileToMoveTo } = action
@@ -152,7 +145,6 @@ class Battlefield extends Component {
     board = update(board, { [indexOfTileFrom]: { creature: { orientation: { $set: orientation } } } })
     this.setState({ board })
 
-    // this.setPointerEventsToInitialBecauseIDontKnow(indexOfTileToMoveTo, 'initial')
     const tileToElement = document.getElementById(indexOfTileToMoveTo)
     const tileFromElement = document.getElementById(indexOfTileFrom)
     const spriteToMoveElement = tileFromElement.lastChild
@@ -168,7 +160,6 @@ class Battlefield extends Component {
 
     const animationPromise = new Promise((resolve, reject) => {
       animation.onfinish = (finished) => {
-        this.setPointerEventsToInitialBecauseIDontKnow(indexOfTileToMoveTo, 'all')
         let board = this.state.board
         const creature = board[indexOfTileFrom].creature || board[indexOfTileToMoveTo].creature
         creature.action = 'idle'

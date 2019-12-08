@@ -61,12 +61,6 @@ io.on('connection', (socket) => {
         io.sockets.emit('actions', actions)
         actionController.endTurn()
       }
-
-      // if (action.type === 'walk') {
-      //   movingAndMaybeAttacking(action.time)
-      // } else if (String(action.type).startsWith('attack-')) {
-      //   attacking()
-      // }
     }
   })
   socket.on('completed-actions', () => {
@@ -93,70 +87,6 @@ io.on('connection', (socket) => {
 const playerExistsAndIsHisTurn = (socket) => {
   return players.has(socket.handshake.headers['x-clientid']) && actionController.turn.player === socket.handshake.headers['x-clientid']
 }
-
-// const movingAndMaybeAttacking = (time) => {
-//   const finishedMoving = new Promise((resolve, reject) => {
-//     setInterval(() => {
-//       resolve('should be finished moving')
-//     }, time)
-//   })
-
-//   finishedMoving
-//     .then(res => {
-//       console.log(res)
-//       const action = actionController.handleFinishedMoving()
-
-//       if (String(action.type).startsWith('attack-')) {
-//         attacking()
-//       } else {
-//         actionController.endTurn()
-//         updateState()
-//         io.sockets.emit('actions', action)
-//       }
-//     })
-//     .catch(err => {
-//       console.log(err)
-//     })
-// }
-
-// const attacking = () => {
-//   const action = actionController.performTheAttack()
-//   updateState()
-//   io.sockets.emit('actions', action)
-
-//   const finishedAttacking = new Promise((resolve, reject) => {
-//     setInterval(() => {
-//       resolve('enough attacking')
-//     }, action.time)
-//   })
-
-//   finishedAttacking.then(res => {
-//     console.log(res)
-//     const action = actionController.handleCreatureAttacked()
-//     updateState()
-//     io.sockets.emit('actions', action)
-
-//     const finishedBeingAttacked = new Promise((resolve, reject) => {
-//       setInterval(() => {
-//         resolve('enough of being attacked')
-//       }, action.time)
-//     })
-
-//     finishedBeingAttacked.then(res => {
-//       console.log(res)
-//       const action = actionController.finishBeingAttacked()
-//       actionController.endTurn()
-//       updateState()
-//       io.sockets.emit('actions', action)
-//     })
-//       .catch(err => {
-//         console.log(err)
-//       })
-//   })
-//     .catch(err => {
-//       console.log(err)
-//     })
-// }
 
 const updateState = () => {
   console.log('updating state')
