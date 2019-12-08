@@ -135,76 +135,65 @@ class Battlefield extends Component {
     }
   }
 
-  async handleWalking (action) {
+  async handleWalking (actions) {
+    const resetCreature = (action) => {
+      console.log('[handleWalking.onfinish] reached destination, resetting creature')
+      const indexOfTileFrom = this.state.turn.creature.tileIndex
+      const { indexOfTileToMoveTo } = action
+      let board = this.state.board
+      const creature = board[indexOfTileFrom].creature || board[indexOfTileToMoveTo].creature
+      creature.action = 'idle'
+      creature.orientation = creature.originalOrientation
+      board = update(board, { [indexOfTileToMoveTo]: { hasCreature: { $set: true } } })
+      board = update(board, { [indexOfTileToMoveTo]: { creature: { $set: creature } } })
+      board = update(board, { [indexOfTileFrom]: { hasCreature: { $set: false } } })
+      this.setState({ board })
+      this.setState({
+        turn: {
+          ...this.state.turn,
+          creature: {
+            ...this.state.turn.creature,
+            tileIndex: indexOfTileToMoveTo
+          }
+        }
+      })
+    }
+
     console.log('[handleWalking]')
-    const { time, type, orientation, indexOfTileToMoveTo } = action
     const indexOfTileFrom = this.state.turn.creature.tileIndex
+    const { type, orientation } = actions[0]
 
     let board = this.state.board
     board = update(board, { [indexOfTileFrom]: { creature: { action: { $set: type } } } })
     board = update(board, { [indexOfTileFrom]: { creature: { orientation: { $set: orientation } } } })
     this.setState({ board })
 
-    const tileToElement = document.getElementById(indexOfTileToMoveTo)
     const tileFromElement = document.getElementById(indexOfTileFrom)
     const spriteToMoveElement = tileFromElement.lastChild
-    const distanceX = tileToElement.getBoundingClientRect().left - tileFromElement.getBoundingClientRect().left
-    const distanceY = tileToElement.getBoundingClientRect().top - tileFromElement.getBoundingClientRect().top
+    const keyFrames = [{ left: '0', top: '0' }]
+    for (const action of actions) {
+      const { indexOfTileToMoveTo } = action
+      const tileToElement = document.getElementById(indexOfTileToMoveTo)
+      const distanceX = tileToElement.getBoundingClientRect().left - tileFromElement.getBoundingClientRect().left
+      const distanceY = tileToElement.getBoundingClientRect().top - tileFromElement.getBoundingClientRect().top
 
-    const keyFrames = [
-      { left: '0', top: '0' },
-      { left: distanceX + 'px', top: distanceY + 'px' }
-    ]
-
-    const animation = spriteToMoveElement.animate(keyFrames, time)
+      keyFrames.push({ left: distanceX + 'px', top: distanceY + 'px' })
+    }
+    const totalTime = actions.reduce((totalTime, currEl) => {
+      return totalTime + currEl.time
+    }, 0)
+    const animation = spriteToMoveElement.animate(keyFrames, totalTime)
 
     const animationPromise = new Promise((resolve, reject) => {
       animation.onfinish = (finished) => {
-        console.log('[handleWalking.onfinish] finished moving animation, resetting creature')
-        let board = this.state.board
-        const creature = board[indexOfTileFrom].creature || board[indexOfTileToMoveTo].creature
-        creature.action = 'idle'
-        creature.orientation = creature.originalOrientation
-        board = update(board, { [indexOfTileToMoveTo]: { hasCreature: { $set: true } } })
-        board = update(board, { [indexOfTileToMoveTo]: { creature: { $set: creature } } })
-        board = update(board, { [indexOfTileFrom]: { hasCreature: { $set: false } } })
-        this.setState({ board })
-        this.setState({
-          turn: {
-            ...this.state.turn,
-            creature: {
-              ...this.state.turn.creature,
-              tileIndex: indexOfTileToMoveTo
-            }
-          }
-        })
-
+        resetCreature(actions[actions.length - 1])
         resolve(finished)
       }
       animation.oncancel = (cancelled) => {
-        console.log('[handleWalking.oncancel] moving animation cancelled, resetting creature')
-        let board = this.state.board
-        const creature = board[indexOfTileFrom].creature
-        creature.action = 'idle'
-        creature.orientation = creature.originalOrientation
-        board = update(board, { [indexOfTileToMoveTo]: { hasCreature: { $set: true } } })
-        board = update(board, { [indexOfTileToMoveTo]: { creature: { $set: creature } } })
-        board = update(board, { [indexOfTileFrom]: { hasCreature: { $set: false } } })
-        this.setState({ board })
-        this.setState({
-          turn: {
-            ...this.state.turn,
-            creature: {
-              ...this.state.turn.creature,
-              tileIndex: indexOfTileToMoveTo
-            }
-          }
-        })
-
+        resetCreature(actions[actions.length - 1])
         reject(cancelled)
       }
     })
-
     await animationPromise
   }
 
@@ -272,14 +261,24 @@ class Battlefield extends Component {
 
   handleActions (actionChain) {
     const dealWithActions = async () => {
-      for (const action of actionChain) {
-        console.log('[handleActions.dealWithActions] starting new action', action.type, action)
-        if (action.type === 'walk') {
-          await this.handleWalking(action)
-        } else {
-          await this.handleGenericAction(action)
-        }
+      const walkingActions = actionChain.filter(el => el.type === 'walk')
+      if (walkingActions.length > 0) {
+        await this.handleWalking(walkingActions)
       }
+      const nonWalkingActions = actionChain.filter(el => el.type !== 'walk')
+      for (const action of nonWalkingActions) {
+        await this.handleGenericAction(action)
+      }
+      // for (const actionIndex in actionChain) {
+      //   const action = actionChain[actionIndex]
+      //   const nextAction = actionChain[parseInt(actionIndex) + 1] || {}
+      //   console.log('[handleActions.dealWithActions] starting new action', action.type, action)
+      //   if (action.type === 'walk') {
+      //     await this.handleWalking(action, nextAction)
+      //   } else {
+      //     await this.handleGenericAction(action)
+      //   }
+      // }
     }
 
     dealWithActions().then(() => {
