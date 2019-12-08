@@ -1,6 +1,6 @@
 import * as hexFuncs from '../../utility/hexHelper'
 
-export function isTileWithEnemyAndNeighbourInRangeAndNeighbourEmptyOrOfActiveCreature (creature, turn, isNeighbourInRange, tileOfNeighbour, indexOfNeighbour) {
+export function isValidToAttack (creature, turn, isNeighbourInRange, tileOfNeighbour, indexOfNeighbour) {
   if (creature.player !== turn.player) {
     if (isNeighbourInRange) {
       if (tileOfNeighbour.hasCreature) {

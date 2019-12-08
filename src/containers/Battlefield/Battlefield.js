@@ -8,7 +8,7 @@ import CombatFooter from './CombatFooter'
 import CombatDashboard from './CombatDashboard'
 import SpriteController from '../Sprite/SpriteController'
 import { whichCornerOfHex } from '../../utility/utility'
-import * as helper from './utility'
+import { getNeighbourIndex, isValidToAttack } from './utility'
 import '../../App.css'
 import CreatureInfo from './CreatureInfo'
 
@@ -108,11 +108,11 @@ class Battlefield extends Component {
       const { range } = this.state.turn.creature
       const inRange = range.includes(hexIndex)
       const corner = whichCornerOfHex(e)
-      const indexOfNeighbour = helper.getNeighbourIndex(this.state.board, hexIndex, corner)
+      const indexOfNeighbour = getNeighbourIndex(this.state.board, hexIndex, corner)
       const neighbourInRange = range.includes(indexOfNeighbour)
 
       if (hasCreature) {
-        if (helper.isTileWithEnemyAndNeighbourInRangeAndNeighbourEmptyOrOfActiveCreature(
+        if (isValidToAttack(
           creature, this.state.turn, neighbourInRange, this.state.board[indexOfNeighbour], indexOfNeighbour
         )) {
           const corner = whichCornerOfHex(e)
@@ -269,16 +269,6 @@ class Battlefield extends Component {
       for (const action of nonWalkingActions) {
         await this.handleGenericAction(action)
       }
-      // for (const actionIndex in actionChain) {
-      //   const action = actionChain[actionIndex]
-      //   const nextAction = actionChain[parseInt(actionIndex) + 1] || {}
-      //   console.log('[handleActions.dealWithActions] starting new action', action.type, action)
-      //   if (action.type === 'walk') {
-      //     await this.handleWalking(action, nextAction)
-      //   } else {
-      //     await this.handleGenericAction(action)
-      //   }
-      // }
     }
 
     dealWithActions().then(() => {
