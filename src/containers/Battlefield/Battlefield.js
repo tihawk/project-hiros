@@ -136,7 +136,7 @@ class Battlefield extends Component {
   }
 
   async handleWalking (action) {
-    console.log('animating')
+    console.log('[handleWalking]')
     const { time, type, orientation, indexOfTileToMoveTo } = action
     const indexOfTileFrom = this.state.turn.creature.tileIndex
 
@@ -160,6 +160,7 @@ class Battlefield extends Component {
 
     const animationPromise = new Promise((resolve, reject) => {
       animation.onfinish = (finished) => {
+        console.log('[handleWalking.onfinish] finished moving animation, resetting creature')
         let board = this.state.board
         const creature = board[indexOfTileFrom].creature || board[indexOfTileToMoveTo].creature
         creature.action = 'idle'
@@ -178,10 +179,10 @@ class Battlefield extends Component {
           }
         })
 
-        // this.state.turn.creature.tileIndex = indexOfTileToMoveTo
         resolve(finished)
       }
       animation.oncancel = (cancelled) => {
+        console.log('[handleWalking.oncancel] moving animation cancelled, resetting creature')
         let board = this.state.board
         const creature = board[indexOfTileFrom].creature
         creature.action = 'idle'
@@ -200,7 +201,6 @@ class Battlefield extends Component {
           }
         })
 
-        // this.state.turn.creature.tileIndex = indexOfTileToMoveTo
         reject(cancelled)
       }
     })
@@ -209,12 +209,13 @@ class Battlefield extends Component {
   }
 
   onFinish () {
+    console.log('[onFinish(callback)] forcing update')
     this.forceUpdate()
   }
 
   async handleGenericAction (action) {
     const resetCreature = () => {
-      console.log('trying to reset creature')
+      console.log('[handleGenericAction.resetCreature] trying to reset creature')
       if (action.type === 'dying') {
         let board = this.state.board
         const creatureOrCorpse = this.state.board[action.indexOfTileToMoveTo].hasCorpse ? 'corpse' : 'creature'
@@ -237,13 +238,13 @@ class Battlefield extends Component {
       try {
         setTimeout(() => {
           if (!finishedOnTime) {
-            console.log('timeouting')
+            console.log('[handleGenericAction.timeOut] attemtping to reset creature')
             board = this.state.board
             try {
               resetCreature()
               resolve()
             } catch {
-              console.log('failed at resetting')
+              console.log('[handleGenericAction.timeOut] failed at resetting, emitting completed-actions')
               this.socket.emit('completed-actions')
             }
           }
@@ -251,18 +252,18 @@ class Battlefield extends Component {
 
         this.onFinish = () => {
           finishedOnTime = true
-          console.log('resolving')
+          console.log('[handleGenericAction.onFinish] attemtping to reset creature')
           board = this.state.board
           try {
             resetCreature()
             resolve()
           } catch {
-            console.log('trying to reset creature')
+            console.log('[handleGenericAction.onFinish] failed to reset creature, calling for a state update')
             this.socket.emit('completed-actions')
           }
         }
       } catch {
-        console.log('failed onFinish')
+        console.log('[handleGenericAction.onFinish] failed to finish, calling for a state update')
         this.socket.emit('completed-actions')
       }
     })
@@ -272,17 +273,17 @@ class Battlefield extends Component {
   handleActions (actionChain) {
     const dealWithActions = async () => {
       for (const action of actionChain) {
-        console.log(action)
+        console.log('[handleActions.dealWithActions] starting new action', action.type, action)
         if (action.type === 'walk') {
           await this.handleWalking(action)
         } else {
-          console.log('attacking')
           await this.handleGenericAction(action)
         }
       }
     }
 
     dealWithActions().then(() => {
+      console.log('[dealWithActions] successfully finished action sequence')
       this.setState({ inAction: false })
       this.socket.emit('completed-actions')
     })
@@ -303,8 +304,6 @@ class Battlefield extends Component {
   checkTypeOfTile = (hexIndex) => {
     if (parseInt(this.state.turn.creature.tileIndex) === hexIndex) {
       return classes.active
-    // } else if (this.state.board[hexIndex].hasCreature && this.state.board[hexIndex].creature.player === this.state.turn.player) {
-    //   return classes.unsteppable
     } else if (this.state.turn.creature.range.includes(hexIndex)) {
       return classes.inRange
     }
