@@ -15,7 +15,6 @@ class Sprite extends Component {
     stackNum = styled.div`
       position: absolute;
       z-index: 3;
-      pointer-events: none;
       top: 35px;
       left: ${({ orientation }) => orientation > 0 ? 70 : -40}px;
       width: 35px;
@@ -29,7 +28,7 @@ class Sprite extends Component {
     componentDidUpdate (prevProps) {
       const { shouldAnimate, framesPerStep, loop, onFinish } = this.props
 
-      if (shouldAnimate && prevProps.shouldAnimate) {
+      if (shouldAnimate) {
         const states = Object.keys(this.props.data.frames).length
         const { state } = this.state
 

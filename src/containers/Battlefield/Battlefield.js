@@ -29,6 +29,11 @@ class Battlefield extends Component {
     nickname: String(Math.random())
   }
 
+  constructor () {
+    super()
+    this.onFinish = this.onFinish.bind(this)
+  }
+
   componentDidMount () {
     const { endpoint } = this.state
     this.socket = socketIOClient(endpoint, {
@@ -48,8 +53,8 @@ class Battlefield extends Component {
       })
     })
     this.socket.on('actions', actionChain => {
-      this.setState({ inAction: true })
       if (actionChain.length > 0) {
+        this.setState({ inAction: true })
         this.handleActions(actionChain)
       }
     })
@@ -130,6 +135,13 @@ class Battlefield extends Component {
     }
   }
 
+  setPointerEventsToInitialBecauseIDontKnow (index, value) {
+    const element = document.getElementById(index)
+    element.scrollIntoView()
+    element.style.pointerEvents = value
+    console.log(element)
+  }
+
   async handleWalking (action) {
     console.log('animating')
     const { time, type, orientation, indexOfTileToMoveTo } = action
@@ -139,9 +151,8 @@ class Battlefield extends Component {
     board = update(board, { [indexOfTileFrom]: { creature: { action: { $set: type } } } })
     board = update(board, { [indexOfTileFrom]: { creature: { orientation: { $set: orientation } } } })
     this.setState({ board })
-    this.state.board[this.state.turn.creature.tileIndex].creature.action = (type)
-    this.state.board[this.state.turn.creature.tileIndex].creature.orientation = orientation
 
+    // this.setPointerEventsToInitialBecauseIDontKnow(indexOfTileToMoveTo, 'initial')
     const tileToElement = document.getElementById(indexOfTileToMoveTo)
     const tileFromElement = document.getElementById(indexOfTileFrom)
     const spriteToMoveElement = tileFromElement.lastChild
@@ -157,6 +168,7 @@ class Battlefield extends Component {
 
     const animationPromise = new Promise((resolve, reject) => {
       animation.onfinish = (finished) => {
+        this.setPointerEventsToInitialBecauseIDontKnow(indexOfTileToMoveTo, 'all')
         let board = this.state.board
         const creature = board[indexOfTileFrom].creature || board[indexOfTileToMoveTo].creature
         creature.action = 'idle'
@@ -165,14 +177,15 @@ class Battlefield extends Component {
         board = update(board, { [indexOfTileToMoveTo]: { creature: { $set: creature } } })
         board = update(board, { [indexOfTileFrom]: { hasCreature: { $set: false } } })
         this.setState({ board })
-
-        this.setState({turn: {
-          ...this.state.turn,
-          creature: {
-            ...this.state.turn.creature,
-            tileIndex: indexOfTileToMoveTo
+        this.setState({
+          turn: {
+            ...this.state.turn,
+            creature: {
+              ...this.state.turn.creature,
+              tileIndex: indexOfTileToMoveTo
+            }
           }
-        }})
+        })
 
         // this.state.turn.creature.tileIndex = indexOfTileToMoveTo
         resolve(finished)
@@ -186,13 +199,15 @@ class Battlefield extends Component {
         board = update(board, { [indexOfTileToMoveTo]: { creature: { $set: creature } } })
         board = update(board, { [indexOfTileFrom]: { hasCreature: { $set: false } } })
         this.setState({ board })
-        this.setState({turn: {
-          ...this.state.turn,
-          creature: {
-            ...this.state.turn.creature,
-            tileIndex: indexOfTileToMoveTo
+        this.setState({
+          turn: {
+            ...this.state.turn,
+            creature: {
+              ...this.state.turn.creature,
+              tileIndex: indexOfTileToMoveTo
+            }
           }
-        }})
+        })
 
         // this.state.turn.creature.tileIndex = indexOfTileToMoveTo
         reject(cancelled)
@@ -202,42 +217,52 @@ class Battlefield extends Component {
     await animationPromise
   }
 
-  sleep (ms) {
-    return new Promise(resolve => setTimeout(resolve, ms))
+  onFinish () {
+    this.forceUpdate()
   }
 
-  onFinish = () => console.log('finished with')
+  async handleGenericAction (action) {
+    let board = this.state.board
+    board = update(board, { [action.indexOfTileToMoveTo]: { creature: { action: { $set: action.type } } } })
+    board = update(board, { [action.indexOfTileToMoveTo]: { creature: { orientation: { $set: action.orientation } } } })
+    this.setState({ board })
+    const animationPromise = new Promise((resolve, reject) => {
+      this.onFinish = () => {
+        console.log('resolving')
+        board = this.state.board
+        board = update(board, { [action.indexOfTileToMoveTo]: { creature: { action: { $set: 'idle' } } } })
+        board = update(board, { [action.indexOfTileToMoveTo]: { creature: { orientation: { $set: board[action.indexOfTileToMoveTo].creature.originalOrientation } } } })
+        this.setState({ board })
+        resolve()
+      }
+    })
 
-  handleActions = (actionChain) => {
+    await animationPromise
+  }
+
+  handleActions (actionChain) {
     const dealWithActions = async () => {
       for (const action of actionChain) {
         console.log(action)
         if (action.type === 'walk') {
           await this.handleWalking(action)
-        } else if (String(action.type).startsWith('attack-')) {
+        }
+        if (String(action.type).startsWith('attack-')) {
           console.log('attacking')
-          let board = this.state.board
-          board = update(board, { [action.indexOfTileToMoveTo]: { creature: { action: { $set: action.type } } } })
-          board = update(board, { [action.indexOfTileToMoveTo]: { creature: { orientation: { $set: action.orientation } } } })
-          this.setState({board})
-          const animationPromise = new Promise((resolve, reject) => {
-            this.onFinish = (finished) => {
-              console.log(finished)
-              resolve(finished)
-            }
-          })
-
-          await animationPromise
-        } else if (action.type === 'attacked') {
+          await this.handleGenericAction(action)
+        }
+        if (action.type === 'attacked') {
           console.log('being attacked')
+          await this.handleGenericAction(action)
         } else if (action.type === 'dying') {
           console.log('dying')
+          await this.handleGenericAction(action)
         }
       }
     }
 
     dealWithActions().then(() => {
-      this.setState({inAction: false})
+      this.setState({ inAction: false })
       this.socket.emit('completed-actions')
     })
   }
@@ -257,8 +282,8 @@ class Battlefield extends Component {
   checkTypeOfTile = (hexIndex) => {
     if (parseInt(this.state.turn.creature.tileIndex) === hexIndex) {
       return classes.active
-    } else if (this.state.board[hexIndex].hasCreature && this.state.board[hexIndex].creature.player === this.state.turn.player) {
-      return classes.unsteppable
+    // } else if (this.state.board[hexIndex].hasCreature && this.state.board[hexIndex].creature.player === this.state.turn.player) {
+    //   return classes.unsteppable
     } else if (this.state.turn.creature.range.includes(hexIndex)) {
       return classes.inRange
     }
@@ -294,6 +319,7 @@ class Battlefield extends Component {
                           creature={hex.corpse.name}
                           action={hex.corpse.action}
                           orientation={hex.corpse.orientation}
+                          onFinish={this.onFinish}
                         />
                         : null}
                       {hex.hasCreature

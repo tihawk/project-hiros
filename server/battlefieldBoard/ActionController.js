@@ -240,7 +240,7 @@ class ActionController {
   handleCreatureAttacked () {
     this.board[this.turn.creature.tileIndex].creature.resetAction()
     const { actionType, isAlive } = this.board[this.indexOfTileToAttack].creature.checkIfAlive()
-    this.addAction(actionType, this.board[this.indexOfTileToAttack].creature.orientation, 500)
+    this.addAction(actionType, this.board[this.indexOfTileToAttack].creature.orientation, 500, this.indexOfTileToAttack)
 
     if (!isAlive) {
       this.battlefield.addCorpse(this.indexOfTileToAttack)

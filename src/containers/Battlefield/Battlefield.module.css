@@ -1,7 +1,3 @@
-.inAction {
-    /* pointer-events: none; */
-}
-
 .field {
     position: relative;
     margin: 10px;
@@ -13,6 +9,15 @@
     background-color: rgb(255, 250, 250, 0.5);
     border: 3px solid gold;
 }
+
+/* .hexagon.active.inAction {
+    pointer-events: initial;
+} */
+
+.field.inAction {
+    pointer-events: none;
+}
+
 
 .field:before {
     content: " ";
