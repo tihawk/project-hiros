@@ -232,8 +232,8 @@ class Battlefield extends Component {
             try {
               resetCreature()
               resolve()
-            } catch {
-              console.log('[handleGenericAction.timeOut] failed at resetting, emitting completed-actions')
+            } catch (e) {
+              console.log('[handleGenericAction.timeOut]', e)
               this.socket.emit('completed-actions')
             }
           }
@@ -246,13 +246,13 @@ class Battlefield extends Component {
           try {
             resetCreature()
             resolve()
-          } catch {
-            console.log('[handleGenericAction.onFinish] failed to reset creature, calling for a state update')
+          } catch (e) {
+            console.log('[handleGenericAction.onFinish]', e)
             this.socket.emit('completed-actions')
           }
         }
-      } catch {
-        console.log('[handleGenericAction.onFinish] failed to finish, calling for a state update')
+      } catch (e) {
+        console.log('[handleGenericAction.onFinish]', e)
         this.socket.emit('completed-actions')
       }
     })
