@@ -1,7 +1,13 @@
-const { actionTypes } = require('./Enums').creature
+const { actionTypes, movementTypes, attackTypes } = require('./Enums').creature
 
 class Creature {
-  constructor (name, town, lvl, att, def, dMin, dMax, hp, spd, grw, val, cost, movementType = 'walk', size = 1, special = {}) {
+  constructor (
+    name, town, lvl, att, def, dMin, dMax, hp, spd, grw, val, cost,
+    movementType = movementTypes.walk,
+    attackType = attackTypes.melee,
+    size = 1,
+    special = {}
+  ) {
     this.name = name
     this.town = town
     this.level = lvl
@@ -15,6 +21,7 @@ class Creature {
     this.value = val
     this.cost = cost
     this.movementType = movementType
+    this.attackType = attackType
     this.size = size
     this.special = { ...special }
 

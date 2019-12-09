@@ -13,6 +13,14 @@ const creature = {
   orientations: {
     left: -1,
     right: 1
+  },
+  movementTypes: {
+    walk: 'walk',
+    fly: 'fly'
+  },
+  attackTypes: {
+    melee: 'melee',
+    ranged: 'ranged'
   }
 }
 

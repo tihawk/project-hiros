@@ -1,8 +1,9 @@
 const Creature = require('../Creature')
+const { attackTypes } = require('../Enums').creature
 
 class Marksman extends Creature {
   constructor (stack, action, orientation, player) {
-    super('Marksman', 'Castle', 2, 6, 3, 2, 3, 10, 6, 9, 184, 150)
+    super('Marksman', 'Castle', 2, 6, 3, 2, 3, 10, 6, 9, 184, 150, undefined, attackTypes.ranged)
 
     this.stackMultiplier = stack
     this.action = action
