@@ -58,10 +58,10 @@ class Creature {
 
     const currentHealthOfEnemy = enemy.currentHP - damage
     console.log(enemy.stackMultiplier, damage)
-    if (currentHealthOfEnemy < 0) {
+    if (currentHealthOfEnemy <= 0) {
       enemy.stackMultiplier += -1 + Math.ceil(currentHealthOfEnemy / enemy.hp)
       enemy.currentHP = enemy.hp + (currentHealthOfEnemy % enemy.hp)
-      console.log(enemy.stackMultiplier, currentHealthOfEnemy, enemy.hp, -1 + Math.floor(currentHealthOfEnemy / enemy.hp), enemy.currentHP)
+      console.log(enemy.stackMultiplier, currentHealthOfEnemy, enemy.hp, -1 + Math.ceil(currentHealthOfEnemy / enemy.hp), enemy.currentHP)
     } else {
       enemy.currentHP = currentHealthOfEnemy
     }

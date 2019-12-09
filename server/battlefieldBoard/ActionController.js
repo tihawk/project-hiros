@@ -215,13 +215,6 @@ class ActionController {
         previousNode = node
       }
 
-      // const { distance, orientation } = getDistanceOrientationAndDepth(this.board[this.turn.creature.tileIndex], this.board[indexOfTileToMoveTo])
-      // this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes.walk)
-      // this.board[this.turn.creature.tileIndex].creature.setOrientation(orientation)
-
-      // const time = distance * 300
-      // this.addAction(actionTypes.walk, orientation, time, indexOfTileToMoveTo)
-
       console.log('finished moving')
       this.battlefield.moveCreature(this.turn.creature.tileIndex, indexOfTileToMoveTo)
       this.turn.creature.tileIndex = indexOfTileToMoveTo
