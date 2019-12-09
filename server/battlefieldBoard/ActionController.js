@@ -42,8 +42,12 @@ function getDistanceOrientationAndDepth (tileFrom, tileTo) {
 }
 
 function calculateRange (board, tileIndex) {
-  const { spd } = board[tileIndex].creature
-  return findRange(board, tileIndex, spd)
+  const { spd, movementType } = board[tileIndex].creature
+  if (movementType === 'walk') {
+    return findRange(board, tileIndex, spd)
+  } else if (movementType === 'fly') {
+    return helper.calculateFlyerRange(board, tileIndex)
+  }
 }
 
 class ActionController {

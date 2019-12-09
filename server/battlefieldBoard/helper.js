@@ -42,3 +42,19 @@ exports.cubeNeighboursList = [
 exports.indexFromOddRow = ({ x, y }) => {
   return x + 15 * y
 }
+
+exports.calculateFlyerRange = (board, tileIndex) => {
+  const { spd } = board[tileIndex].creature
+  const { x, y, z } = this.oddRowHexToCube(board[tileIndex])
+  const coordsCube = board.map(tile => this.oddRowHexToCube(tile))
+
+  const range = []
+  for (let i = 0; i < coordsCube.length; i++) {
+    const dist = this.calculateCubeDistance(coordsCube[i], x, y, z)
+    if (dist <= spd) {
+      if (board[i].hasCreature || board[i].hasObstacle || board[i].hasWall) continue
+      range.push(i)
+    }
+  }
+  return range
+}

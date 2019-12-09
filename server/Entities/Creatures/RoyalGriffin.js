@@ -2,7 +2,7 @@ const Creature = require('../Creature')
 
 class RoyalGriffin extends Creature {
   constructor (stack, action, orientation, player) {
-    super('Royal Griffin', 'Castle', 3, 9, 9, 3, 6, 25, 9, 7, 448, 240)
+    super('Royal Griffin', 'Castle', 3, 9, 9, 3, 6, 25, 9, 7, 448, 240, 'fly')
 
     this.stackMultiplier = stack
     this.action = action
