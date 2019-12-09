@@ -196,19 +196,25 @@ class ActionController {
 
   handleCreatureMove (indexOfTileToMoveTo) {
     console.log('[handleCreatureMove]')
-    console.log('[handleCreatureMove] running pathfinding')
-    const path = findPath(
-      this.board,
-      this.turn.creature.range,
-      this.board[this.turn.creature.tileIndex],
-      this.board[indexOfTileToMoveTo]
-    )
+    let path
+    if (this.board[this.turn.creature.tileIndex].creature.movementType === 'walk') {
+      console.log('[handleCreatureMove] running pathfinding')
+      path = findPath(
+        this.board,
+        this.turn.creature.range,
+        this.board[this.turn.creature.tileIndex],
+        this.board[indexOfTileToMoveTo]
+      )
+    } else if (this.board[this.turn.creature.tileIndex].creature.movementType === 'fly') {
+      if (this.turn.creature.tileIndex !== indexOfTileToMoveTo) {
+        path = [indexOfTileToMoveTo]
+      }
+    }
     console.log('[handleCreatureMove] found path:\n', path)
     if (path) {
       console.log('[handleCreatureMove] moving...')
 
       let previousNode = this.turn.creature.tileIndex
-      console.log(indexOfTileToMoveTo)
       for (const node of path) {
         const { distance, orientation } = getDistanceOrientationAndDepth(this.board[previousNode], this.board[node])
         this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes.walk)
