@@ -3,7 +3,7 @@ const { movementTypes } = require('../Enums').creature
 
 class Archangel extends Creature {
   constructor (stack, action, orientation, player) {
-    super('Archangel', 'Castle', 7, 30, 30, 50, 50, 250, 18, 1, 8776, 5000, movementTypes.fly)
+    super('Archangel', 'Castle', 7, 30, 30, 50, 50, 250, 18, 1, 8776, 5000, movementTypes.fly, undefined, 2)
 
     this.stackMultiplier = stack
     this.action = action

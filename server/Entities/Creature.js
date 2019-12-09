@@ -6,6 +6,7 @@ class Creature {
     movementType = movementTypes.walk,
     attackType = attackTypes.melee,
     size = 1,
+    retaliations = 1,
     special = {}
   ) {
     this.name = name
@@ -24,7 +25,9 @@ class Creature {
     this.attackType = attackType
     this.size = size
     this.special = { ...special }
+    this.retaliationsPerRound = retaliations
 
+    this.currentRetaliations = retaliations
     this.isDefend = false
     this.currentDef = def
     this.currentHP = hp
