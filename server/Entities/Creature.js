@@ -61,6 +61,11 @@ class Creature {
     this.currentDef = isDefend === true ? this.def + 0.3 * this.def : this.def
   }
 
+  resetRoundStats () {
+    this.setDefend(false)
+    this.currentRetaliations = this.retaliationsPerRound
+  }
+
   attack (enemy) {
     const randDamage = Math.random() * (this.dMax - this.dMin) + this.dMin
     const enemyDef = enemy.currentDef
@@ -92,6 +97,19 @@ class Creature {
     }
     this.setAction(actionType)
     return { isAlive: this.isAlive, actionType }
+  }
+
+  checkIfRetaliates (other) {
+    if (this.isAlive && !other.special.noEnemyRetaliation) {
+      if (this.currentRetaliations > 0) {
+        this.currentRetaliations -= 1
+        return true
+      } else {
+        return false
+      }
+    } else {
+      return false
+    }
   }
 }
 

@@ -242,7 +242,7 @@ class ActionController {
     this.isToAttack = false
     const { orientation, depth } = getDistanceOrientationAndDepth(this.board[this.turn.creature.tileIndex], this.board[this.indexOfTileToAttack])
     const attackType = 'attack' + depth
-    console.log('[handleCreatureMove] setting action to attack')
+    console.log('[performTheAttack] setting action to attack')
     this.addAction(actionTypes[attackType], orientation, 600, this.turn.creature.tileIndex)
 
     this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes[attackType])
@@ -261,7 +261,33 @@ class ActionController {
       this.battlefield.addCorpse(this.indexOfTileToAttack)
     } else {
       this.board[this.indexOfTileToAttack].creature.resetAction()
+      this.handleRetaliation()
     }
+  }
+
+  handleRetaliation () {
+    const retaliates = this.board[this.indexOfTileToAttack].creature.checkIfRetaliates(this.board[this.turn.creature.tileIndex].creature)
+    if (retaliates) {
+      const { orientation, depth } = getDistanceOrientationAndDepth(this.board[this.indexOfTileToAttack], this.board[this.turn.creature.tileIndex])
+      const attackType = 'attack' + depth
+      console.log('[handleRetaliation] setting action to attack (retaliates)')
+      this.addAction(actionTypes[attackType], orientation, 600, this.indexOfTileToAttack)
+
+      this.board[this.indexOfTileToAttack].creature.setAction(actionTypes[attackType])
+      this.board[this.indexOfTileToAttack].creature.setOrientation(orientation)
+      this.board[this.indexOfTileToAttack].creature.attack(this.board[this.turn.creature.tileIndex].creature)
+
+      this.board[this.indexOfTileToAttack].creature.resetAction()
+      const { actionType, isAlive } = this.board[this.turn.creature.tileIndex].creature.checkIfAlive()
+      this.addAction(actionType, this.board[this.turn.creature.tileIndex].creature.orientation, 1000, this.turn.creature.tileIndex)
+
+      if (!isAlive) {
+        this.battlefield.addCorpse(this.turn.creature.tileIndex)
+      } else {
+        this.board[this.turn.creature.tileIndex].creature.resetAction()
+      }
+    }
+
     this.indexOfTileToAttack = null
   }
 
@@ -286,7 +312,8 @@ class ActionController {
   }
 
   startNewTurn () {
-    this.board[this.turn.creature.tileIndex].creature.setDefend(false)
+    // this.board[this.turn.creature.tileIndex].creature.setDefend(false)
+    this.board[this.turn.creature.tileIndex].creature.resetRoundStats()
   }
 }
 
