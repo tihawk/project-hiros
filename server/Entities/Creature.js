@@ -62,7 +62,6 @@ class Creature {
   }
 
   resetRoundStats () {
-    this.setDefend(false)
     this.currentRetaliations = this.retaliationsPerRound
   }
 

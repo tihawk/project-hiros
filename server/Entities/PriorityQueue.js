@@ -83,6 +83,10 @@ class PriorityQueue {
     this.currentPhase = getNextPhase(this.currentPhase)
     if (this.currentPhase === phases[0]) {
       console.log('[initNextPhase] switching to normal phase')
+      const creatureTiles = this.board.filter(el => el.hasCreature)
+      for (const tile of creatureTiles) {
+        tile.creature.resetRoundStats()
+      }
       this.getNewQueue()
     } else if (this.currentPhase === phases[1]) {
       console.log('[initNextPhase] switching to war machine phase')

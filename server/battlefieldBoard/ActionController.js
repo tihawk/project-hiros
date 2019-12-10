@@ -312,8 +312,8 @@ class ActionController {
   }
 
   startNewTurn () {
-    // this.board[this.turn.creature.tileIndex].creature.setDefend(false)
-    this.board[this.turn.creature.tileIndex].creature.resetRoundStats()
+    this.board[this.turn.creature.tileIndex].creature.setDefend(false)
+    // this.board[this.turn.creature.tileIndex].creature.resetRoundStats()
   }
 }
 
