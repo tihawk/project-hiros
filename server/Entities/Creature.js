@@ -83,7 +83,10 @@ class Creature {
   }
 
   attack (enemy) {
-    const damage = this.calculateBaseDamage(enemy)
+    let damage = this.calculateBaseDamage(enemy)
+    if (this.attackType === attackTypes.ranged) {
+      damage = 0.5 * damage
+    }
 
     const currentHealthOfEnemy = enemy.currentHP - damage
     console.log(enemy.stackMultiplier, damage)
