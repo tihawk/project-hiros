@@ -65,20 +65,40 @@ class Creature {
     this.currentRetaliations = this.retaliationsPerRound
   }
 
-  attack (enemy) {
+  calculateBaseDamage (enemy) {
     const randDamage = Math.random() * (this.dMax - this.dMin) + this.dMin
     const enemyDef = enemy.currentDef
     const X = this.att > enemyDef ? 0.05 : 0.02
-    const damage = (1 + ((this.att - enemyDef) * X)) * this.stackMultiplier * randDamage
+    return (1 + ((this.att - enemyDef) * X)) * this.stackMultiplier * randDamage
+  }
 
-    const currentHealthOfEnemy = enemy.currentHP - damage
-    console.log(enemy.stackMultiplier, damage)
+  assignEnemyHealth (currentHealthOfEnemy, enemy) {
     if (currentHealthOfEnemy <= 0) {
       enemy.stackMultiplier += -1 + Math.ceil(currentHealthOfEnemy / enemy.hp)
       enemy.currentHP = enemy.hp + (currentHealthOfEnemy % enemy.hp)
       console.log(enemy.stackMultiplier, currentHealthOfEnemy, enemy.hp, -1 + Math.ceil(currentHealthOfEnemy / enemy.hp), enemy.currentHP)
     } else {
       enemy.currentHP = currentHealthOfEnemy
+    }
+  }
+
+  attack (enemy) {
+    const damage = this.calculateBaseDamage(enemy)
+
+    const currentHealthOfEnemy = enemy.currentHP - damage
+    console.log(enemy.stackMultiplier, damage)
+    this.assignEnemyHealth(currentHealthOfEnemy, enemy)
+  }
+
+  shoot (enemy, distance) {
+    if (this.attackType === attackTypes.ranged) {
+      let damage = this.calculateBaseDamage(enemy)
+      if (distance > 10) {
+        damage = 0.5 * damage
+      }
+      const currentHealthOfEnemy = enemy.currentHP - damage
+      console.log(enemy.stackMultiplier, damage)
+      this.assignEnemyHealth(currentHealthOfEnemy, enemy)
     }
   }
 

@@ -5,7 +5,7 @@ const InitiativeQueue = require('../Entities/PriorityQueue')
 const Board = require('../Entities/Board')
 const findPath = require('./aStar')
 const findRange = require('./breadthFirst')
-const { actionTypes, orientations } = require('../Entities/Enums').creature
+const { actionTypes, orientations, attackTypes } = require('../Entities/Enums').creature
 
 function getNeighbourIndex (tile, corner) {
   const { x, y, z } = helper.oddRowHexToCube(tile)
@@ -177,19 +177,24 @@ class ActionController {
   }
 
   handleCreatureAttack (tileIndex, corner) {
+    const { attackType } = this.board[this.turn.creature.tileIndex].creature
     this.isToAttack = true
     this.indexOfTileToAttack = tileIndex
 
     const indexOfNeighbour = getNeighbourIndex(this.board[tileIndex], corner)
     console.log('[handleCreatureAttack] found neighbour to be', indexOfNeighbour, 'and attacker is at', this.turn.creature.tileIndex)
 
-    if (indexOfNeighbour !== -1) {
+    if (indexOfNeighbour !== -1 && this.board[indexOfNeighbour]) {
       if (this.board[indexOfNeighbour].hasCreature) {
         if (this.turn.creature.tileIndex === indexOfNeighbour) {
           this.handleCreatureMove(indexOfNeighbour)
         }
       } else {
-        this.handleCreatureMove(indexOfNeighbour)
+        if (attackType === attackTypes.ranged) {
+          this.handleCreatureShoot(tileIndex)
+        } else {
+          this.handleCreatureMove(indexOfNeighbour)
+        }
       }
     }
   }
@@ -250,6 +255,28 @@ class ActionController {
     this.board[this.turn.creature.tileIndex].creature.attack(this.board[this.indexOfTileToAttack].creature)
 
     this.handleCreatureAttacked()
+  }
+
+  handleCreatureShoot (tileOfAttacked) {
+    console.log('[handleCreatureShoot] attacking tile', tileOfAttacked)
+    const { distance, orientation, depth } = getDistanceOrientationAndDepth(this.board[this.turn.creature.tileIndex], this.board[tileOfAttacked])
+    const attackType = 'attack' + depth
+    this.addAction(actionTypes[attackType], orientation, 600, this.turn.creature.tileIndex)
+
+    console.log('[handleCreatureShoot] distance:', distance)
+    this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes[attackType])
+    this.board[this.turn.creature.tileIndex].creature.setOrientation(orientation)
+    this.board[this.turn.creature.tileIndex].creature.shoot(this.board[tileOfAttacked].creature, distance)
+
+    this.board[this.turn.creature.tileIndex].creature.resetAction()
+    const { actionType, isAlive } = this.board[tileOfAttacked].creature.checkIfAlive()
+    this.addAction(actionType, this.board[tileOfAttacked].creature.orientation, 1000, tileOfAttacked)
+
+    if (!isAlive) {
+      this.battlefield.addCorpse(tileOfAttacked)
+    } else {
+      this.board[tileOfAttacked].creature.resetAction()
+    }
   }
 
   handleCreatureAttacked () {
