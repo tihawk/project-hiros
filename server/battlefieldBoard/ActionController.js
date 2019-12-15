@@ -133,7 +133,9 @@ class ActionController {
       const army = new Army(this.players[i])
       for (let j = 0; j < 5; j++) {
         const random = Math.random()
-        const member = random < 0.5 ? new Creatures.Swordsman(Math.floor(Math.random() * (10 - 1)) + 1,
+        const member = random < 0.33 ? new Creatures.Swordsman(Math.floor(Math.random() * (10 - 1)) + 1,
+          actionTypes.idle, i === 0 ? orientations.right : orientations.left,
+          this.players[i]) : random < 0.67 ? new Creatures.Marksman(Math.floor(Math.random() * (10 - 1)) + 1,
           actionTypes.idle, i === 0 ? orientations.right : orientations.left,
           this.players[i]) : new Creatures.Angel(Math.floor(Math.random() * (10 - 1)) + 1,
           actionTypes.idle, i === 0 ? orientations.right : orientations.left,
@@ -247,7 +249,7 @@ class ActionController {
     this.isToAttack = false
     const { orientation, depth } = getDistanceOrientationAndDepth(this.board[this.turn.creature.tileIndex], this.board[this.indexOfTileToAttack])
     const attackType = 'attack' + depth
-    console.log('[performTheAttack] setting action to attack')
+    console.log('[performTheAttack] setting action to', attackType)
     this.addAction(actionTypes[attackType], orientation, 600, this.turn.creature.tileIndex)
 
     this.board[this.turn.creature.tileIndex].creature.setAction(actionTypes[attackType])
@@ -260,7 +262,8 @@ class ActionController {
   handleCreatureShoot (tileOfAttacked) {
     console.log('[handleCreatureShoot] attacking tile', tileOfAttacked)
     const { distance, orientation, depth } = getDistanceOrientationAndDepth(this.board[this.turn.creature.tileIndex], this.board[tileOfAttacked])
-    const attackType = 'attack' + depth
+    const attackType = 'shoot' + depth
+    console.log('[performTheAttack] setting action to', attackType)
     this.addAction(actionTypes[attackType], orientation, 600, this.turn.creature.tileIndex)
 
     console.log('[handleCreatureShoot] distance:', distance)

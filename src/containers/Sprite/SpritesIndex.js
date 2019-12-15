@@ -3,7 +3,8 @@ import files from './SpriteFiles'
 const creaturesList = [
   'Swordsman',
   'Angel',
-  'Naga'
+  'Naga',
+  'Marksman'
 ]
 const filesList = [
   'Idle',
@@ -12,7 +13,9 @@ const filesList = [
   'AttackWE',
   'AttackNWNE',
   'AttackSWSE',
-  'AttackWE',
+  'ShootWE',
+  'ShootNWNE',
+  'ShootSWSE',
   'Attacked',
   'Defend',
   'Dying',
@@ -26,7 +29,9 @@ const actionsList = [
   'attack-w-e',
   'attack-nw-ne',
   'attack-sw-se',
-  'attack-w-e',
+  'shoot-w-e',
+  'shoot-nw-ne',
+  'shoot-sw-se',
   'attacked',
   'defend',
   'dying',
@@ -44,10 +49,10 @@ creaturesList.forEach(creature => {
   console.log(sprites)
   actionsList.forEach((action, index) => {
     sprites[creature][action] = {}
-    const data = files[String(creature).toLowerCase() + filesList[index] + 'Data']
+    const data = files[String(creature).toLowerCase() + filesList[index] + 'Data'] || {}
     sprites[creature][action].data = data
-    sprites[creature][action].image = files[String(creature).toLowerCase() + filesList[index] + 'Image']
-    sprites[creature][action].framesPerStep = Math.floor(Object.keys(data.frames).length) / (action === 'walk' ? 2 : 1)
+    sprites[creature][action].image = files[String(creature).toLowerCase() + filesList[index] + 'Image'] || null
+    sprites[creature][action].framesPerStep = data.frames ? Math.floor(Object.keys(data.frames).length) / (action === 'walk' ? 2 : 1) : null
     sprites[creature][action].shouldAnimate = !(action === 'idle' || action === 'dead')
     sprites[creature][action].loop = action === 'walk'
   })
