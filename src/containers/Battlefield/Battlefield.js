@@ -237,6 +237,7 @@ class Battlefield extends Component {
               resetCreature()
               resolve()
             } catch (e) {
+              this.setState({ inAction: false })
               console.log('[handleGenericAction.timeOut]', e)
               this.socket.emit('completed-actions')
             }
@@ -251,11 +252,13 @@ class Battlefield extends Component {
             resetCreature()
             resolve()
           } catch (e) {
+            this.setState({ inAction: false })
             console.log('[handleGenericAction.onFinish]', e)
             this.socket.emit('completed-actions')
           }
         }
       } catch (e) {
+        this.setState({ inAction: false })
         console.log('[handleGenericAction.onFinish]', e)
         this.socket.emit('completed-actions')
       }
