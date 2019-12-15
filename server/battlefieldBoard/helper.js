@@ -40,6 +40,7 @@ exports.cubeNeighboursList = [
 ]
 
 exports.indexFromOddRow = ({ x, y }) => {
+  if (x > 14 || x < 0) return -1
   return x + 15 * y
 }
 
