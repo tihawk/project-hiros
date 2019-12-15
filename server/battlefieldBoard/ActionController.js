@@ -180,20 +180,32 @@ class ActionController {
 
   handleCreatureAttack (tileIndex, corner) {
     const { attackType } = this.board[this.turn.creature.tileIndex].creature
-    this.isToAttack = true
-    this.indexOfTileToAttack = tileIndex
+    const { x, y } = this.board[this.turn.creature.tileIndex]
+    if (attackType === attackTypes.ranged) {
+      const attackerCube = helper.oddRowHexToCube({ x, y })
+      const attackedCube = helper.oddRowHexToCube(this.board[tileIndex])
+      const distanceBetweenCreatures = helper.calculateCubeDistance(attackerCube, attackedCube.x, attackedCube.y, attackedCube.z)
+      console.log(distanceBetweenCreatures)
 
-    const indexOfNeighbour = getNeighbourIndex(this.board[tileIndex], corner)
-    console.log('[handleCreatureAttack] found neighbour to be', indexOfNeighbour, 'and attacker is at', this.turn.creature.tileIndex)
-
-    if (indexOfNeighbour !== -1 && this.board[indexOfNeighbour]) {
-      if (this.board[indexOfNeighbour].hasCreature) {
-        if (this.turn.creature.tileIndex === indexOfNeighbour) {
-          this.handleCreatureMove(indexOfNeighbour)
-        }
+      if (distanceBetweenCreatures > 1) {
+        this.handleCreatureShoot(tileIndex)
       } else {
-        if (attackType === attackTypes.ranged) {
-          this.handleCreatureShoot(tileIndex)
+        this.isToAttack = true
+        this.indexOfTileToAttack = tileIndex
+        this.handleCreatureMove(this.turn.creature.tileIndex)
+      }
+    } else {
+      this.isToAttack = true
+      this.indexOfTileToAttack = tileIndex
+
+      const indexOfNeighbour = getNeighbourIndex(this.board[tileIndex], corner)
+      console.log('[handleCreatureAttack] found neighbour to be', indexOfNeighbour, 'and attacker is at', this.turn.creature.tileIndex)
+
+      if (indexOfNeighbour !== -1 && this.board[indexOfNeighbour]) {
+        if (this.board[indexOfNeighbour].hasCreature) {
+          if (this.turn.creature.tileIndex === indexOfNeighbour) {
+            this.handleCreatureMove(indexOfNeighbour)
+          }
         } else {
           this.handleCreatureMove(indexOfNeighbour)
         }
