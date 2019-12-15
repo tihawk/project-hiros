@@ -24,7 +24,7 @@ export const whichCornerOfHex = (e) => {
   const dx = x - e.clientX + offsetWidth / 2
   const dy = y - e.clientY + offsetHeight / 2
 
-  const leftRight = 3.5
+  const leftRight = 10 // 3.5
   const up = 14
   const down = 0
 

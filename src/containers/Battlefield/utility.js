@@ -26,7 +26,11 @@ export function getShootOrAttack (creature, turn, tileOfTurn, tileOfHover) {
     const attackedCube = hexFuncs.oddRowHexToCube(tileOfHover)
     const distanceBetweenTiles = hexFuncs.calculateCubeDistance(attackerCube, attackedCube.x, attackedCube.y, attackedCube.z)
     if (distanceBetweenTiles > 1) {
-      return 'shoot'
+      if (distanceBetweenTiles > 10) {
+        return 'shootpenalty'
+      } else {
+        return 'shoot'
+      }
     } else {
       return 'attack'
     }
