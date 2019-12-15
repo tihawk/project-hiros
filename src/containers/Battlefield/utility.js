@@ -20,11 +20,18 @@ export function isValidToAttack (creature, turn, isNeighbourInRange, tileOfNeigh
   }
 }
 
-export function isValidToShoot (creature, turn) {
+export function getShootOrAttack (creature, turn, tileOfTurn, tileOfHover) {
   if (creature.player !== turn.player) {
-    return true
+    const attackerCube = hexFuncs.oddRowHexToCube(tileOfTurn)
+    const attackedCube = hexFuncs.oddRowHexToCube(tileOfHover)
+    const distanceBetweenTiles = hexFuncs.calculateCubeDistance(attackerCube, attackedCube.x, attackedCube.y, attackedCube.z)
+    if (distanceBetweenTiles > 1) {
+      return 'shoot'
+    } else {
+      return 'attack'
+    }
   } else {
-    return false
+    return null
   }
 }
 
