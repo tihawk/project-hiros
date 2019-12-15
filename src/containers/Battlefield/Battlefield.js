@@ -116,7 +116,7 @@ class Battlefield extends Component {
       if (hasCreature) {
         if (attackType === 'ranged') {
           const shootOrAttack = getShootOrAttack(creature, this.state.turn, this.state.board[this.state.turn.creature.tileIndex], { x, y })
-          if (shootOrAttack.startsWith('shoot')) {
+          if (String(shootOrAttack).startsWith('shoot')) {
             style.cursor = cursors[shootOrAttack]
             this.setState({ combatFooterMessage: 'Shoot ' + creature.name })
           } else if (shootOrAttack === 'attack') {
