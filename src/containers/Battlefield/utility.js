@@ -20,6 +20,14 @@ export function isValidToAttack (creature, turn, isNeighbourInRange, tileOfNeigh
   }
 }
 
+export function isValidToShoot (creature, turn) {
+  if (creature.player !== turn.player) {
+    return true
+  } else {
+    return false
+  }
+}
+
 export function getNeighbourIndex (board, tileIndex, corner) {
   if (board[tileIndex]) {
     const { x, y, z } = hexFuncs.oddRowHexToCube(board[tileIndex])

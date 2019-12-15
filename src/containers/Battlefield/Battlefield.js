@@ -8,7 +8,7 @@ import CombatFooter from './CombatFooter'
 import CombatDashboard from './CombatDashboard'
 import SpriteController from '../Sprite/SpriteController'
 import { whichCornerOfHex } from '../../utility/utility'
-import { getNeighbourIndex, isValidToAttack } from './utility'
+import { getNeighbourIndex, isValidToAttack, isValidToShoot } from './utility'
 import '../../App.css'
 import CreatureInfo from './CreatureInfo'
 
@@ -106,6 +106,7 @@ class Battlefield extends Component {
 
     if (this.state.turn.player === this.state.nickname) {
       const { range } = this.state.turn.creature
+      const { attackType } = this.state.board[this.state.turn.creature.tileIndex].creature
       const inRange = range.includes(hexIndex)
       const corner = whichCornerOfHex(e)
       const indexOfNeighbour = getNeighbourIndex(this.state.board, hexIndex, corner)
@@ -118,6 +119,9 @@ class Battlefield extends Component {
           const corner = whichCornerOfHex(e)
           style.cursor = `${corner}-resize`
           this.setState({ combatFooterMessage: 'Attack ' + creature.name })
+        } else if (attackType === 'ranged' && isValidToShoot(creature, this.state.turn)) {
+          style.cursor = 'crosshair'
+          this.setState({ combatFooterMessage: 'Shoot ' + creature.name })
         } else {
           style.cursor = 'not-allowed'
           this.setState({ combatFooterMessage: '' })
