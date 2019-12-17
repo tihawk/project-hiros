@@ -23,21 +23,30 @@ class CombatDashboard extends Component {
     const { notAllowedToAct, phase } = this.props
     return (
       <div className={classes.dashboard}>
-        <button onClick={this.props.playerReady}
+        <button
+          className={classes.dashboardButton}
+          onClick={this.props.playerReady}
           title="Click to start/join a battle"
         >
           <div className={classes.settingsButton}></div>
         </button>
         <button
+          className={classes.dashboardButton}
           onClick={this.props.playerDisconnect}
           title="Surrender"
         >
           <div className={classes.surrenderButton}></div>
         </button>
-        <button disabled>
+        <button
+          className={classes.dashboardButton}
+          disabled
+        >
           <div className={classes.retreatButton}></div>
         </button>
-        <button disabled>
+        <button
+          className={classes.dashboardButton}
+          disabled
+        >
           <div className={classes.autoCombatButton}></div>
         </button>
         <div className={classes.redPanel}>
@@ -50,12 +59,14 @@ class CombatDashboard extends Component {
           </div>
         </div>
         <button
+          className={classes.dashboardButton}
           title="Cast Spell (disabled)"
           onClick={() => this.setState({ messages: this.state.messages.concat('random message') })}
         >
           <div className={classes.spellsButton}></div>
         </button>
         <button
+          className={classes.dashboardButton}
           title="Wait"
           disabled={notAllowedToAct || phase === 'wait'}
           onClick={this.props.onWait}
@@ -63,6 +74,7 @@ class CombatDashboard extends Component {
           <div className={classes.waitButton}></div>
         </button>
         <button
+          className={classes.dashboardButton}
           title="Defend"
           disabled={notAllowedToAct}
           onClick={this.props.onDefend}

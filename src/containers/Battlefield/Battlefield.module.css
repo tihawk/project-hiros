@@ -356,3 +356,10 @@ button {
     background-repeat: no-repeat;
     background-position: center;
 }
+
+.dashboardButton:disabled * {
+    border: 1px solid #999999;
+    background-color: rgba(44, 42, 30, 0.5);
+    background-blend-mode: overlay;
+    color: #666666;
+}
