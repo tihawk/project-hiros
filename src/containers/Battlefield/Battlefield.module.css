@@ -48,7 +48,7 @@ body {
     clear: both;
 }
 
-li {
+.grid li {
     list-style-type: none;
     position: relative;
     float: left;
@@ -58,7 +58,7 @@ li {
     background-size: cover;
 }
 
-li * {
+.grid li * {
     visibility: visible;
 }
 
@@ -227,7 +227,7 @@ li:nth-child(30n+30)
     border-bottom: 1px solid gold;
 }
 
-button {
+.dashboard button {
     height: 100%;
     padding: 0;
     flex-grow: 1;

@@ -25,7 +25,75 @@ server.listen(PORT, () => {
 
 const players = new Set([])
 const actionController = new ActionController()
+
+const battles = {
+  game1: {
+    players: new Set([])
+  },
+  game2: {
+    players: new Set([])
+  },
+  game84: {
+    players: new Set([])
+  },
+  game85: {
+    players: new Set([])
+  },
+  game86: {
+    players: new Set([])
+  },
+  game87: {
+    players: new Set([])
+  },
+  game88: {
+    players: new Set([])
+  },
+  game89: {
+    players: new Set([])
+  },
+  game90: {
+    players: new Set([])
+  },
+  game91: {
+    players: new Set([])
+  },
+  game92: {
+    players: new Set([])
+  },
+  game93: {
+    players: new Set([])
+  },
+  game94: {
+    players: new Set([])
+  },
+  game95: {
+    players: new Set([])
+  },
+  game96: {
+    players: new Set([])
+  },
+  game97: {
+    players: new Set([])
+  },
+  game98: {
+    players: new Set([])
+  },
+  game99: {
+    players: new Set([])
+  }
+}
 io.on('connection', (socket) => {
+  sendBattlesList()
+  socket.on('join-battle', ({ battleName }) => {
+    console.log(battleName)
+    if (battles[battleName] && battles[battleName].players.size < 2) {
+      battles[battleName].players.add(socket.handshake.headers['x-clientid'])
+      sendBattlesList()
+      socket.join(battleName)
+      console.log(io.nsps['/'].adapter.rooms)
+      console.log(battles)
+    }
+  })
   if (players.size >= 2) {
     sendStateTo(socket)
   }
@@ -108,5 +176,19 @@ const sendStateTo = (socket) => {
     loading: actionController.loading,
     actions: actionController.actions,
     phase: actionController.queue.currentPhase
+  })
+}
+
+const sendBattlesList = () => {
+  const battlesCopy = { ...battles }
+  const battleNames = Object.keys(battlesCopy)
+  for (const battle of battleNames) {
+    battlesCopy[battle] = {
+      players: [...battles[battle].players]
+    }
+  }
+
+  io.emit('battles-list', {
+    battles: battlesCopy
   })
 }
