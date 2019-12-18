@@ -324,62 +324,64 @@ class Battlefield extends Component {
 
     const fieldClasses = [classes.field, this.state.inAction === true ? classes.inAction : null].join(' ')
     return (
-      <div className={fieldClasses}>
-        { this.state.loading.isLoading === true ? <InfoPanel message={this.state.loading.message} />
-          : <div className="d-flex flex-row justify-content-between align-items-end">
-            <CreatureInfo id={this.state.players[0]} creatureData={creatureHoveredOver} />
-            <ul className={[classes.grid, classes.clear].join(' ')}>
-              {board.map((hex, hexIndex) => {
-                return (
-                  <li key={hexIndex}>
-                    <div
-                      className={[
-                        classes.hexagon,
-                        this.checkTypeOfTile(hexIndex)
-                      ].join(' ')}
-                      onClick={(e) => this.handleTileClicked(e, hexIndex)}
-                      onMouseMove={(e) => this.handleTileHover(e, hexIndex, hex)}
-                      onMouseEnter={() => this.showCreatureInfo(hex.creature || null)}
-                      onMouseLeave={this.hideCreatureInfo}
-                      id={hexIndex}
-                    >
-                      {hex.hasCorpse
-                        ? <SpriteController
-                          creature={hex.corpse.name}
-                          action={hex.corpse.action}
-                          orientation={hex.corpse.orientation}
-                          onFinish={this.onFinish}
-                        />
-                        : null}
-                      {hex.hasCreature
-                        ? <SpriteController
-                          creature={hex.creature.name}
-                          action={hex.creature.action}
-                          orientation={hex.creature.orientation}
-                          player={this.state.players.indexOf(hex.creature.player)}
-                          stackSize={hex.creature.stackMultiplier}
-                          onFinish={this.onFinish}
-                        /> : null}
-                    </div>
-                  </li>
-                )
-              })}
-            </ul>
-            <CreatureInfo id={this.state.players[1]} creatureData={creatureHoveredOver} />
-          </div>}
-        <div>
-          <CombatDashboard
-            playerReady={this.playerReady}
-            playerDisconnect={this.playerDisconnect}
-            messages={this.state.combatDashboardMessages}
-            notAllowedToAct={!(this.state.turn.player === this.state.nickname)}
-            phase={this.state.phase}
-            onWait={this.handleWait}
-            onDefend={this.handleDefend}
-          />
-          <CombatFooter message={this.state.combatFooterMessage} />
+      <>
+        <div className={fieldClasses}>
+          { this.state.loading.isLoading === true ? <InfoPanel message={this.state.loading.message} />
+            : <div className="d-flex flex-row justify-content-between align-items-end">
+              <CreatureInfo id={this.state.players[0]} creatureData={creatureHoveredOver} />
+              <ul className={[classes.grid, classes.clear].join(' ')}>
+                {board.map((hex, hexIndex) => {
+                  return (
+                    <li key={hexIndex}>
+                      <div
+                        className={[
+                          classes.hexagon,
+                          this.checkTypeOfTile(hexIndex)
+                        ].join(' ')}
+                        onClick={(e) => this.handleTileClicked(e, hexIndex)}
+                        onMouseMove={(e) => this.handleTileHover(e, hexIndex, hex)}
+                        onMouseEnter={() => this.showCreatureInfo(hex.creature || null)}
+                        onMouseLeave={this.hideCreatureInfo}
+                        id={hexIndex}
+                      >
+                        {hex.hasCorpse
+                          ? <SpriteController
+                            creature={hex.corpse.name}
+                            action={hex.corpse.action}
+                            orientation={hex.corpse.orientation}
+                            onFinish={this.onFinish}
+                          />
+                          : null}
+                        {hex.hasCreature
+                          ? <SpriteController
+                            creature={hex.creature.name}
+                            action={hex.creature.action}
+                            orientation={hex.creature.orientation}
+                            player={this.state.players.indexOf(hex.creature.player)}
+                            stackSize={hex.creature.stackMultiplier}
+                            onFinish={this.onFinish}
+                          /> : null}
+                      </div>
+                    </li>
+                  )
+                })}
+              </ul>
+              <CreatureInfo id={this.state.players[1]} creatureData={creatureHoveredOver} />
+            </div>}
+          <div>
+            <CombatDashboard
+              playerReady={this.playerReady}
+              playerDisconnect={this.playerDisconnect}
+              messages={this.state.combatDashboardMessages}
+              notAllowedToAct={!(this.state.turn.player === this.state.nickname)}
+              phase={this.state.phase}
+              onWait={this.handleWait}
+              onDefend={this.handleDefend}
+            />
+            <CombatFooter message={this.state.combatFooterMessage} />
+          </div>
         </div>
-      </div>
+      </>
     )
   }
 }

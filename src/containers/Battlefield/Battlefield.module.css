@@ -35,7 +35,10 @@ body {
     position: relative;
     padding-top: 15%;
     padding-left: 0; /* clears default 40px of unordered list */
-    width: 80%;
+    width: 80vw;
+    /* height: 85vmin;
+    overflow-x: unset;
+    overflow-y: auto; */
     margin-right: 2.5%
 }
 
@@ -358,8 +361,6 @@ button {
 }
 
 .dashboardButton:disabled * {
-    border: 1px solid #999999;
     background-color: rgba(44, 42, 30, 0.5);
     background-blend-mode: overlay;
-    color: #666666;
 }
