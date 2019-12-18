@@ -49,7 +49,6 @@ class Lobby extends Component {
 
   render () {
     const { battles } = this.state
-    if (battles.game1) console.log(battles.game1.players)
     return (
       <div className={classes.battlesLobby} >
         <div className={classes.redPanel} >
@@ -61,8 +60,8 @@ class Lobby extends Component {
         </div>
         {Object.keys(battles).map((battle, index) => {
           return (
-            <div className={classes.redPanel} >
-              <div className={classes.menuSubtile} key={index} >
+            <div className={classes.redPanel} key={index} >
+              <div className={classes.menuSubtile} >
                 <div>{battle}</div>
                 <div>Players joined: {battles[battle].players.length}</div>
                 <button
