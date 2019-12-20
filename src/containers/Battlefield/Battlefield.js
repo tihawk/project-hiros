@@ -35,7 +35,7 @@ class Battlefield extends Component {
   }
 
   componentDidMount () {
-    socket.emit('completed-actions')
+    socket.emit('completed-actions', this.props.battleName)
     socket.on('state', data => {
       this.setState({ ...data })
       const newMessage = 'Round ' + this.state.turn.roundNum + ', Turn ' + this.state.turn.turnNum
@@ -249,7 +249,7 @@ class Battlefield extends Component {
             } catch (e) {
               this.setState({ inAction: false })
               console.log('[handleGenericAction.timeOut]', e)
-              socket.emit('completed-actions')
+              socket.emit('completed-actions', this.props.battleName)
             }
           }
         }, action.time)
@@ -264,13 +264,13 @@ class Battlefield extends Component {
           } catch (e) {
             this.setState({ inAction: false })
             console.log('[handleGenericAction.onFinish]', e)
-            socket.emit('completed-actions')
+            socket.emit('completed-actions', this.props.battleName)
           }
         }
       } catch (e) {
         this.setState({ inAction: false })
         console.log('[handleGenericAction.onFinish]', e)
-        socket.emit('completed-actions')
+        socket.emit('completed-actions', this.props.battleName)
       }
     })
     await animationPromise
@@ -291,7 +291,7 @@ class Battlefield extends Component {
     dealWithActions().then(() => {
       console.log('[dealWithActions] successfully finished action sequence')
       this.setState({ inAction: false })
-      socket.emit('completed-actions')
+      socket.emit('completed-actions', this.props.battleName)
     })
   }
 
