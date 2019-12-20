@@ -1,26 +1,17 @@
 import React, { Component } from 'react'
-import socketIOClient from 'socket.io-client'
+import { connect } from 'react-redux'
+import * as actions from '../../store/actions'
 import { withTranslation } from 'react-i18next'
 import classes from './Lobby.module.css'
+import socket from '../../socket'
 
 class Lobby extends Component {
   state = {
-    endpoint: 'http://localhost:5000',
-    battles: {},
-    nickname: String(Math.random())
+    battles: {}
   }
 
   componentDidMount () {
-    const { endpoint } = this.state
-    this.socket = socketIOClient(endpoint, {
-      transportOptions: {
-        polling: {
-          extraHeaders: {
-            'x-clientid': this.state.nickname
-          }
-        }
-      }
-    })
+    this.socket = socket
     this.socket.on('battles-list', data => {
       this.setState({ ...data })
     })
@@ -30,11 +21,17 @@ class Lobby extends Component {
     // })
   }
 
+  handleRefresh = () => {
+    this.socket.emit('get-battle-list')
+  }
+
   handleJoinBattle = (battleName, e) => {
     e.preventDefault()
     console.log(battleName)
-    this.socket.emit('join-battle', { battleName })
-    this.props.history.push('/battle')
+    this.socket.emit('join-battle', { battleName }, ack => {
+      this.props.onSetBattleAddress(ack)
+      this.props.history.push('/battle')
+    })
   }
 
   //   playerReady = () => {
@@ -51,6 +48,15 @@ class Lobby extends Component {
     const { battles } = this.state
     return (
       <div className={classes.battlesLobby} >
+        <div className={classes.redPanel} >
+          <div className={classes.menuSubtile} >
+            <button
+              onClick={this.handleRefresh}
+            >
+            refresh
+            </button>
+          </div>
+        </div>
         <div className={classes.redPanel} >
           <div className={classes.menuSubtile} >
             <button>
@@ -76,4 +82,11 @@ class Lobby extends Component {
   }
 }
 
-export default withTranslation()(Lobby)
+const mapDispatchToProps = dispatch => {
+  return {
+    onSetPlayer: (playerData) => dispatch(actions.setPlayerData(playerData)),
+    onSetBattleAddress: battle => dispatch(actions.setBattleAddress(battle))
+  }
+}
+
+export default connect(null, mapDispatchToProps)(withTranslation()(Lobby))

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import socketIOClient from 'socket.io-client'
+import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import update from 'immutability-helper'
 import classes from './Battlefield.module.css'
@@ -12,10 +12,10 @@ import { getNeighbourIndex, isValidToAttack, getShootOrAttack } from './utility'
 import '../../App.css'
 import CreatureInfo from './CreatureInfo'
 import cursors from './cursors'
+import socket from '../../socket'
 
 class Battlefield extends Component {
   state = {
-    endpoint: 'http://localhost:5000',
     turn: {
       player: null
     },
@@ -26,8 +26,7 @@ class Battlefield extends Component {
     inAction: false,
     creatureHoveredOver: {},
     combatDashboardMessages: [],
-    combatFooterMessage: '',
-    nickname: String(Math.random())
+    combatFooterMessage: ''
   }
 
   constructor () {
@@ -36,24 +35,15 @@ class Battlefield extends Component {
   }
 
   componentDidMount () {
-    const { endpoint } = this.state
-    this.socket = socketIOClient(endpoint, {
-      transportOptions: {
-        polling: {
-          extraHeaders: {
-            'x-clientid': this.state.nickname
-          }
-        }
-      }
-    })
-    this.socket.on('state', data => {
+    socket.emit('completed-actions')
+    socket.on('state', data => {
       this.setState({ ...data })
       const newMessage = 'Round ' + this.state.turn.roundNum + ', Turn ' + this.state.turn.turnNum
       this.setState({
         combatDashboardMessages: this.state.combatDashboardMessages.concat(newMessage)
       })
     })
-    this.socket.on('actions', actionChain => {
+    socket.on('actions', actionChain => {
       if (actionChain.length > 0) {
         this.setState({ inAction: true })
         this.handleActions(actionChain)
@@ -67,12 +57,17 @@ class Battlefield extends Component {
 
   playerReady = () => {
     console.log('clicked player ready')
-    this.socket.emit('player-ready')
+    socket.emit('player-ready')
   }
 
   playerDisconnect = () => {
+    const { battleName, history } = this.props
     console.log('clicked player disconnect')
-    this.socket.emit('player-disconnect')
+    socket.emit('player-disconnect', battleName, ack => {
+      if (ack) {
+        history.push('/')
+      }
+    })
   }
 
   showCreatureInfo = (creature) => {
@@ -96,16 +91,18 @@ class Battlefield extends Component {
   }
 
   handleTileClicked = (e, tileIndex) => {
-    if (this.state.turn.player === this.state.nickname) {
+    const { battleName } = this.props
+    console.log(this.props.player, this.state.turn.player, battleName)
+    if (this.state.turn.player === this.props.player) {
       const corner = whichCornerOfHex(e)
-      this.socket.emit('click', { tileIndex, corner })
+      socket.emit('click', { tileIndex, corner, battle: battleName })
     }
   }
 
   handleTileHover = (e, hexIndex, { hasCreature, creature, x, y }) => {
     const { style } = e.target
 
-    if (this.state.turn.player === this.state.nickname) {
+    if (this.state.turn.player === this.props.player) {
       const { range } = this.state.turn.creature
       const { attackType, movementType } = this.state.board[this.state.turn.creature.tileIndex].creature
       const inRange = range.includes(hexIndex)
@@ -252,7 +249,7 @@ class Battlefield extends Component {
             } catch (e) {
               this.setState({ inAction: false })
               console.log('[handleGenericAction.timeOut]', e)
-              this.socket.emit('completed-actions')
+              socket.emit('completed-actions')
             }
           }
         }, action.time)
@@ -267,13 +264,13 @@ class Battlefield extends Component {
           } catch (e) {
             this.setState({ inAction: false })
             console.log('[handleGenericAction.onFinish]', e)
-            this.socket.emit('completed-actions')
+            socket.emit('completed-actions')
           }
         }
       } catch (e) {
         this.setState({ inAction: false })
         console.log('[handleGenericAction.onFinish]', e)
-        this.socket.emit('completed-actions')
+        socket.emit('completed-actions')
       }
     })
     await animationPromise
@@ -294,20 +291,24 @@ class Battlefield extends Component {
     dealWithActions().then(() => {
       console.log('[dealWithActions] successfully finished action sequence')
       this.setState({ inAction: false })
-      this.socket.emit('completed-actions')
+      socket.emit('completed-actions')
     })
   }
 
   handleWait = e => {
     e.preventDefault()
     console.log('[handleWait]')
-    this.socket.emit('wait')
+    const { battleName } = this.props
+    console.log(this.props.player, this.state.turn.player, battleName)
+    socket.emit('wait', battleName)
   }
 
   handleDefend = e => {
     e.preventDefault()
     console.log('[handleDefend]')
-    this.socket.emit('defend')
+    const { battleName } = this.props
+    console.log(this.props.player, this.state.turn.player, battleName)
+    socket.emit('defend', battleName)
   }
 
   checkTypeOfTile = (hexIndex) => {
@@ -373,7 +374,7 @@ class Battlefield extends Component {
               playerReady={this.playerReady}
               playerDisconnect={this.playerDisconnect}
               messages={this.state.combatDashboardMessages}
-              notAllowedToAct={!(this.state.turn.player === this.state.nickname)}
+              notAllowedToAct={!(this.state.turn.player === this.props.player)}
               phase={this.state.phase}
               onWait={this.handleWait}
               onDefend={this.handleDefend}
@@ -386,4 +387,11 @@ class Battlefield extends Component {
   }
 }
 
-export default withTranslation()(Battlefield)
+const mapStateToProps = state => {
+  return {
+    player: state.player.player,
+    battleName: state.battle.battleAddress
+  }
+}
+
+export default connect(mapStateToProps)(withTranslation()(Battlefield))

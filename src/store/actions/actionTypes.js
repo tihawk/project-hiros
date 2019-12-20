@@ -1,0 +1,3 @@
+export const SET_PLAYER_DATA = 'SET_PLAYER_DATA'
+
+export const SET_BATTLE_ADDRESS = 'SET_BATTLE_ADDRESS'

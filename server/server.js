@@ -84,46 +84,63 @@ const battles = {
 }
 io.on('connection', (socket) => {
   sendBattlesList()
-  socket.on('join-battle', ({ battleName }) => {
+  socket.on('get-battle-list', () => {
+    sendBattlesList(socket)
+  })
+  socket.on('join-battle', ({ battleName }, func) => {
     console.log(battleName)
-    if (battles[battleName] && battles[battleName].players.size < 2) {
+    const { players } = battles[battleName]
+    console.log(battleName)
+    if (battles[battleName] && players.size < 2) {
       battles[battleName].players.add(socket.handshake.headers['x-clientid'])
       sendBattlesList()
       socket.join(battleName)
       console.log(io.nsps['/'].adapter.rooms)
-      console.log(battles)
-    }
-  })
-  if (players.size >= 2) {
-    sendStateTo(socket)
-  }
-  socket.on('player-ready', () => {
-    if (players.size < 2) {
-      players.add(socket.handshake.headers['x-clientid'])
+      // console.log(battles)
       if (players.size === 2) {
         console.log('populating grid')
         actionController.resetAll()
         actionController.initBattlefield(players)
+        updateState(battleName)
+        console.log(players)
       }
     }
-    updateState()
-    console.log(players)
+    func(battleName)
   })
-  socket.on('player-disconnect', () => {
+  if (players.size >= 2) {
+    sendStateTo(socket)
+  }
+  // socket.on('player-ready', () => {
+  //   if (players.size < 2) {
+  //     players.add(socket.handshake.headers['x-clientid'])
+  //     if (players.size === 2) {
+  //       console.log('populating grid')
+  //       actionController.resetAll()
+  //       actionController.initBattlefield(players)
+  //     }
+  //   }
+  //   updateState()
+  //   console.log(players)
+  // })
+  socket.on('player-disconnect', (battleName, func) => {
     console.log('user disconnected')
-    players.delete(socket.handshake.headers['x-clientid'])
+    console.log(battleName)
+    socket.leave(battleName)
+    console.log(io.nsps['/'].adapter.rooms)
+    if (battles[battleName]) battles[battleName].players.delete(socket.handshake.headers['x-clientid'])
     socket.emit('state', {
       loading: {
         isLoading: true,
         message: 'ClickReady'
       }
     })
+    func(true)
   })
   socket.on('disconnect', (reason) => {
     console.log('[disconnect]', players, socket.id, socket.handshake.headers['x-clientid'], reason)
   })
   socket.on('click', data => {
-    if (playerExistsAndIsHisTurn(socket)) {
+    if (playerExistsAndIsHisTurn(socket, data.battle)) {
       const actions = actionController.handleTileClicked(data.tileIndex, data.corner)
       if (actions.length > 0) {
         io.sockets.emit('actions', actions)
@@ -134,31 +151,32 @@ io.on('connection', (socket) => {
   socket.on('completed-actions', () => {
     sendStateTo(socket)
   })
-  socket.on('wait', () => {
-    if (playerExistsAndIsHisTurn(socket)) {
+  socket.on('wait', (battle) => {
+    if (playerExistsAndIsHisTurn(socket, battle)) {
       if (actionController.queue.currentPhase !== 'wait') {
         actionController.handleWaiting()
-        updateState()
+        updateState(battle)
       } else {
         console.log('[socket.on.wait] tried to wait during a wait phase')
       }
     }
   })
-  socket.on('defend', () => {
-    if (playerExistsAndIsHisTurn(socket)) {
+  socket.on('defend', (battle) => {
+    if (playerExistsAndIsHisTurn(socket, battle)) {
       actionController.handleDefending()
-      updateState()
+      updateState(battle)
     }
   })
 })
 
-const playerExistsAndIsHisTurn = (socket) => {
-  return players.has(socket.handshake.headers['x-clientid']) && actionController.turn.player === socket.handshake.headers['x-clientid']
+const playerExistsAndIsHisTurn = (socket, battle) => {
+  const { players } = battles[battle]
+  return players && players.has(socket.handshake.headers['x-clientid']) && actionController.turn.player === socket.handshake.headers['x-clientid']
 }
 
-const updateState = () => {
+const updateState = (battleName) => {
   console.log('updating state')
-  io.sockets.emit('state', {
+  io.sockets.in(battleName).emit('state', {
     players: actionController.players,
     board: actionController.board,
     turn: actionController.turn,
@@ -179,7 +197,7 @@ const sendStateTo = (socket) => {
   })
 }
 
-const sendBattlesList = () => {
+const sendBattlesList = (socket = io) => {
   const battlesCopy = { ...battles }
   const battleNames = Object.keys(battlesCopy)
   for (const battle of battleNames) {
@@ -188,7 +206,7 @@ const sendBattlesList = () => {
     }
   }
 
-  io.emit('battles-list', {
+  socket.emit('battles-list', {
     battles: battlesCopy
   })
 }
