@@ -15,6 +15,7 @@ class Lobby extends Component {
     this.socket.on('battles-list', data => {
       this.setState({ ...data })
     })
+    this.socket.emit('get-battle-list')
     // window.addEventListener('beforeunload', e => {
     //   e.preventDefault()
     //   this.playerDisconnect()

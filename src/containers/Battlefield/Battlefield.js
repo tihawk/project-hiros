@@ -35,7 +35,6 @@ class Battlefield extends Component {
   }
 
   componentDidMount () {
-    socket.emit('completed-actions', this.props.battleName)
     socket.on('state', data => {
       this.setState({ ...data })
       const newMessage = 'Round ' + this.state.turn.roundNum + ', Turn ' + this.state.turn.turnNum
@@ -53,20 +52,27 @@ class Battlefield extends Component {
       e.preventDefault()
       this.playerDisconnect()
     })
+
+    socket.emit('completed-actions', this.props.battleName)
   }
 
   playerReady = () => {
     console.log('clicked player ready')
-    socket.emit('player-ready')
+    const { battleName } = this.props
+    if (battleName) {
+      socket.emit('join-battle', { battleName }, ack => {
+        console.log(ack)
+      })
+    } else {
+      this.props.history.push('/')
+    }
   }
 
   playerDisconnect = () => {
-    const { battleName, history } = this.props
+    const { battleName } = this.props
     console.log('clicked player disconnect')
     socket.emit('player-disconnect', battleName, ack => {
-      if (ack) {
-        history.push('/')
-      }
+      console.log(ack)
     })
   }
 

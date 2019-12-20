@@ -45,7 +45,7 @@ io.on('connection', (socket) => {
     if (players.size === 0) battles[battleName].actionController = new ActionController()
     if (battles[battleName] && players.size < 2) {
       battles[battleName].players.add(socket.handshake.headers['x-clientid'])
-      sendBattlesList()
+      sendBattlesList(socket.broadcast)
       socket.join(battleName)
       if (players.size === 2) {
         console.log('creating game')
@@ -58,16 +58,22 @@ io.on('connection', (socket) => {
     }
     func(battleName)
   })
-  socket.on('player-disconnect', (battleName, func) => {
+  socket.on('player-disconnect', (battle, func) => {
     console.log('user disconnected')
-    console.log(battleName)
-    socket.leave(battleName)
+    console.log(battle)
+    socket.leave(battle)
     console.log(io.nsps['/'].adapter.rooms)
-    if (battles[battleName]) battles[battleName].players.delete(socket.handshake.headers['x-clientid'])
+    if (battles[battle]) battles[battle].players.delete(socket.handshake.headers['x-clientid'])
     socket.emit('state', {
       loading: {
         isLoading: true,
         message: 'ClickReady'
+      }
+    })
+    socket.in(battle).emit('state', {
+      loading: {
+        isLoading: true,
+        message: 'WaitingForPlayers'
       }
     })
     func(true)
@@ -116,10 +122,10 @@ const playerExistsAndIsHisTurn = (socket, battle) => {
   return players && players.has(player) && actionController.turn.player === player
 }
 
-const updateState = (battleName) => {
+const updateState = (battle) => {
   console.log('updating state')
-  const { actionController } = battles[battleName]
-  io.sockets.in(battleName).emit('state', {
+  const { actionController } = battles[battle]
+  io.sockets.in(battle).emit('state', {
     players: actionController.players,
     board: actionController.board,
     turn: actionController.turn,
@@ -130,7 +136,7 @@ const updateState = (battleName) => {
 }
 
 const sendStateTo = (socket, battle) => {
-  if (!battles[battle]) return
+  if (!battles[battle] || !battles[battle].actionController) return
   const { actionController } = battles[battle]
   socket.emit('state', {
     players: actionController.players,
