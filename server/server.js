@@ -170,8 +170,10 @@ io.on('connection', (socket) => {
 })
 
 const playerExistsAndIsHisTurn = (socket, battle) => {
+  if (!battles[battle]) return false
   const { players } = battles[battle]
-  return players && players.has(socket.handshake.headers['x-clientid']) && actionController.turn.player === socket.handshake.headers['x-clientid']
+  const player = socket.handshake.headers['x-clientid']
+  return players && players.has(player) && actionController.turn.player === player
 }
 
 const updateState = (battleName) => {
