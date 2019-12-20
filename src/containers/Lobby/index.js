@@ -11,11 +11,10 @@ class Lobby extends Component {
   }
 
   componentDidMount () {
-    this.socket = socket
-    this.socket.on('battles-list', data => {
+    socket.on('battles-list', data => {
       this.setState({ ...data })
     })
-    this.socket.emit('get-battle-list')
+    socket.emit('get-battle-list')
     // window.addEventListener('beforeunload', e => {
     //   e.preventDefault()
     //   this.playerDisconnect()
@@ -23,13 +22,13 @@ class Lobby extends Component {
   }
 
   handleRefresh = () => {
-    this.socket.emit('get-battle-list')
+    socket.emit('get-battle-list')
   }
 
   handleJoinBattle = (battleName, e) => {
     e.preventDefault()
     console.log(battleName)
-    this.socket.emit('join-battle', { battleName }, ack => {
+    socket.emit('join-battle', { battleName }, ack => {
       this.props.onSetBattleAddress(ack)
       this.props.history.push('/battle')
     })

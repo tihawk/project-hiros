@@ -35,6 +35,8 @@ class Battlefield extends Component {
   }
 
   componentDidMount () {
+    if (!this.props.battleName) return this.props.history.push('/')
+
     socket.on('state', data => {
       this.setState({ ...data })
       const newMessage = 'Round ' + this.state.turn.roundNum + ', Turn ' + this.state.turn.turnNum
