@@ -48,10 +48,20 @@
     margin-bottom: 16px;
 }
 
+.Modal .outerContainer .innerContainer button {
+    color: lightgoldenrodyellow;
+    background-image: url(../../public/assets/textures/461223166.jpg);
+    outline: 1px gold solid;
+    border-left: 3px solid rgb(255, 255, 255, 0.3);
+    border-top: 3px solid rgb(255, 255, 255, 0.3);
+    border-right: 3px solid rgb(0, 0, 0, 0.3);
+    border-bottom: 3px solid rgb(0, 0, 0, 0.3);
+}
+
 .Modal .outerContainer .innerContainer span,
 .Modal .outerContainer .innerContainer div,
 .Modal .outerContainer .innerContainer label {
-    color: white;
+    color: lightgoldenrodyellow;
 }
 
 @media (min-width: 600px) {

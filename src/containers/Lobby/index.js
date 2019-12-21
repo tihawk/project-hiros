@@ -76,6 +76,9 @@ class Lobby extends Component {
         <div className={classes.battlesLobby} >
           <div className={classes.redPanel} >
             <div className={classes.menuSubtile} >
+              <button onClick={this.openModal}>
+                Start new game
+              </button>
               <button
                 onClick={this.handleRefresh}
               >
@@ -83,26 +86,26 @@ class Lobby extends Component {
               </button>
             </div>
           </div>
-          <div className={classes.redPanel} >
-            <div className={classes.menuSubtile} >
-              <button onClick={this.openModal}>
-                Start new game
-              </button>
-            </div>
-          </div>
-          {Object.keys(battles).map((battle, index) => {
-            return (
-              <div className={classes.redPanel} key={index} >
-                <div className={classes.menuSubtile} >
-                  <div>{battle}</div>
-                  <div>Players joined: {battles[battle].players.length}</div>
-                  <button
-                    onClick={ e => this.handleJoinBattle(battle, e)}
-                  >Join</button>
+          {Object.keys(battles).length > 0
+            ? Object.keys(battles).map((battle, index) => {
+              return (
+                <div className={classes.redPanel} key={index} >
+                  <div className={classes.menuSubtile} >
+                    <div>{battle}</div>
+                    <div>Players joined: {battles[battle].players.length}</div>
+                    <button
+                      onClick={ e => this.handleJoinBattle(battle, e)}
+                    >Join</button>
+                  </div>
                 </div>
+              )
+            })
+            : <div className={classes.redPanel} >
+              <div className={classes.menuSubtile} >
+                <span>No battles currently fought</span>
               </div>
-            )
-          })}
+            </div>
+          }
         </div>
       </>
     )
