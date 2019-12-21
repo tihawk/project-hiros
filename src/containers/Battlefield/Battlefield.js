@@ -367,7 +367,7 @@ class Battlefield extends Component {
         {showModal && <Modal show={showModal} onClose={this.confirmModal} >
           <span>You've surrendered</span>
         </Modal>}
-        <Settings show={showSettings} onClose={this.closeSettings} />
+        {showSettings && <Settings show={showSettings} onClose={this.closeSettings} />}
         <div className={fieldClasses}>
           { this.state.loading.isLoading === true ? <InfoPanel message={this.state.loading.message} />
             : <div className="d-flex flex-row justify-content-between align-items-end">

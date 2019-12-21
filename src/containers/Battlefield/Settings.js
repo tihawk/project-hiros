@@ -25,7 +25,6 @@ class Settings extends Component {
   render () {
     const { show, onClose } = this.props
     const { lng } = this.state
-    console.log(show)
     return (
       <Modal
         show={show}
