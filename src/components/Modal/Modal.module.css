@@ -31,7 +31,7 @@
     
 }
 
-/* .Modal .outerContainer .innerContainer:before {
+.Modal .outerContainer .innerContainer:before {
     position: absolute;
     content: " ";
     z-index: 1;
@@ -41,14 +41,15 @@
     bottom: 9px;
     border: 2px solid black;
     box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
-} */
+}
 
 .Modal .outerContainer .innerContainer * {
+    z-index: 2;
     margin-bottom: 16px;
 }
 
-button:disabled {
-    color: gold;
+.Modal .outerContainer .innerContainer span {
+    color: white;
 }
 
 @media (min-width: 600px) {

@@ -32,10 +32,15 @@ io.on('connection', (socket) => {
   socket.on('get-battle-list', () => {
     sendBattlesList(socket)
   })
-  socket.on('create-battle', battleName => {
+  socket.on('create-battle', (battleName, func) => {
     console.log('[create-battle]', battleName)
-    battles[battleName] = { players: new Set([]) }
-    sendBattlesList()
+    if (!battles[battleName]) {
+      battles[battleName] = { players: new Set([]) }
+      sendBattlesList()
+      func(true)
+    } else {
+      func(false)
+    }
   })
   socket.on('join-battle', ({ battleName }, func) => {
     console.log(battleName)
@@ -62,6 +67,7 @@ io.on('connection', (socket) => {
     socket.leave(battle)
     console.log(io.nsps['/'].adapter.rooms)
     if (battles[battle]) battles[battle].players.delete(socket.handshake.headers['x-clientid'])
+    if (battles[battle].players.size === 0) delete battles[battle]
     socket.emit('state', {
       loading: {
         isLoading: true,

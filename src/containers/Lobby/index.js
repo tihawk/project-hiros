@@ -18,10 +18,6 @@ class Lobby extends Component {
       this.setState({ ...data })
     })
     socket.emit('get-battle-list')
-    // window.addEventListener('beforeunload', e => {
-    //   e.preventDefault()
-    //   this.playerDisconnect()
-    // })
   }
 
   handleRefresh = () => {
@@ -33,7 +29,7 @@ class Lobby extends Component {
     console.log(battleName)
     socket.emit('join-battle', { battleName }, ack => {
       this.props.onSetBattleAddress(ack)
-      this.props.history.push('/battle')
+      return this.props.history.push('/battle')
     })
   }
 
@@ -49,8 +45,12 @@ class Lobby extends Component {
 
   handleCreateGame = e => {
     e.preventDefault()
-    socket.emit('create-battle', this.state.newGame)
-    this.setState({ showModal: false })
+    socket.emit('create-battle', this.state.newGame, ack => {
+      this.setState({ showModal: false })
+      if (ack) {
+        this.handleJoinBattle(this.state.newGame, e)
+      }
+    })
   }
 
   render () {
@@ -73,7 +73,7 @@ class Lobby extends Component {
           <div className={classes.redPanel} >
             <div className={classes.menuSubtile} >
               <button onClick={this.openModal}>
-                Create new game
+                Start new game
               </button>
             </div>
           </div>

@@ -13,6 +13,7 @@ import '../../App.css'
 import CreatureInfo from './CreatureInfo'
 import cursors from './cursors'
 import socket from '../../socket'
+import Modal from '../../components/Modal'
 
 class Battlefield extends Component {
   state = {
@@ -26,7 +27,8 @@ class Battlefield extends Component {
     inAction: false,
     creatureHoveredOver: {},
     combatDashboardMessages: [],
-    combatFooterMessage: ''
+    combatFooterMessage: '',
+    showModal: false
   }
 
   constructor () {
@@ -70,11 +72,23 @@ class Battlefield extends Component {
     }
   }
 
+  openModal = () => {
+    this.setState({ showModal: true })
+  }
+
+  confirmModal = e => {
+    e.preventDefault()
+    this.setState({ showModal: false })
+    this.isUnmounting = true
+    return this.props.history.push('/')
+  }
+
   playerDisconnect = () => {
     const { battleName } = this.props
     console.log('clicked player disconnect')
     socket.emit('player-disconnect', battleName, ack => {
       console.log(ack)
+      this.openModal()
     })
   }
 
@@ -327,13 +341,20 @@ class Battlefield extends Component {
     }
   }
 
+  componentWillUnmount () {
+    this.isUnmounting = true
+  }
+
   render () {
     // const { t } = this.props
-    const { board, creatureHoveredOver } = this.state
+    const { board, creatureHoveredOver, showModal } = this.state
 
     const fieldClasses = [classes.field, this.state.inAction === true ? classes.inAction : null].join(' ')
     return (
       <>
+        <Modal show={showModal} onClose={this.confirmModal} >
+          <span>You've surrendered</span>
+        </Modal>
         <div className={fieldClasses}>
           { this.state.loading.isLoading === true ? <InfoPanel message={this.state.loading.message} />
             : <div className="d-flex flex-row justify-content-between align-items-end">
