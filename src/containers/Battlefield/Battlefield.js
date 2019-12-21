@@ -353,9 +353,9 @@ class Battlefield extends Component {
     const fieldClasses = [classes.field, this.state.inAction === true ? classes.inAction : null].join(' ')
     return (
       <>
-        <Modal show={showModal} onClose={this.confirmModal} >
+        {showModal && <Modal show={showModal} onClose={this.confirmModal} >
           <span>You've surrendered</span>
-        </Modal>
+        </Modal>}
         <div className={fieldClasses}>
           { this.state.loading.isLoading === true ? <InfoPanel message={this.state.loading.message} />
             : <div className="d-flex flex-row justify-content-between align-items-end">

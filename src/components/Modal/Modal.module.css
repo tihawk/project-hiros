@@ -48,7 +48,9 @@
     margin-bottom: 16px;
 }
 
-.Modal .outerContainer .innerContainer span {
+.Modal .outerContainer .innerContainer span,
+.Modal .outerContainer .innerContainer div,
+.Modal .outerContainer .innerContainer label {
     color: white;
 }
 

@@ -42,6 +42,10 @@ class Lobby extends Component {
     this.setState({ newGame: e.target.value })
   }
 
+  handleCancelCreateGame = () => {
+    this.setState({ showModal: false })
+  }
+
   handleCreateGame = e => {
     e.persist()
     socket.emit('create-battle', this.state.newGame, ack => {
@@ -60,7 +64,13 @@ class Lobby extends Component {
     const { battles, showModal } = this.state
     return (
       <>
-        <Modal show={showModal} onClose={this.handleCreateGame} >
+        <Modal
+          show={showModal}
+          onClose={this.handleCreateGame}
+          cancelable
+          onCancel={this.handleCancelCreateGame}
+        >
+          <label>Enter new battle name</label>
           <input value={this.state.newGame} onChange={this.changeNewGameName} />
         </Modal>
         <div className={classes.battlesLobby} >
