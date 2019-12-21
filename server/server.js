@@ -34,7 +34,7 @@ io.on('connection', (socket) => {
   })
   socket.on('create-battle', (battleName, func) => {
     console.log('[create-battle]', battleName)
-    if (!battles[battleName]) {
+    if (battleName && !battles[battleName]) {
       battles[battleName] = { players: new Set([]) }
       sendBattlesList()
       func(true)
