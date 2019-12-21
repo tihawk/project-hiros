@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
+import socket from '../../socket'
 import { connect } from 'react-redux'
 import * as actions from '../../store/actions'
 import { withTranslation } from 'react-i18next'
 import classes from './Lobby.module.css'
-import socket from '../../socket'
 import Modal from '../../components/Modal'
 
 class Lobby extends Component {
@@ -29,7 +29,7 @@ class Lobby extends Component {
     console.log(battleName)
     socket.emit('join-battle', { battleName }, ack => {
       this.props.onSetBattleAddress(ack)
-      return this.props.history.push('/battle')
+      return this.props.history.replace('/battle')
     })
   }
 
@@ -39,18 +39,21 @@ class Lobby extends Component {
   }
 
   changeNewGameName = e => {
-    console.log(e.target.value)
     this.setState({ newGame: e.target.value })
   }
 
   handleCreateGame = e => {
-    e.preventDefault()
+    e.persist()
     socket.emit('create-battle', this.state.newGame, ack => {
       this.setState({ showModal: false })
       if (ack) {
         this.handleJoinBattle(this.state.newGame, e)
       }
     })
+  }
+
+  componentWillUnmount () {
+    socket.off('battles-list')
   }
 
   render () {

@@ -23,7 +23,7 @@ server.listen(PORT, () => {
   console.log('Starting server on port', PORT)
 })
 
-const players = new Set([])
+// const players = new Set([])
 // const actionController = new ActionController()
 
 const battles = {}
@@ -67,7 +67,7 @@ io.on('connection', (socket) => {
     socket.leave(battle)
     console.log(io.nsps['/'].adapter.rooms)
     if (battles[battle]) battles[battle].players.delete(socket.handshake.headers['x-clientid'])
-    if (battles[battle].players.size === 0) delete battles[battle]
+    if (battles[battle] && battles[battle].players.size === 0) delete battles[battle]
     socket.emit('state', {
       loading: {
         isLoading: true,
@@ -83,7 +83,7 @@ io.on('connection', (socket) => {
     func(true)
   })
   socket.on('disconnect', (reason) => {
-    console.log('[disconnect]', players, socket.id, socket.handshake.headers['x-clientid'], reason)
+    console.log('[disconnect]', socket.id, socket.handshake.headers['x-clientid'], reason)
   })
   socket.on('click', data => {
     if (playerExistsAndIsHisTurn(socket, data.battle)) {

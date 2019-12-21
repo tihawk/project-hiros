@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import socket from '../../socket'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import update from 'immutability-helper'
@@ -12,7 +13,6 @@ import { getNeighbourIndex, isValidToAttack, getShootOrAttack } from './utility'
 import '../../App.css'
 import CreatureInfo from './CreatureInfo'
 import cursors from './cursors'
-import socket from '../../socket'
 import Modal from '../../components/Modal'
 
 class Battlefield extends Component {
@@ -37,8 +37,7 @@ class Battlefield extends Component {
   }
 
   componentDidMount () {
-    if (!this.props.battleName) return this.props.history.push('/')
-
+    if (!this.props.battleName) return this.props.history.replace('/')
     socket.on('state', data => {
       this.setState({ ...data })
       const newMessage = 'Round ' + this.state.turn.roundNum + ', Turn ' + this.state.turn.turnNum
@@ -68,7 +67,7 @@ class Battlefield extends Component {
         console.log(ack)
       })
     } else {
-      this.props.history.push('/')
+      return this.props.history.replace('/')
     }
   }
 
@@ -80,7 +79,7 @@ class Battlefield extends Component {
     e.preventDefault()
     this.setState({ showModal: false })
     this.isUnmounting = true
-    return this.props.history.push('/')
+    return this.props.history.replace('/')
   }
 
   playerDisconnect = () => {
@@ -172,6 +171,7 @@ class Battlefield extends Component {
   }
 
   async handleWalking (actions) {
+    console.log(actions)
     const resetCreature = (action) => {
       console.log('[handleWalking.onfinish] reached destination, resetting creature')
       const indexOfTileFrom = this.state.turn.creature.tileIndex
@@ -342,7 +342,8 @@ class Battlefield extends Component {
   }
 
   componentWillUnmount () {
-    this.isUnmounting = true
+    socket.off('actions')
+    socket.off('state')
   }
 
   render () {
