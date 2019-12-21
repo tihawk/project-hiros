@@ -12,8 +12,8 @@ function RouterWrapper () {
   return (
     <Router>
       <Switch>
-        <Route exact path='/' render={(props) => <Lobby {...props} />}/>
-        <Route exact path='/battle' render={(props) => <Battlefield {...props} />}/>
+        <Route exact path='/' component={Lobby} />
+        <Route exact path='/battle' component={Battlefield} />
       </Switch>
     </Router>
   )

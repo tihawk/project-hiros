@@ -25,8 +25,8 @@ class CombatDashboard extends Component {
       <div className={classes.dashboard}>
         <button
           className={classes.dashboardButton}
-          onClick={this.props.playerReady}
-          title="Click to start/join a battle"
+          onClick={this.props.settings}
+          title="Click to open battlefield settings"
         >
           <div className={classes.settingsButton}></div>
         </button>

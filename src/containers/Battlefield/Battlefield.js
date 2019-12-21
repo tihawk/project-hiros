@@ -14,6 +14,7 @@ import '../../App.css'
 import CreatureInfo from './CreatureInfo'
 import cursors from './cursors'
 import Modal from '../../components/Modal'
+import Settings from './Settings'
 
 class Battlefield extends Component {
   state = {
@@ -28,7 +29,8 @@ class Battlefield extends Component {
     creatureHoveredOver: {},
     combatDashboardMessages: [],
     combatFooterMessage: '',
-    showModal: false
+    showModal: false,
+    showSettings: false
   }
 
   constructor () {
@@ -69,6 +71,15 @@ class Battlefield extends Component {
     } else {
       return this.props.history.replace('/')
     }
+  }
+
+  openSettings = () => {
+    this.setState({ showSettings: true })
+  }
+
+  closeSettings = e => {
+    e.preventDefault()
+    this.setState({ showSettings: false })
   }
 
   openModal = () => {
@@ -348,7 +359,7 @@ class Battlefield extends Component {
 
   render () {
     // const { t } = this.props
-    const { board, creatureHoveredOver, showModal } = this.state
+    const { board, creatureHoveredOver, showModal, showSettings } = this.state
 
     const fieldClasses = [classes.field, this.state.inAction === true ? classes.inAction : null].join(' ')
     return (
@@ -356,6 +367,7 @@ class Battlefield extends Component {
         {showModal && <Modal show={showModal} onClose={this.confirmModal} >
           <span>You've surrendered</span>
         </Modal>}
+        <Settings show={showSettings} onClose={this.closeSettings} />
         <div className={fieldClasses}>
           { this.state.loading.isLoading === true ? <InfoPanel message={this.state.loading.message} />
             : <div className="d-flex flex-row justify-content-between align-items-end">
@@ -401,7 +413,7 @@ class Battlefield extends Component {
             </div>}
           <div>
             <CombatDashboard
-              playerReady={this.playerReady}
+              settings={this.openSettings}
               playerDisconnect={this.playerDisconnect}
               messages={this.state.combatDashboardMessages}
               notAllowedToAct={!(this.state.turn.player === this.props.player)}
