@@ -1,6 +1,6 @@
 import socketIOClient from 'socket.io-client'
-import store from './store'
-import * as actions from './store/actions'
+import store from '../../store'
+import * as actions from '../../store/actions'
 
 const endpoint = 'http://localhost:5000'
 store.dispatch(actions.setPlayerData(String(Math.random())))

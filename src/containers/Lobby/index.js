@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import socket from '../../socket'
+import socket from '../../utility/socket'
 import { connect } from 'react-redux'
 import * as actions from '../../store/actions'
 import { withTranslation } from 'react-i18next'

@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { withTranslation } from 'react-i18next'
 import Modal from '../../components/Modal'
-// import i18n from '../../utility/i18next/i18next'
 import i18n from 'i18next'
 
 class Settings extends Component {
@@ -10,10 +9,6 @@ class Settings extends Component {
     this.state = {
       lng: i18n.language
     }
-  }
-
-  componentDidMount () {
-    console.log(this.props)
   }
 
   changeLanguage = e => {
