@@ -4,10 +4,13 @@ import * as actions from '../../store/actions'
 import { withTranslation } from 'react-i18next'
 import classes from './Lobby.module.css'
 import socket from '../../socket'
+import Modal from '../../components/Modal'
 
 class Lobby extends Component {
   state = {
-    battles: {}
+    battles: {},
+    showModal: false,
+    newGame: ''
   }
 
   componentDidMount () {
@@ -34,50 +37,61 @@ class Lobby extends Component {
     })
   }
 
-  //   playerReady = () => {
-  //     console.log('clicked player ready')
-  //     this.socket.emit('player-ready')
-  //   }
+  openModal = e => {
+    e.preventDefault()
+    this.setState({ showModal: true })
+  }
 
-  //   playerDisconnect = () => {
-  //     console.log('clicked player disconnect')
-  //     this.socket.emit('player-disconnect')
-  //   }
+  changeNewGameName = e => {
+    console.log(e.target.value)
+    this.setState({ newGame: e.target.value })
+  }
+
+  handleCreateGame = e => {
+    e.preventDefault()
+    socket.emit('create-battle', this.state.newGame)
+    this.setState({ showModal: false })
+  }
 
   render () {
-    const { battles } = this.state
+    const { battles, showModal } = this.state
     return (
-      <div className={classes.battlesLobby} >
-        <div className={classes.redPanel} >
-          <div className={classes.menuSubtile} >
-            <button
-              onClick={this.handleRefresh}
-            >
-            refresh
-            </button>
-          </div>
-        </div>
-        <div className={classes.redPanel} >
-          <div className={classes.menuSubtile} >
-            <button>
-            Create new game
-            </button>
-          </div>
-        </div>
-        {Object.keys(battles).map((battle, index) => {
-          return (
-            <div className={classes.redPanel} key={index} >
-              <div className={classes.menuSubtile} >
-                <div>{battle}</div>
-                <div>Players joined: {battles[battle].players.length}</div>
-                <button
-                  onClick={ e => this.handleJoinBattle(battle, e)}
-                >Join</button>
-              </div>
+      <>
+        <Modal show={showModal} onClose={this.handleCreateGame} >
+          <input value={this.state.newGame} onChange={this.changeNewGameName} />
+        </Modal>
+        <div className={classes.battlesLobby} >
+          <div className={classes.redPanel} >
+            <div className={classes.menuSubtile} >
+              <button
+                onClick={this.handleRefresh}
+              >
+                Refresh
+              </button>
             </div>
-          )
-        })}
-      </div>
+          </div>
+          <div className={classes.redPanel} >
+            <div className={classes.menuSubtile} >
+              <button onClick={this.openModal}>
+                Create new game
+              </button>
+            </div>
+          </div>
+          {Object.keys(battles).map((battle, index) => {
+            return (
+              <div className={classes.redPanel} key={index} >
+                <div className={classes.menuSubtile} >
+                  <div>{battle}</div>
+                  <div>Players joined: {battles[battle].players.length}</div>
+                  <button
+                    onClick={ e => this.handleJoinBattle(battle, e)}
+                  >Join</button>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </>
     )
   }
 }

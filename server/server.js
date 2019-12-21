@@ -26,18 +26,16 @@ server.listen(PORT, () => {
 const players = new Set([])
 // const actionController = new ActionController()
 
-const battles = {
-  game1: {
-    players: new Set([])
-  },
-  game2: {
-    players: new Set([])
-  }
-}
+const battles = {}
 io.on('connection', (socket) => {
   sendBattlesList()
   socket.on('get-battle-list', () => {
     sendBattlesList(socket)
+  })
+  socket.on('create-battle', battleName => {
+    console.log('[create-battle]', battleName)
+    battles[battleName] = { players: new Set([]) }
+    sendBattlesList()
   })
   socket.on('join-battle', ({ battleName }, func) => {
     console.log(battleName)
