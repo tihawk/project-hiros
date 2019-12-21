@@ -1,6 +1,10 @@
 {
     "Battlefield": {
-        "Battlefield": "Schlachtfeld"
+        "Battlefield": "Schlachtfeld",
+        "SettingsMenu": "Kapmf Einstellungen",
+        "Settings": {
+            "ChangeLanguage": "Die Sprache ändern"
+        }
     },
     "CombatFooter": {
         "Empty": " "

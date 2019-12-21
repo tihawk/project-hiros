@@ -18,13 +18,15 @@ class Settings extends Component {
   }
 
   render () {
-    const { show, onClose } = this.props
+    const { show, onClose, t } = this.props
     const { lng } = this.state
     return (
       <Modal
         show={show}
         onClose={onClose}
+        title={t('Battlefield.SettingsMenu')}
         cancelable >
+        <label>{t('Battlefield.Settings.ChangeLanguage')}</label>
         <select
           value={lng}
           onChange={this.changeLanguage}

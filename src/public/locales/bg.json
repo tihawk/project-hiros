@@ -1,6 +1,10 @@
 {
     "Battlefield": {
-        "Battlefield": "Бойно поле"
+        "Battlefield": "Бойно поле",
+        "SettingsMenu": "Бойни Настройки",
+        "Settings": {
+            "ChangeLanguage": "Смени езика"
+        }
     },
     "CombatFooter": {
         "Empty": " "

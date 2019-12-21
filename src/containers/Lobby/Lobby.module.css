@@ -39,7 +39,6 @@
     background-repeat: repeat-y;
     text-align: center;
     color: lightgoldenrodyellow;
-    /* font-size: 1vw; */
 }
 
 .menuSubtile button {
@@ -47,7 +46,7 @@
     color: lightgoldenrodyellow;
     background-image: url(../../public/assets/textures/461223166.jpg);
     outline: 1px gold solid;
-    border-left: 3px solid rgb(255, 255, 255, 0.3);
+    border-left: 3px solid rgb(255, 255, 255, 0.1);
     border-top: 3px solid rgb(255, 255, 255, 0.3);
     border-right: 3px solid rgb(0, 0, 0, 0.3);
     border-bottom: 3px solid rgb(0, 0, 0, 0.3);

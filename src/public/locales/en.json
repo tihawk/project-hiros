@@ -1,6 +1,10 @@
 {
     "Battlefield": {
-        "Battlefield": "Battlefield"
+        "Battlefield": "Battlefield",
+        "SettingsMenu": "Combat Options",
+        "Settings": {
+            "ChangeLanguage": "Change the language"
+        }
     },
     "CombatFooter": {
         "": " ",

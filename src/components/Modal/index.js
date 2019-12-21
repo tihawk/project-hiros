@@ -13,7 +13,7 @@ class Modal extends Component {
   }
 
   render () {
-    const { cancelable, show, onClose, onCancel } = this.props
+    const { cancelable, show, onClose, onCancel, title } = this.props
     return (
       <>
         {cancelable ? <Backdrop show={this.props.show} clicked={onCancel || onClose} /> : null }
@@ -25,8 +25,12 @@ class Modal extends Component {
           }}>
           <div className={classes.outerContainer}>
             <div className={classes.innerContainer}>
+              {title && <span className={classes.title}>{title}</span>}
               {this.props.children}
-              <button type="button" onClick={onClose}>OK</button>
+              <div className="d-flex flex-row justify-content-around align-items-end w-50 mt-5">
+                <button type="button" onClick={onClose}>OK</button>
+                {cancelable && <button type="button" onClick={onCancel || onClose}>Cancel</button>}
+              </div>
             </div>
           </div>
         </div>
