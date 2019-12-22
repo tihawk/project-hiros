@@ -27,6 +27,10 @@ server.listen(PORT, () => {
 // const actionController = new ActionController()
 
 const battles = {}
+for (let i = 0; i < 1; i++) {
+  battles[i] = {}
+  battles[i].players = new Set([])
+}
 io.on('connection', (socket) => {
   sendBattlesList()
   socket.on('get-battle-list', () => {

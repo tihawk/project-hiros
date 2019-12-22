@@ -1,0 +1,66 @@
+.mainMenu {
+    width: 100%;
+    height: 100%;
+    max-height: min-content;
+    margin-left: auto;
+    margin-right: auto;
+    border: 2px solid gold;
+    background-color: grey;
+    background-image: url(../../public/assets/images/GamSelB1.bmp);
+    background-size: cover;
+    overflow-y: auto;
+}
+
+.battlesLobby {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20vh;
+    margin-bottom: 20vh;
+    max-width: 400px;
+    background-image: url(../../public/assets/textures/461223166.jpg);
+    background-color: brown;
+    background-repeat: repeat-y;
+    border: 1px solid gold;
+    outline: black solid 1px;
+    text-align: center;
+    color: white;
+    /* font-size: 1vw; */
+}
+
+.redPanel {
+    width: 100%;
+    height: 100%;
+    margin: 1px;
+    background-color: darkred;
+    border: 1px solid gold;
+    outline: black solid 1px;
+    padding: 3px;
+}
+
+.menuSubtile {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-content: center;
+    width: 100%;
+    background-image: url(../../public/assets/textures/461223166.jpg);
+    background-color: brown;
+    background-repeat: repeat-y;
+    text-align: center;
+    color: lightgoldenrodyellow;
+}
+
+.menuSubtile button {
+    margin: 5px;
+    color: lightgoldenrodyellow;
+    background-image: url(../../public/assets/textures/461223166.jpg);
+    outline: 1px gold solid;
+    border-left: 3px solid rgb(255, 255, 255, 0.1);
+    border-top: 3px solid rgb(255, 255, 255, 0.3);
+    border-right: 3px solid rgb(0, 0, 0, 0.3);
+    border-bottom: 3px solid rgb(0, 0, 0, 0.3);
+}
