@@ -1,9 +1,10 @@
 .mainMenu {
-    width: 100%;
+    width: 80%;
     height: 100%;
     min-height: 70vh;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 10%;
+    /* margin-left: auto;
+    margin-right: auto; */
     border: 2px solid gold;
     background-color: grey;
     background-image: url(../../public/assets/images/GamSelB1.bmp);

@@ -4,7 +4,7 @@ body {
 
 .field {
     position: relative;
-    margin: 10px;
+    margin: 10%;
     max-width: 100vmax;
     background-image: url(../../public/assets/battlegrounds/CmBkMag.png);
     background-size: cover;
