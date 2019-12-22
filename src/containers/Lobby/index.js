@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
 import socket from '../../utility/socket'
 import { connect } from 'react-redux'
 import * as actions from '../../store/actions'
@@ -73,6 +74,9 @@ class Lobby extends Component {
           <label>Enter new battle name</label>
           <input value={this.state.newGame} onChange={this.changeNewGameName} />
         </Modal>
+        <div className={classes.exitButton} >
+          <Link to='/'>Exit</Link>
+        </div>
         <div className={classes.battlesLobby} >
           <div className={classes.redPanel} >
             <div className={classes.menuSubtile} >

@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
 import socket from '../../utility/socket'
 import { connect } from 'react-redux'
 import * as actions from '../../store/actions'
@@ -8,29 +9,10 @@ import Modal from '../../components/Modal'
 
 class Lobby extends Component {
   state = {
-    battles: {},
-    showModal: false,
-    newGame: ''
+    showModal: false
   }
 
   componentDidMount () {
-    socket.on('battles-list', data => {
-      this.setState({ ...data })
-    })
-    socket.emit('get-battle-list')
-  }
-
-  handleRefresh = () => {
-    socket.emit('get-battle-list')
-  }
-
-  handleJoinBattle = (battleName, e) => {
-    e.preventDefault()
-    console.log(battleName)
-    socket.emit('join-battle', { battleName }, ack => {
-      this.props.onSetBattleAddress(ack)
-      return this.props.history.replace('/battle')
-    })
   }
 
   openModal = e => {
@@ -38,30 +20,8 @@ class Lobby extends Component {
     this.setState({ showModal: true })
   }
 
-  changeNewGameName = e => {
-    this.setState({ newGame: e.target.value })
-  }
-
-  handleCancelCreateGame = () => {
-    this.setState({ showModal: false })
-  }
-
-  handleCreateGame = e => {
-    e.persist()
-    socket.emit('create-battle', this.state.newGame, ack => {
-      this.setState({ showModal: false })
-      if (ack) {
-        this.handleJoinBattle(this.state.newGame, e)
-      }
-    })
-  }
-
-  componentWillUnmount () {
-    socket.off('battles-list')
-  }
-
   render () {
-    const { battles, showModal } = this.state
+    const { showModal } = this.state
     return (
       <>
         <Modal
@@ -73,20 +33,20 @@ class Lobby extends Component {
           <label>Enter new battle name</label>
           <input value={this.state.newGame} onChange={this.changeNewGameName} />
         </Modal>
-        <div className={classes.battlesLobby} >
+        <div className={classes.menuTitle} >
+          <div className={classes.menuSubtile} >
+            <span>Main Menu</span>
+          </div>
+        </div>
+        <div className={classes.menuPanel} >
           <div className={classes.redPanel} >
             <div className={classes.menuSubtile} >
-              <button onClick={this.openModal}>
-                Start new game
-              </button>
-              <button
-                onClick={this.handleRefresh}
-              >
-                Refresh
-              </button>
+              <Link to='/main/lobby' >
+                Lobby
+              </Link>
             </div>
           </div>
-          {Object.keys(battles).length > 0
+          {/* {Object.keys(battles).length > 0
             ? Object.keys(battles).map((battle, index) => {
               return (
                 <div className={classes.redPanel} key={index} >
@@ -105,7 +65,7 @@ class Lobby extends Component {
                 <span>No battles currently fought</span>
               </div>
             </div>
-          }
+          } */}
         </div>
       </>
     )

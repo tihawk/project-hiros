@@ -51,3 +51,25 @@
     border-right: 3px solid rgb(0, 0, 0, 0.3);
     border-bottom: 3px solid rgb(0, 0, 0, 0.3);
 }
+
+.exitButton {
+    width: 8%;
+    height: 5%;
+    margin-left: 90%;
+    margin-top: 2%;
+    background-image: url(../../public/assets/textures/461223166.jpg);
+    outline: 1px gold solid;
+    text-align: center;
+}
+
+.exitButton * {
+    text-decoration: none;
+    text-underline-position: unset;
+    color: lightgoldenrodyellow;
+}
+
+.exitButton *:hover {
+    text-decoration: none;
+    text-underline-position: unset;
+    color: lightgoldenrodyellow;
+}

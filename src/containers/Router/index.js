@@ -6,7 +6,6 @@ import {
   Route
 } from 'react-router-dom'
 import Battlefield from '../Battlefield/Battlefield'
-import Lobby from '../Lobby'
 import MainMenu from '../MainMenu'
 
 function RouterWrapper () {

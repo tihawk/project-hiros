@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
 import classes from './MainMenu.module.css'
 import MainMenu from './MainMenu'
 import Lobby from '../Lobby'
@@ -23,7 +22,6 @@ class MainWrapper extends Component {
     console.log(window.location)
     return (
       <div className={classes.mainMenu} >
-        <Link to='/main/lobby' replace >hi</Link>
         {currentMenu === '/' && <MainMenu history={this.props.history} />}
         {currentMenu === '/main/lobby' && <Lobby history={this.props.history} />}
       </div>
