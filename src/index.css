@@ -37,25 +37,25 @@ body::-webkit-scrollbar-thumb {
 }
 
 body::-webkit-scrollbar-button:single-button:vertical:decrement {
-  height: 10px;
+  height: 11px;
   background-image: url(./public/assets/combat-bar/up-arrow.png);
   background-size: contain;
   background-position: top;
   background-repeat: no-repeat;
   border-left: 1px solid gold;
   border-right: 1px solid gold;
-  border-top: 1px solid gold;
+  border-top: 2px solid gold;
 }
 
 body::-webkit-scrollbar-button:single-button:vertical:increment {
-  height: 10px;
+  height: 11px;
   background-image: url(./public/assets/combat-bar/down-arrow.png);
   background-size: contain;
   background-position: bottom;
   background-repeat: no-repeat;
   border-left: 1px solid gold;
   border-right: 1px solid gold;
-  border-bottom: 1px solid gold;
+  border-bottom: 2px solid gold;
 }
 
 code {
